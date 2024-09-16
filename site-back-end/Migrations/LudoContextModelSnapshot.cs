@@ -68,6 +68,9 @@ namespace LudoAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("is_admin")
+                        .HasColumnType("bit");
+
                     b.Property<int>("loses")
                         .HasColumnType("int");
 
