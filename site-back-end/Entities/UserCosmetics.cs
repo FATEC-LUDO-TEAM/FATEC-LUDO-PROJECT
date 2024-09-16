@@ -5,6 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 public class UserCosmetics {
     [Key]
     public string user_id { get; set; }
-    public string[] available_cosmetics { get; set; }
-    public string[] wishlist_cosmetics { get; set;}
+    public List<string> available_cosmetics { get; set; }
+    public List<string> wishlist_cosmetics { get; set;}
 }
