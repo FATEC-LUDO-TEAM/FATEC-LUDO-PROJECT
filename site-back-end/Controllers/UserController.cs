@@ -1,3 +1,5 @@
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,16 +10,12 @@ namespace LudoAPI.Controllers;
 public class UserController : ControllerBase 
 {
     public LudoContext _ludocontext;
+    public IMapper _mapper;
 
-    public UserController(LudoContext ludoContext)
+    public UserController(LudoContext ludoContext, IMapper mapper)
     {
         _ludocontext = ludoContext;
-    }
-
-    [HttpGet("teste")]
-    public string Get()
-    {
-        return "oi";
+        _mapper = mapper;
     }
 
     [HttpPost("subscribe")]
@@ -30,7 +28,7 @@ public class UserController : ControllerBase
         //se existir retornar um Conflict 
         if(UsuariosParecidos.Count() > 0)
         {
-            return Results.Conflict("Email ou Username já estão sendo usados!");
+            return Results.Conflict("email ou username já estão sendo usados!");
         }
         //se não existir realizar o cadastro do usuário
         else
@@ -41,6 +39,7 @@ public class UserController : ControllerBase
                 username = jsonBody.Username,
                 email = jsonBody.Email,
                 password = jsonBody.Password,
+                is_admin = false,
                 created_at = DateTime.Now,
                 updated_at = DateTime.Now
             };
@@ -69,5 +68,39 @@ public class UserController : ControllerBase
         }
         var userToken = JwtService.GenerateJwtToken(UsuarioEncontrado.id);
         return Results.Ok(userToken);
+    }
+
+    // [Authorize]
+    [HttpDelete("delete")]
+    public IResult DeleteUser ([FromBody] String userId)
+    {
+        //procura o usuario pelo id informado
+        var usuarioEncontrado = _ludocontext.Users.Where(u => u.id == userId).FirstOrDefault();
+        if(usuarioEncontrado == null)
+        {
+            return Results.NotFound("usuário não foi encontrado");
+        }
+        //procura pelo seu inventario pessoal
+        var inventarioEncontrado = _ludocontext.UserCosmetics.Where(u => u.user_id == userId).FirstOrDefault();
+        if(inventarioEncontrado == null)
+        {
+            return Results.NotFound("inventario não foi encontrado");
+        }
+
+        //deleta usuario e seu inventario do banco
+        _ludocontext.Users.Remove(usuarioEncontrado);
+        _ludocontext.UserCosmetics.Remove(inventarioEncontrado);
+        _ludocontext.SaveChanges();
+
+        return Results.Ok();
+    }
+
+    [HttpGet("list")]
+    public IResult ListUsers ([FromBody] ListUsersBody jsonBody) 
+    {
+        List<User> ListaGerada = _ludocontext.Users.Skip(jsonBody.ItemsPerPage * jsonBody.Page).Take(jsonBody.ItemsPerPage).ToList();
+        // filtro o resultado para não voltar informações sensiveis do usuario, como a senha
+        List<ListUsersResponse> ListaFiltrada = _mapper.Map<List<ListUsersResponse>>(ListaGerada); 
+        return Results.Ok(ListaFiltrada);
     }
 }
