@@ -11,6 +11,7 @@ public class User {
     public int loses { get; set; }
     public int wins { get; set; }   
     public int ludo_coins { get; set; } 
+    public bool is_admin { get; set;}
     public DateTime created_at { get; set; }    
     public DateTime updated_at { get; set; }
 }
