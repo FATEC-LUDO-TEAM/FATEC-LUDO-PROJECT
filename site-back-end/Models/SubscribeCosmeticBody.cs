@@ -16,4 +16,7 @@ public class SubscribeCosmeticBody
 
     [JsonPropertyName("data")]
     public string Data { get; set; }
+
+    [JsonPropertyName("item_type")]
+    public string ItemType { get; set; }
 }

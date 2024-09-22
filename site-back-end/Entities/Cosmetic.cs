@@ -11,6 +11,8 @@ public class Cosmetic
     public int price { get; set; }
     public string image { get; set; }
     public string data { get; set; }
+    public string item_type { get; set;}
     public DateTime created_at { get; set; }
     public DateTime updated_at { get; set; }
+    
 }

@@ -48,7 +48,8 @@ public class UserController : ControllerBase
             UserCosmetics userCosmetics = new UserCosmetics(){
                 user_id = userid,
                 available_cosmetics = [],
-                wishlist_cosmetics = []
+                wishlist_cosmetics = [],
+                applied_cosmetics = []
             };
             _ludocontext.UserCosmetics.Add(userCosmetics);
 

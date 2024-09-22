@@ -7,4 +7,5 @@ public class UserCosmetics {
     public string user_id { get; set; }
     public List<string> available_cosmetics { get; set; }
     public List<string> wishlist_cosmetics { get; set;}
+    public List<string> applied_cosmetics { get; set; }
 }

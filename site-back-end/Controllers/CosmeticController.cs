@@ -33,6 +33,7 @@ public class CosmeticController : ControllerBase
                 price = jsonBody.Price,
                 image = jsonBody.Image,
                 data = jsonBody.Data,
+                item_type = jsonBody.ItemType,
                 created_at = DateTime.Now,
                 updated_at = DateTime.Now
             };
@@ -49,7 +50,7 @@ public class CosmeticController : ControllerBase
         var usuarioEncontrado = _ludocontext.Users.Where(u => u.id == jsonBody.Userid).FirstOrDefault();
         if (usuarioEncontrado == null)
         {
-            return Results.NotFound("usuario não encontrado");
+            return Results.Problem("usuario não encontrado");
         }
         //pega informações do cosmético
         var cosmeticoEncontrado = _ludocontext.Cosmetics.Where(u => u.id == jsonBody.CosmeticId).FirstOrDefault();
