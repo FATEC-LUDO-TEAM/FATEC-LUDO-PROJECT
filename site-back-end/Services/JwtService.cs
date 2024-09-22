@@ -16,7 +16,9 @@ public class JwtService
                 new Claim("id", userId) 
             }),
             Expires = DateTime.UtcNow.AddDays(1),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+            Issuer = "Issuer",
+            Audience = "Audience",  
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
