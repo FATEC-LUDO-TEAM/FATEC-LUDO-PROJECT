@@ -33,6 +33,15 @@ public class GameScript : MonoBehaviour{
     public Vector3 posicao_peca_verde_1, posicao_peca_verde_2, posicao_peca_verde_3, posicao_peca_verde_4;
     public Vector3 posicao_peca_amarelo_1, posicao_peca_amarelo_2, posicao_peca_amarelo_3, posicao_peca_amarelo_4;
     public Vector3 posicao_peca_azul_1, posicao_peca_azul_2, posicao_peca_azul_3, posicao_peca_azul_4;
+    
+    //Determina quando ou não podemos selecionar as peças de cada cor para jogar.
+    public Button botao_jogador_vermelho_1, botao_jogador_vermelho_2,botao_jogador_vermelho_3, botao_jogador_vermelho_4;
+    public Button botao_jogador_verde_1, botao_jogador_verde_2, botao_jogador_verde_3, botao_jogador_verde_4;
+    public Button botao_jogador_amarelo_1, botao_jogador_amarelo_2, botao_jogador_amarelo_3 , botao_jogador_amarelo_4;
+    public Button botao_jogador_azul_1, botao_jogador_azul_2, botao_jogador_azul_3, botao_jogador_azul_4;
+
+    //Vai cobrir cada canto de jogador com alguma coisa que mostre que ele venceu, pode ser um minimapa de ludo, um quadrado dizendo venceu, qualquer coisa.
+    public GameObject vitoria_azul, vitoria_verde, vitoria_amarelo, vitoria_vermelho;
 
 //Responsável pela animação do dado. Não criei a animação dentro do unity ainda, só assinalei as imagens.
     public Transform rodar_dado;
@@ -44,21 +53,15 @@ public class GameScript : MonoBehaviour{
 //Botao que faz que o dado só funcione para o jogador clickar quando for devido.
     public Button botaodado;
 
-    //Determina quando ou não podemos selecionar as peças de cada cor para jogar.
-    public Button botao_jogador_vermelho_1, botao_jogador_vermelho_2,botao_jogador_vermelho_3, botao_jogador_vermelho_4;
-    public Button botao_jogador_verde_1, botao_jogador_verde_2, botao_jogador_verde_3, botao_jogador_verde_4;
-    public Button botao_jogador_amarelo_1, botao_jogador_amarelo_2, botao_jogador_amarelo_3 , botao_jogador_amarelo_4;
-    public Button botao_jogador_azul_1, botao_jogador_azul_2, botao_jogador_azul_3, botao_jogador_azul_4;
 
-//Vai cobrir cada canto de jogador com alguma coisa que mostre que ele venceu, pode ser um minimapa de ludo, um quadrado dizendo venceu, qualquer coisa.
-    public GameObject vitoria_azul, vitoria_verde, vitoria_amarelo, vitoria_vermelho;
+
 
    /* 
 
    ----------DISCLAIMER--------
    ATIVA DEPOIS, só para não ficar com flag de warning no unity
    */
-   private string turno_jogador = "amarelo";
+    private string turno_jogador = "amarelo";
     private string jogador_atual = "none";
     private string nome_jogador_atual = "none";
 
@@ -81,7 +84,7 @@ public class GameScript : MonoBehaviour{
 
 
     //Animações do dado abaixo
-    private int selecionar_animacao_dado;
+    private int selecionar_num_dado_animacao;
 
     public GameObject animacao_dado_1, animacao_dado_2, animacao_dado_3, animacao_dado_4, animacao_dado_5, animacao_dado_6;
 
@@ -92,52 +95,60 @@ public class GameScript : MonoBehaviour{
     public List<GameObject> bloco_movimento_azul = new List<GameObject>();
     public List<GameObject> bloco_movimento_amarelo = new List<GameObject>();
 
+//Valores aleatórios de 1 a 6 para o dado :);
     private System.Random randNo;
     //Tela do Deseja sair? sim/nao
-    public GameObject tela_sair;
+    public GameObject tela_confirmar_sair;
 
     //O jogo acabou uhu
-    public GameObject tela_fim_jogo;
+    public GameObject tela_jogo_acabou;
 
 
-    //Valores aleatórios de 1 a 6 para o dado :);
-    private System.Random randno;
-
-
-
+// ================================================================================= CLIQUEI NO BOTAO SAIR ====================================================================
 //métodos de entrada e saída do jogo
-    public void SairJogo () 
+    public void sairjogo () 
     {
-    tela_sair.SetActive(true);
+    SoundManager.buttonAudioSource.Play ();
+    tela_confirmar_sair.SetActive(true);
+    }
+
+    public void simsairjogo () {
+    SoundManager.buttonAudioSource.Play ();
+		SceneManager.LoadScene ("Main Menu");
     }
 //TROCAR O NOME PARA MENUPRINCIPAL OU A CENA QUE VOU USAR
-    public void Confirmarsair()
-    {
-    SceneManager.LoadScene("main menu");
-    }   
+    public void naosairjogo()
+	{
+		SoundManager.buttonAudioSource.Play ();
+		tela_confirmar_sair.SetActive (false);
+	}
 
-//Método para ativar a tela de jogo completo após 1.5 segundos (vamos executar dentro de outro void)
+
+
+//================================================================================= O JOGO ACABOU -- FUNCOES ===================================================================
 
     IEnumerator jogocompletorotina ()
     {
 
     yield return new WaitForSeconds (1.5f);
-    tela_fim_jogo.SetActive(true);
+    tela_jogo_acabou.SetActive(true);
     } 
 
 
 //Sim quero jogar de novo
-    public void simjogoconcluido ()
+    public void simjogoacabou ()
     {   
+    SoundManager.buttonAudioSource.Play ();
     SceneManager.LoadScene("Ludo");
     }
 
 //Nao quero jogar de novo
-    public void naojogoconcluido ()
+    public void naojogoacabou ()
     {
-    SceneManager.LoadScene("Main menu");
+    SoundManager.buttonAudioSource.Play ();
+    SceneManager.LoadScene("Main Menu");
     }
-//FUNCIONA EM CONJUNTO COM A FUNCAO DE INICIALIZAR DADO.
+
 
 
 
@@ -149,6 +160,11 @@ public class GameScript : MonoBehaviour{
 ░░██░░░██░░░██░░░██░░░██░░░░░░░██░░░██████░██░░░░░░░██░░░██░░░░░░██████░██░░██░░░██░░░██░██████░██░░░██░██░░░██
 ██████░██░░░██░██████░▀█████░██████░██░░██░██████░██████░███████░██░░██░██░░██░░░██████▀░██░░██░██████▀░▀█████▀
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+
+
+
+===================================== Rotina que inicializa o dado no início ou nos finais de turno ===================================================================
 
 */
 
@@ -174,7 +190,7 @@ public class GameScript : MonoBehaviour{
 
 
 
-
+====================================== Conferindo quais jogadores venceram a partida ======================================================
          */
         
 
@@ -183,25 +199,25 @@ public class GameScript : MonoBehaviour{
         switch (MainMenuManager.howManyPlayers)
         {
           case 2:
-
+//Só PODE VENCER VERDE E AMARELO
           if(totalamarelocasa > 3)
           {
             SoundManager.winAudioSource.Play();
             vitoria_amarelo.SetActive(true);
-            StartCoroutine("GameCompleteRoutine");
+            StartCoroutine("jogocompletorotina");
             turno_jogador = "none";            
           }
           if(totalverdecasa > 3)
           {
             SoundManager.winAudioSource.Play();
             vitoria_verde.SetActive(true);
-            StartCoroutine("GameCompleteRoutine");
+            StartCoroutine("jogocompletorotina");
             turno_jogador = "none";            
           }
           break;
 
           case 3:
-
+//============== QUANDO O PRIMEIRO DE 3 JOGADORES VENCEU
 
           if(totalamarelocasa > 3 && totalverdecasa < 4 && totalvermelhocasa < 4 && turno_jogador == "amarelo")
           {
@@ -240,10 +256,9 @@ public class GameScript : MonoBehaviour{
             turno_jogador = "amarelo";
                      
           }
-          break;
 
 
-          //============================================================SE DOIS OU MAIS JOGADORES TERMINARAM (MODO DE 3 JOGADORES)===========================================================
+          //===========================================================QUANDO O SEGUNDO DOS 3 JOGADORES VENCEU ===========================================================
 
           if (totalamarelocasa > 3 && totalverdecasa > 3 && totalvermelhocasa < 4 )
           {
@@ -260,7 +275,7 @@ public class GameScript : MonoBehaviour{
             vitoria_verde.SetActive(true);
 
 
-            StartCoroutine("GameCompleteRoutine");
+            StartCoroutine("jogocompletorotina");
             Debug.Log("Jogo concluido");
             turno_jogador = "none";
 
@@ -282,7 +297,7 @@ public class GameScript : MonoBehaviour{
             vitoria_vermelho.SetActive(true);
 
 
-            StartCoroutine("GameCompleteRoutine");
+            StartCoroutine("jogocompletorotina");
             Debug.Log("Jogo concluido");
             turno_jogador = "none";
 
@@ -305,7 +320,7 @@ public class GameScript : MonoBehaviour{
             vitoria_vermelho.SetActive(true);
 
 
-            StartCoroutine("GameCompleteRoutine");
+            StartCoroutine("jogocompletorotina");
             Debug.Log("Jogo concluido");
             turno_jogador = "none";
 
@@ -316,7 +331,7 @@ public class GameScript : MonoBehaviour{
 
     
            case 4:
-
+//======================================================== QUANDO O PRIMEIRO DOS QUATRO JOGADORES VENCEU ====================================================
 
             if(totalamarelocasa > 3 && totalverdecasa < 4 && totalvermelhocasa < 4 && totalazulcasa < 4 && turno_jogador == "amarelo")
           {
@@ -373,7 +388,7 @@ public class GameScript : MonoBehaviour{
 
 
 
-          //============================================================SE DOIS OU MAIS JOGADORES TERMINARAM (MODO DE 4 JOGADORES)===========================================================
+          //============================================================QUANDO O SEGUNDO DOS 4 JOGADORES VENCEU===========================================================
         
 
            if(totalamarelocasa > 3 && totalverdecasa > 3 && totalvermelhocasa < 4 && totalazulcasa < 4 && (turno_jogador == "amarelo" || turno_jogador == "verde"))
@@ -537,7 +552,7 @@ public class GameScript : MonoBehaviour{
           }
         
 
-          //==============================================SE 3 OU MAIS JOGADORES ACABAREM (Modo 4 jogadores)==============================================================
+          //==============================================QUANDO O TERCEIRO DOS 4 JOGADORES VENCEU ==============================================================
             if(totalamarelocasa > 3 && totalverdecasa > 3 && totalvermelhocasa > 3 && totalazulcasa < 4)
           {
             if(!vitoria_amarelo.activeInHierarchy)
@@ -555,7 +570,7 @@ public class GameScript : MonoBehaviour{
             vitoria_amarelo.SetActive(true);
             vitoria_verde.SetActive(true);
             vitoria_vermelho.SetActive(true);
-            StartCoroutine("GameCompleteRoutine");
+            StartCoroutine("jogocompletorotina");
             Debug.Log("o jogo acabou");
             turno_jogador = "none";
         
@@ -578,7 +593,7 @@ public class GameScript : MonoBehaviour{
             vitoria_amarelo.SetActive(true);
             vitoria_verde.SetActive(true);
             vitoria_azul.SetActive(true);
-            StartCoroutine("GameCompleteRoutine");
+            StartCoroutine("jogocompletorotina");
             Debug.Log("o jogo acabou");
             turno_jogador = "none";
         
@@ -602,7 +617,7 @@ public class GameScript : MonoBehaviour{
             vitoria_amarelo.SetActive(true);
             vitoria_vermelho.SetActive(true);
             vitoria_azul.SetActive(true);
-            StartCoroutine("GameCompleteRoutine");
+            StartCoroutine("jogocompletorotina");
             Debug.Log("o jogo acabou");
             turno_jogador = "none";
         
@@ -626,7 +641,7 @@ public class GameScript : MonoBehaviour{
             vitoria_verde.SetActive(true);
             vitoria_vermelho.SetActive(true);
             vitoria_azul.SetActive(true);
-            StartCoroutine("GameCompleteRoutine");
+            StartCoroutine("jogocompletorotina");
             Debug.Log("o jogo acabou");
             turno_jogador = "none";
         
@@ -642,15 +657,19 @@ public class GameScript : MonoBehaviour{
       if(nome_jogador_atual.Contains("jogador_vermelho"))
       {
         if(nome_jogador_atual == "jogador_vermelho_1" ) {
+          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
           jogador_atual = codjogadorvermelho1.codjogadorvermelho1col;
         }
         if(nome_jogador_atual == "jogador_vermelho_2" ) {
+          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
           jogador_atual = codjogadorvermelho2.codjogadorvermelho2col;
         }
         if(nome_jogador_atual == "jogador_vermelho_3" ) {
+          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
           jogador_atual = codjogadorvermelho3.codjogadorvermelho3col;
         }
         if(nome_jogador_atual == "jogador_vermelho_4" ) {
+          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
           jogador_atual = codjogadorvermelho4.codjogadorvermelho4col;
         }
       }
@@ -658,15 +677,19 @@ public class GameScript : MonoBehaviour{
       if(nome_jogador_atual.Contains("jogador_verde"))
       {
         if(nome_jogador_atual == "jogador_verde_1" ) {
+          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
           jogador_atual = codjogadorverde1.codjogadorverde1col;
         }
         if(nome_jogador_atual == "jogador_verde_2" ) {
+          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
           jogador_atual = codjogadorverde2.codjogadorverde2col;
         }
         if(nome_jogador_atual == "jogador_verde_3" ) {
+          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
           jogador_atual = codjogadorverde3.codjogadorverde3col;
         }
         if(nome_jogador_atual == "jogador_verde_4" ) {
+          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
           jogador_atual = codjogadorverde4.codjogadorverde4col;
         }
       }
@@ -674,15 +697,19 @@ public class GameScript : MonoBehaviour{
       if(nome_jogador_atual.Contains("jogador_azul"))
       {
         if(nome_jogador_atual == "jogador_azul_1" ) {
+          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
           jogador_atual = codjogadorazul1.codjogadorazul1col;
         }
         if(nome_jogador_atual == "jogador_azul_2" ) {
+          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
           jogador_atual = codjogadorazul2.codjogadorazul2col;
         }
         if(nome_jogador_atual == "jogador_azul_3" ) {
+          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
           jogador_atual = codjogadorazul3.codjogadorazul3col;
         }
         if(nome_jogador_atual == "jogador_azul_4" ) {
+          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
           jogador_atual = codjogadorazul4.codjogadorazul4col;
         }
       }
@@ -691,15 +718,19 @@ public class GameScript : MonoBehaviour{
       if(nome_jogador_atual.Contains("jogador_amarelo"))
       {
         if(nome_jogador_atual == "jogador_amarelo_1" ) {
+          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
           jogador_atual = codjogadoramarelo1.codjogadoramarelo1col;
         }
         if(nome_jogador_atual == "jogador_amarelo_2" ) {
+          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
           jogador_atual = codjogadoramarelo2.codjogadoramarelo2col;
         }
         if(nome_jogador_atual == "jogador_amarelo_3" ) {
+          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
           jogador_atual = codjogadoramarelo3.codjogadoramarelo3col;
         }
         if(nome_jogador_atual == "jogador_amarelo_4" ) {
+          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
           jogador_atual = codjogadoramarelo4.codjogadoramarelo4col;
         }
       }
@@ -1540,12 +1571,16 @@ public class GameScript : MonoBehaviour{
                     rodar_dado.position = dado_verde_rolagem.position;
                     frame_verde.SetActive(true);
                     frame_amarelo.SetActive(false);
+                    frame_vermelho.SetActive(false);
+                    frame_azul.SetActive(false);
                     }
                 if(turno_jogador == "amarelo")
                     {
                     rodar_dado.position = dado_amarelo_rolagem.position;
                     frame_amarelo.SetActive(true);
                     frame_verde.SetActive(false);
+                    frame_vermelho.SetActive(false);
+                    frame_azul.SetActive(false);
                     }
                 botao_jogador_amarelo_1.interactable = false;
                 botao_jogador_amarelo_2.interactable = false;
@@ -1707,7 +1742,7 @@ public class GameScript : MonoBehaviour{
 
         }
 
-    
+    selecionar_num_dado_animacao = 0;
 }
 
 /*
@@ -1743,17 +1778,15 @@ public class GameScript : MonoBehaviour{
 //Só rodar o dado quando disponível 
     public void rolar_dado ()
     {   
-    botaodado.interactable = false;
-
     SoundManager.diceAudioSource.Play();
     botaodado.interactable = false;
 
     //Já Criei animacao do dado. Assinala um número de 1 a 6 de Randno para o dado.
 
 
-        selecionar_animacao_dado = randNo.Next(1,7);
+        selecionar_num_dado_animacao = randNo.Next(1,7);
 
-        switch(selecionar_animacao_dado)
+        switch(selecionar_num_dado_animacao)
         {
             case 1:
             animacao_dado_1.SetActive(true);  
@@ -1804,10 +1837,8 @@ public class GameScript : MonoBehaviour{
             animacao_dado_6.SetActive(true);
             break;
 
-            StartCoroutine("jogadoresnaoinicializados");
-
-
         }
+      StartCoroutine("jogadoresnaoinicializados");
     }
 
 /*
@@ -1838,7 +1869,7 @@ public class GameScript : MonoBehaviour{
             //determina quando podemos mexer na peca amarelo 1, sendo no caso ter um valor de movimento maior do que voce tirou no dado, que a peça não esteja num local que não conhecemos (menor que 0) e que ele não tenha completado sua jornada chegando na 
             //casa final.
 
-            if ((bloco_movimento_amarelo.Count - local_peca_amarelo_1)>= selecionar_animacao_dado && local_peca_amarelo_1 > 0 && (bloco_movimento_amarelo.Count > local_peca_amarelo_1))
+            if ((bloco_movimento_amarelo.Count - local_peca_amarelo_1)>= selecionar_num_dado_animacao && local_peca_amarelo_1 > 0 && (bloco_movimento_amarelo.Count > local_peca_amarelo_1))
             {
                 borda_peca_amarelo_1.SetActive(true);
                 botao_jogador_amarelo_1.interactable = true;
@@ -1850,7 +1881,7 @@ public class GameScript : MonoBehaviour{
 
             }
 
-             if ((bloco_movimento_amarelo.Count - local_peca_amarelo_2)>= selecionar_animacao_dado && local_peca_amarelo_2 > 0 && (bloco_movimento_amarelo.Count > local_peca_amarelo_2))
+             if ((bloco_movimento_amarelo.Count - local_peca_amarelo_2)>= selecionar_num_dado_animacao && local_peca_amarelo_2 > 0 && (bloco_movimento_amarelo.Count > local_peca_amarelo_2))
             {
                 borda_peca_amarelo_2.SetActive(true);
                 botao_jogador_amarelo_2.interactable = true;
@@ -1862,7 +1893,7 @@ public class GameScript : MonoBehaviour{
 
             }
 
-             if ((bloco_movimento_amarelo.Count - local_peca_amarelo_3)>= selecionar_animacao_dado && local_peca_amarelo_3 > 0 && (bloco_movimento_amarelo.Count > local_peca_amarelo_3))
+             if ((bloco_movimento_amarelo.Count - local_peca_amarelo_3)>= selecionar_num_dado_animacao && local_peca_amarelo_3 > 0 && (bloco_movimento_amarelo.Count > local_peca_amarelo_3))
             {
                 borda_peca_amarelo_3.SetActive(true);
                 botao_jogador_amarelo_3.interactable = true;
@@ -1873,7 +1904,7 @@ public class GameScript : MonoBehaviour{
                 botao_jogador_amarelo_3.interactable = false;
             }
 
-             if ((bloco_movimento_amarelo.Count - local_peca_amarelo_4)>= selecionar_animacao_dado && local_peca_amarelo_4 > 0 && (bloco_movimento_amarelo.Count > local_peca_amarelo_4))
+             if ((bloco_movimento_amarelo.Count - local_peca_amarelo_4)>= selecionar_num_dado_animacao && local_peca_amarelo_4 > 0 && (bloco_movimento_amarelo.Count > local_peca_amarelo_4))
             {
                 borda_peca_amarelo_4.SetActive(true);
                 botao_jogador_amarelo_4.interactable = true;
@@ -1886,28 +1917,28 @@ public class GameScript : MonoBehaviour{
 
             // tirando 6 e movendo a peça da casa 0.
             
-            if (selecionar_animacao_dado == 6 && local_peca_amarelo_1 == 0)
+            if (selecionar_num_dado_animacao == 6 && local_peca_amarelo_1 == 0)
             {
                 borda_peca_amarelo_1.SetActive(true);
                 botao_jogador_amarelo_1.interactable = true;
 
             }
 
-              if (selecionar_animacao_dado == 6 && local_peca_amarelo_2 == 0)
+              if (selecionar_num_dado_animacao == 6 && local_peca_amarelo_2 == 0)
             {
                 borda_peca_amarelo_2.SetActive(true);
                 botao_jogador_amarelo_2.interactable = true;
 
             }
 
-              if (selecionar_animacao_dado == 6 && local_peca_amarelo_3 == 0)
+              if (selecionar_num_dado_animacao == 6 && local_peca_amarelo_3 == 0)
             {
                 borda_peca_amarelo_3.SetActive(true);
                 botao_jogador_amarelo_3.interactable = true;
 
             }
 
-              if (selecionar_animacao_dado == 6 && local_peca_amarelo_4 == 0)
+              if (selecionar_num_dado_animacao == 6 && local_peca_amarelo_4 == 0)
             {
                 borda_peca_amarelo_4.SetActive(true);
                 botao_jogador_amarelo_4.interactable = true;
@@ -1946,7 +1977,7 @@ public class GameScript : MonoBehaviour{
             break;
             case "verde":
 
-             if ((bloco_movimento_verde.Count - local_peca_verde_1)>= selecionar_animacao_dado && local_peca_verde_1 > 0 && (bloco_movimento_verde.Count > local_peca_verde_1))
+             if ((bloco_movimento_verde.Count - local_peca_verde_1)>= selecionar_num_dado_animacao && local_peca_verde_1 > 0 && (bloco_movimento_verde.Count > local_peca_verde_1))
             {
                 borda_peca_verde_1.SetActive(true);
                 botao_jogador_verde_1.interactable = true;
@@ -1958,7 +1989,7 @@ public class GameScript : MonoBehaviour{
                 botao_jogador_verde_1.interactable = false;
             }
 
-             if ((bloco_movimento_verde.Count - local_peca_verde_2)>= selecionar_animacao_dado && local_peca_verde_2 > 0 && (bloco_movimento_verde.Count > local_peca_verde_2))
+             if ((bloco_movimento_verde.Count - local_peca_verde_2)>= selecionar_num_dado_animacao && local_peca_verde_2 > 0 && (bloco_movimento_verde.Count > local_peca_verde_2))
             {
                 borda_peca_verde_2.SetActive(true);
                 botao_jogador_verde_2.interactable = true;
@@ -1969,7 +2000,7 @@ public class GameScript : MonoBehaviour{
                 botao_jogador_verde_2.interactable = false;
             }
 
-             if ((bloco_movimento_verde.Count - local_peca_verde_3)>= selecionar_animacao_dado && local_peca_verde_3 > 0 && (bloco_movimento_verde.Count > local_peca_verde_3))
+             if ((bloco_movimento_verde.Count - local_peca_verde_3)>= selecionar_num_dado_animacao && local_peca_verde_3 > 0 && (bloco_movimento_verde.Count > local_peca_verde_3))
             {
                 borda_peca_verde_3.SetActive(true);
                 botao_jogador_verde_3.interactable = true;
@@ -1980,7 +2011,7 @@ public class GameScript : MonoBehaviour{
                 botao_jogador_verde_3.interactable = false;
             }
 
-             if ((bloco_movimento_verde.Count - local_peca_verde_4)>= selecionar_animacao_dado && local_peca_verde_4 > 0 && (bloco_movimento_verde.Count > local_peca_verde_4))
+             if ((bloco_movimento_verde.Count - local_peca_verde_4)>= selecionar_num_dado_animacao && local_peca_verde_4 > 0 && (bloco_movimento_verde.Count > local_peca_verde_4))
             {
                 borda_peca_verde_4.SetActive(true);
                 botao_jogador_verde_4.interactable = true;
@@ -1999,28 +2030,28 @@ public class GameScript : MonoBehaviour{
 
 
 
-           if (selecionar_animacao_dado == 6 && local_peca_verde_1 == 0)
+           if (selecionar_num_dado_animacao == 6 && local_peca_verde_1 == 0)
             {
                 borda_peca_verde_1.SetActive(true);
                 botao_jogador_verde_1.interactable = true;
 
             }
 
-              if (selecionar_animacao_dado == 6 && local_peca_verde_2 == 0)
+              if (selecionar_num_dado_animacao == 6 && local_peca_verde_2 == 0)
             {
                 borda_peca_verde_2.SetActive(true);
                 botao_jogador_verde_2.interactable = true;
 
             }
 
-              if (selecionar_animacao_dado == 6 && local_peca_verde_3 == 0)
+              if (selecionar_num_dado_animacao == 6 && local_peca_verde_3 == 0)
             {
                 borda_peca_verde_3.SetActive(true);
                 botao_jogador_verde_3.interactable = true;
 
             }
 
-              if (selecionar_animacao_dado == 6 && local_peca_verde_4 == 0)
+              if (selecionar_num_dado_animacao == 6 && local_peca_verde_4 == 0)
             {
                 borda_peca_verde_4.SetActive(true);
                 botao_jogador_verde_4.interactable = true;
@@ -2061,7 +2092,7 @@ public class GameScript : MonoBehaviour{
 
 
 
-            if ((bloco_movimento_vermelho.Count - local_peca_vermelho_1)>= selecionar_animacao_dado && local_peca_vermelho_1 > 0 && (bloco_movimento_vermelho.Count > local_peca_vermelho_1))
+            if ((bloco_movimento_vermelho.Count - local_peca_vermelho_1)>= selecionar_num_dado_animacao && local_peca_vermelho_1 > 0 && (bloco_movimento_vermelho.Count > local_peca_vermelho_1))
             {
                 borda_peca_vermelho_1.SetActive(true);
                 botao_jogador_vermelho_1.interactable = true;
@@ -2074,7 +2105,7 @@ public class GameScript : MonoBehaviour{
                 botao_jogador_vermelho_1.interactable = false;
             }
 
-             if ((bloco_movimento_vermelho.Count - local_peca_vermelho_2)>= selecionar_animacao_dado && local_peca_vermelho_2 > 0 && (bloco_movimento_vermelho.Count > local_peca_vermelho_2))
+             if ((bloco_movimento_vermelho.Count - local_peca_vermelho_2)>= selecionar_num_dado_animacao && local_peca_vermelho_2 > 0 && (bloco_movimento_vermelho.Count > local_peca_vermelho_2))
             {
                 borda_peca_vermelho_2.SetActive(true);
                 botao_jogador_vermelho_2.interactable = true;
@@ -2086,7 +2117,7 @@ public class GameScript : MonoBehaviour{
                 botao_jogador_vermelho_2.interactable = false;
             }
 
-             if ((bloco_movimento_vermelho.Count - local_peca_vermelho_3)>= selecionar_animacao_dado && local_peca_vermelho_3 > 0 && (bloco_movimento_vermelho.Count > local_peca_vermelho_3))
+             if ((bloco_movimento_vermelho.Count - local_peca_vermelho_3)>= selecionar_num_dado_animacao && local_peca_vermelho_3 > 0 && (bloco_movimento_vermelho.Count > local_peca_vermelho_3))
             {
                 borda_peca_vermelho_3.SetActive(true);
                 botao_jogador_vermelho_3.interactable = true;
@@ -2099,7 +2130,7 @@ public class GameScript : MonoBehaviour{
                 botao_jogador_vermelho_3.interactable = false;
             }
 
-             if ((bloco_movimento_vermelho.Count - local_peca_vermelho_4)>= selecionar_animacao_dado && local_peca_vermelho_4 > 0 && (bloco_movimento_vermelho.Count > local_peca_vermelho_4))
+             if ((bloco_movimento_vermelho.Count - local_peca_vermelho_4)>= selecionar_num_dado_animacao && local_peca_vermelho_4 > 0 && (bloco_movimento_vermelho.Count > local_peca_vermelho_4))
             {
                 borda_peca_vermelho_4.SetActive(true);
                 botao_jogador_vermelho_4.interactable = true;
@@ -2112,7 +2143,7 @@ public class GameScript : MonoBehaviour{
 
 
 
-              if (selecionar_animacao_dado == 6 && local_peca_vermelho_1 == 0)
+              if (selecionar_num_dado_animacao == 6 && local_peca_vermelho_1 == 0)
             {
                 borda_peca_vermelho_1.SetActive(true);
                 botao_jogador_vermelho_1.interactable = true;
@@ -2126,7 +2157,7 @@ public class GameScript : MonoBehaviour{
 
             }
 
-              if (selecionar_animacao_dado == 6 && local_peca_vermelho_2 == 0)
+              if (selecionar_num_dado_animacao == 6 && local_peca_vermelho_2 == 0)
             {
                 borda_peca_vermelho_2.SetActive(true);
                 botao_jogador_vermelho_2.interactable = true;
@@ -2139,7 +2170,7 @@ public class GameScript : MonoBehaviour{
 
             }
 
-              if (selecionar_animacao_dado == 6 && local_peca_vermelho_3 == 0)
+              if (selecionar_num_dado_animacao == 6 && local_peca_vermelho_3 == 0)
             {
                 borda_peca_vermelho_3.SetActive(true);
                 botao_jogador_vermelho_3.interactable = true;
@@ -2152,7 +2183,7 @@ public class GameScript : MonoBehaviour{
 
             }
 
-              if (selecionar_animacao_dado == 6 && local_peca_vermelho_4 == 0)
+              if (selecionar_num_dado_animacao == 6 && local_peca_vermelho_4 == 0)
             {
                 borda_peca_vermelho_4.SetActive(true);
                 botao_jogador_vermelho_4.interactable = true;
@@ -2173,6 +2204,8 @@ public class GameScript : MonoBehaviour{
                 
              switch (MainMenuManager.howManyPlayers)
                 {
+                case 2:
+                break;
                 case 3:
                 turno_jogador = "amarelo";
                 inicializardado();
@@ -2189,7 +2222,7 @@ public class GameScript : MonoBehaviour{
 
              case "azul":
 
-            if ((bloco_movimento_azul.Count - local_peca_azul_1)>= selecionar_animacao_dado && local_peca_azul_1 > 0 && (bloco_movimento_azul.Count > local_peca_azul_1))
+            if ((bloco_movimento_azul.Count - local_peca_azul_1)>= selecionar_num_dado_animacao && local_peca_azul_1 > 0 && (bloco_movimento_azul.Count > local_peca_azul_1))
             {
                 borda_peca_azul_1.SetActive(true);
                 botao_jogador_azul_1.interactable = true;
@@ -2202,7 +2235,7 @@ public class GameScript : MonoBehaviour{
                 botao_jogador_azul_1.interactable = false;
             }
 
-             if ((bloco_movimento_azul.Count - local_peca_azul_2)>= selecionar_animacao_dado && local_peca_azul_2 > 0 && (bloco_movimento_azul.Count > local_peca_azul_2))
+             if ((bloco_movimento_azul.Count - local_peca_azul_2)>= selecionar_num_dado_animacao && local_peca_azul_2 > 0 && (bloco_movimento_azul.Count > local_peca_azul_2))
             {
                 borda_peca_azul_2.SetActive(true);
                 botao_jogador_azul_2.interactable = true;
@@ -2216,7 +2249,7 @@ public class GameScript : MonoBehaviour{
                 botao_jogador_azul_2.interactable = false;
             }
 
-             if ((bloco_movimento_azul.Count - local_peca_azul_3)>= selecionar_animacao_dado && local_peca_azul_3 > 0 && (bloco_movimento_azul.Count > local_peca_azul_3))
+             if ((bloco_movimento_azul.Count - local_peca_azul_3)>= selecionar_num_dado_animacao && local_peca_azul_3 > 0 && (bloco_movimento_azul.Count > local_peca_azul_3))
             {
                 borda_peca_azul_3.SetActive(true);
                 botao_jogador_azul_3.interactable = true;
@@ -2229,7 +2262,7 @@ public class GameScript : MonoBehaviour{
                 botao_jogador_azul_3.interactable = false;
             }
 
-             if ((bloco_movimento_azul.Count - local_peca_azul_4)>= selecionar_animacao_dado && local_peca_azul_4 > 0 && (bloco_movimento_azul.Count > local_peca_azul_4))
+             if ((bloco_movimento_azul.Count - local_peca_azul_4)>= selecionar_num_dado_animacao && local_peca_azul_4 > 0 && (bloco_movimento_azul.Count > local_peca_azul_4))
             {
                 borda_peca_azul_4.SetActive(true);
                 botao_jogador_azul_4.interactable = true;
@@ -2250,28 +2283,28 @@ public class GameScript : MonoBehaviour{
 
             
             
-            if (selecionar_animacao_dado == 6 && local_peca_azul_1 == 0)
+            if (selecionar_num_dado_animacao == 6 && local_peca_azul_1 == 0)
             {
                 borda_peca_azul_1.SetActive(true);
                 botao_jogador_azul_1.interactable = true;
 
             }
 
-              if (selecionar_animacao_dado == 6 && local_peca_azul_2 == 0)
+              if (selecionar_num_dado_animacao == 6 && local_peca_azul_2 == 0)
             {
                 borda_peca_azul_2.SetActive(true);
                 botao_jogador_azul_2.interactable = true;
 
             }
 
-              if (selecionar_animacao_dado == 6 && local_peca_azul_3 == 0)
+              if (selecionar_num_dado_animacao == 6 && local_peca_azul_3 == 0)
             {
                 borda_peca_azul_3.SetActive(true);
                 botao_jogador_azul_3.interactable = true;
 
             }
 
-              if (selecionar_animacao_dado == 6 && local_peca_azul_4 == 0)
+              if (selecionar_num_dado_animacao == 6 && local_peca_azul_4 == 0)
             {
                 borda_peca_azul_4.SetActive(true);
                 botao_jogador_azul_4.interactable = true;
@@ -2287,6 +2320,12 @@ public class GameScript : MonoBehaviour{
                 
              switch (MainMenuManager.howManyPlayers)
                 {
+                case 2:
+                break;
+
+                case 3:
+                break;
+                
                 case 4:
                 turno_jogador = "amarelo";
                 inicializardado();
@@ -2299,6 +2338,2380 @@ public class GameScript : MonoBehaviour{
 
     }
 
+
+
+/*
+
+█   █  ███  █   █ █████ █   █ █████ █   █ █████  ███  
+██ ██ █   █ █   █   █   ██ ██ █     ██  █   █   █   █ 
+█ █ █ █   █  █ █    █   █ █ █ ████  █ █ █   █   █   █ 
+█   █ █   █  █ █    █   █   █ █     █  ██   █   █   █ 
+█   █  ███    █   █████ █   █ █████ █   █   █    ███  
+
+
+███  █████  ████  ███       
+█   █ █     █     █   █ 
+████  ████  █     █████ 
+█     █     █     █   █ 
+█     █████  ████ █   █ 
+
+ ███  █   █  ███  ████  █████ █      ███  
+█   █ ██ ██ █   █ █   █ █     █     █   █ 
+█████ █ █ █ █████ ████  ████  █     █   █ 
+█   █ █   █ █   █ █   █ █     █     █   █ 
+█   █ █   █ █   █ █   █ █████ █████  ███  
+
+*/
+
+
+
+public void jogador_amarelo_1_movimento(){
+
+    SoundManager.playerAudioSource.Play();
+
+    borda_peca_amarelo_1.SetActive(false);
+    borda_peca_amarelo_2.SetActive(false);
+    borda_peca_amarelo_3.SetActive(false);
+    borda_peca_amarelo_4.SetActive(false);
+
+    botao_jogador_amarelo_1.interactable = false;
+    botao_jogador_amarelo_2.interactable = false;
+    botao_jogador_amarelo_3.interactable = false;
+    botao_jogador_amarelo_4.interactable = false;
+
+    if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_1) > selecionar_num_dado_animacao)
+    {
+
+         if (local_peca_amarelo_1 > 0 )
+        {
+            //armazena no vetor o valor que tirei no dado.
+           Vector3[] caminho_jogador_amarelo_1 = new Vector3[selecionar_num_dado_animacao];
+
+            //para cada valor do dado, mostra o movimento da peca
+           for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_amarelo_1[i] = bloco_movimento_amarelo[local_peca_amarelo_1 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_amarelo_1+= selecionar_num_dado_animacao;
+
+          //se tirar valor de 6 no dado e a peça já estiver em jogo
+          if (selecionar_num_dado_animacao == 6)
+          {
+            turno_jogador = "amarelo";
+          }
+
+          else
+          {
+            switch (MainMenuManager.howManyPlayers)
+            {
+                case 2:
+                turno_jogador = "verde";
+                break;
+
+                case 3:
+                turno_jogador = "verde";
+                break;
+
+                case 4:
+                turno_jogador = "verde";
+                break;
+            }
+          }
+
+          if(caminho_jogador_amarelo_1.Length > 1)
+          {
+            iTween.MoveTo(jogador_amarelo_1, iTween.Hash("path", caminho_jogador_amarelo_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_amarelo_1, iTween.Hash("position", caminho_jogador_amarelo_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          nome_jogador_atual = "jogador_amarelo_1";
+        }
+        else{
+
+
+
+        if (selecionar_num_dado_animacao == 6 && local_peca_amarelo_1 == 0  )
+        {
+            Vector3[] caminho_jogador_amarelo_1 = new Vector3[1];
+            caminho_jogador_amarelo_1[0] = bloco_movimento_amarelo[local_peca_amarelo_1].transform.position;
+            local_peca_amarelo_1 +=1;
+            turno_jogador = "amarelo";
+            nome_jogador_atual = "jogador_amarelo_1";
+            iTween.MoveTo(jogador_amarelo_1, iTween.Hash("position", caminho_jogador_amarelo_1[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+        }
+        }
+    }
+    else{
+
+  if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_1)  == selecionar_num_dado_animacao)
+  
+  {
+    Vector3[] caminho_jogador_amarelo_1 = new Vector3[selecionar_num_dado_animacao];
+    for(int i = 0; i < selecionar_num_dado_animacao; i++)
+       {
+        caminho_jogador_amarelo_1[i] = bloco_movimento_amarelo[local_peca_amarelo_1 + i].transform.position;
+       }
+
+       //armazena o valor do dado para os próximos movimentos (onde está a peça)
+       local_peca_amarelo_1+= selecionar_num_dado_animacao;
+       if(caminho_jogador_amarelo_1.Length > 1)
+      {
+        iTween.MoveTo(jogador_amarelo_1, iTween.Hash("path", caminho_jogador_amarelo_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+      else
+      {
+        iTween.MoveTo(jogador_amarelo_1, iTween.Hash("position", caminho_jogador_amarelo_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+       turno_jogador = "amarelo";
+       totalamarelocasa +=1;
+       Debug.Log("Boa, chegou em casa meu veio!");
+       botao_jogador_amarelo_1.enabled=false;
+  }
+
+  else{
+    Debug.Log("You need" + (bloco_movimento_amarelo.Count - local_peca_amarelo_1).ToString() + "Steps to enter into the house");
+    if((local_peca_amarelo_2 + local_peca_amarelo_3 + local_peca_amarelo_4) == 0 && selecionar_num_dado_animacao !=6)
+    {
+
+        switch (MainMenuManager.howManyPlayers)
+        {
+                case 2:
+                turno_jogador = "verde";
+                break;
+
+                case 3:
+                turno_jogador = "verde";
+                break;
+
+                case 4:
+                turno_jogador = "verde";
+                break;
+
+    }
+    }
+    
+  inicializardado();
+
+
+
+ 
+  
+  
+  
+}
+    
+}        
+
+}
+
+public void jogador_amarelo_2_movimento(){
+
+    SoundManager.playerAudioSource.Play();
+
+    borda_peca_amarelo_1.SetActive(false);
+    borda_peca_amarelo_2.SetActive(false);
+    borda_peca_amarelo_3.SetActive(false);
+    borda_peca_amarelo_4.SetActive(false);
+
+    botao_jogador_amarelo_1.interactable = false;
+    botao_jogador_amarelo_2.interactable = false;
+    botao_jogador_amarelo_3.interactable = false;
+    botao_jogador_amarelo_4.interactable = false;
+
+    if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_2) > selecionar_num_dado_animacao)
+    {
+
+         if (local_peca_amarelo_2 > 0 )
+        {
+            //armazena no vetor o valor que tirei no dado.
+           Vector3[] caminho_jogador_amarelo_2 = new Vector3[selecionar_num_dado_animacao];
+
+            //para cada valor do dado, mostra o movimento da peca
+           for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_amarelo_2[i] = bloco_movimento_amarelo[local_peca_amarelo_2 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_amarelo_2+= selecionar_num_dado_animacao;
+
+          //se tirar valor de 6 no dado e a peça já estiver em jogo
+          if (selecionar_num_dado_animacao == 6)
+          {
+            turno_jogador = "amarelo";
+          }
+
+          else
+          {
+            switch (MainMenuManager.howManyPlayers)
+            {
+                case 2:
+                turno_jogador = "verde";
+                break;
+
+                case 3:
+                turno_jogador = "verde";
+                break;
+
+                case 4:
+                turno_jogador = "verde";
+                break;
+            }
+          }
+
+          if(caminho_jogador_amarelo_2.Length > 1)
+          {
+            iTween.MoveTo(jogador_amarelo_2, iTween.Hash("path", caminho_jogador_amarelo_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_amarelo_2, iTween.Hash("position", caminho_jogador_amarelo_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          nome_jogador_atual = "jogador_amarelo_2";
+        }
+        else{
+
+        
+        
+
+        if (selecionar_num_dado_animacao == 6 && local_peca_amarelo_2 == 0  )
+        {
+            Vector3[] caminho_jogador_amarelo_2 = new Vector3[1];
+            caminho_jogador_amarelo_2[0] = bloco_movimento_amarelo[local_peca_amarelo_2].transform.position;
+            local_peca_amarelo_2 +=1;
+            turno_jogador = "amarelo";
+            nome_jogador_atual = "jogador_amarelo_2";
+            iTween.MoveTo(jogador_amarelo_2, iTween.Hash("position", caminho_jogador_amarelo_2[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+        }
+      }
+    }
+
+
+  else{
+
+  if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_2)  == selecionar_num_dado_animacao)
+  
+  {
+    Vector3[] caminho_jogador_amarelo_2 = new Vector3[selecionar_num_dado_animacao];
+    for(int i = 0; i < selecionar_num_dado_animacao; i++)
+       {
+        caminho_jogador_amarelo_2[i] = bloco_movimento_amarelo[local_peca_amarelo_2 + i].transform.position;
+       }
+
+       //armazena o valor do dado para os próximos movimentos (onde está a peça)
+       local_peca_amarelo_2+= selecionar_num_dado_animacao;
+       if(caminho_jogador_amarelo_2.Length > 1)
+      {
+        iTween.MoveTo(jogador_amarelo_2, iTween.Hash("path", caminho_jogador_amarelo_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+      else
+      {
+        iTween.MoveTo(jogador_amarelo_2, iTween.Hash("position", caminho_jogador_amarelo_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+       turno_jogador = "amarelo";
+       totalamarelocasa +=1;
+       Debug.Log("Boa, chegou em casa meu veio!");
+       botao_jogador_amarelo_2.enabled=false;
+  }
+
+  else{
+    Debug.Log("You need" + (bloco_movimento_amarelo.Count - local_peca_amarelo_2).ToString() + "Steps to enter into the house");
+    if((local_peca_amarelo_1 + local_peca_amarelo_3 + local_peca_amarelo_4) == 0 && selecionar_num_dado_animacao !=6)
+    {
+
+        switch (MainMenuManager.howManyPlayers)
+        {
+                case 2:
+                turno_jogador = "verde";
+                break;
+
+                case 3:
+                turno_jogador = "verde";
+                break;
+
+                case 4:
+                turno_jogador = "verde";
+                break;
+
+    }
+    }
+  inicializardado();
+
+
+
+  
+  
+  
+  
+}
+
+}
+        
+
+}
+
+public void jogador_amarelo_3_movimento(){
+
+    SoundManager.playerAudioSource.Play();
+
+    borda_peca_amarelo_1.SetActive(false);
+    borda_peca_amarelo_2.SetActive(false);
+    borda_peca_amarelo_3.SetActive(false);
+    borda_peca_amarelo_4.SetActive(false);
+
+    botao_jogador_amarelo_1.interactable = false;
+    botao_jogador_amarelo_2.interactable = false;
+    botao_jogador_amarelo_3.interactable = false;
+    botao_jogador_amarelo_4.interactable = false;
+
+    if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_3) > selecionar_num_dado_animacao)
+    {
+
+
+         if (local_peca_amarelo_3 > 0 )
+        {
+            //armazena no vetor o valor que tirei no dado.
+           Vector3[] caminho_jogador_amarelo_3 = new Vector3[selecionar_num_dado_animacao];
+
+            //para cada valor do dado, mostra o movimento da peca
+           for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_amarelo_3[i] = bloco_movimento_amarelo[local_peca_amarelo_3 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_amarelo_3+= selecionar_num_dado_animacao;
+
+          //se tirar valor de 6 no dado e a peça já estiver em jogo
+          if (selecionar_num_dado_animacao == 6)
+          {
+            turno_jogador = "amarelo";
+          }
+
+          else
+          {
+            switch (MainMenuManager.howManyPlayers)
+            {
+               case 2:
+                turno_jogador = "verde";
+                break;
+
+                case 3:
+                turno_jogador = "verde";
+                break;
+
+                case 4:
+                turno_jogador = "verde";
+                break;
+            }
+          }
+
+          if(caminho_jogador_amarelo_3.Length > 1)
+          {
+            iTween.MoveTo(jogador_amarelo_3, iTween.Hash("path", caminho_jogador_amarelo_3, "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_amarelo_3, iTween.Hash("position", caminho_jogador_amarelo_3[0], "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          nome_jogador_atual = "jogador_amarelo_3";
+        }
+        else{
+
+
+
+
+
+
+        if (selecionar_num_dado_animacao == 6 && local_peca_amarelo_3 == 0  )
+        {
+            Vector3[] caminho_jogador_amarelo_3 = new Vector3[1];
+            caminho_jogador_amarelo_3[0] = bloco_movimento_amarelo[local_peca_amarelo_3].transform.position;
+            local_peca_amarelo_3 +=1;
+            turno_jogador = "amarelo";
+            nome_jogador_atual = "jogador_amarelo_3";
+            iTween.MoveTo(jogador_amarelo_3, iTween.Hash("position", caminho_jogador_amarelo_3[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+        }
+      }
+    }
+
+
+    else{
+
+  if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_3)  == selecionar_num_dado_animacao)
+  
+  {
+    Vector3[] caminho_jogador_amarelo_3 = new Vector3[selecionar_num_dado_animacao];
+    for(int i = 0; i < selecionar_num_dado_animacao; i++)
+       {
+        caminho_jogador_amarelo_3[i] = bloco_movimento_amarelo[local_peca_amarelo_3 + i].transform.position;
+       }
+
+       //armazena o valor do dado para os próximos movimentos (onde está a peça)
+       local_peca_amarelo_3+= selecionar_num_dado_animacao;
+       if(caminho_jogador_amarelo_3.Length > 1)
+      {
+        iTween.MoveTo(jogador_amarelo_3, iTween.Hash("path", caminho_jogador_amarelo_3, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+      else
+      {
+        iTween.MoveTo(jogador_amarelo_3, iTween.Hash("position", caminho_jogador_amarelo_3[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+       turno_jogador = "amarelo";
+       totalamarelocasa +=1;
+       Debug.Log("Boa, chegou em casa meu veio!");
+       botao_jogador_amarelo_3.enabled=false;
+  }
+
+  else{
+    Debug.Log("You need" + (bloco_movimento_amarelo.Count - local_peca_amarelo_3).ToString() + "Steps to enter into the house");
+    if((local_peca_amarelo_1 + local_peca_amarelo_2 + local_peca_amarelo_4) == 0 && selecionar_num_dado_animacao !=6)
+    {
+
+        switch (MainMenuManager.howManyPlayers)
+        {
+                case 2:
+                turno_jogador = "verde";
+                break;
+
+                case 3:
+                turno_jogador = "verde";
+                break;
+
+                case 4:
+                turno_jogador = "verde";
+                break;
+
+    }
+    }
+    
+  inicializardado();
+
+
+
+ 
+  
+  
+  
+}
+
+}
+        
+
+}
+
+public void jogador_amarelo_4_movimento(){
+
+    SoundManager.playerAudioSource.Play();
+
+    borda_peca_amarelo_1.SetActive(false);
+    borda_peca_amarelo_2.SetActive(false);
+    borda_peca_amarelo_3.SetActive(false);
+    borda_peca_amarelo_4.SetActive(false);
+
+    botao_jogador_amarelo_1.interactable = false;
+    botao_jogador_amarelo_2.interactable = false;
+    botao_jogador_amarelo_3.interactable = false;
+    botao_jogador_amarelo_4.interactable = false;
+
+    if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_4) > selecionar_num_dado_animacao)
+    {
+
+
+        if (local_peca_amarelo_4 > 0 )
+        {
+            //armazena no vetor o valor que tirei no dado.
+           Vector4[] caminho_jogador_amarelo_4 = new Vector4[selecionar_num_dado_animacao];
+
+            //para cada valor do dado, mostra o movimento da peca
+           for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_amarelo_4[i] = bloco_movimento_amarelo[local_peca_amarelo_4 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_amarelo_4+= selecionar_num_dado_animacao;
+
+          //se tirar valor de 6 no dado e a peça já estiver em jogo
+          if (selecionar_num_dado_animacao == 6)
+          {
+            turno_jogador = "amarelo";
+          }
+
+          else
+          {
+            switch (MainMenuManager.howManyPlayers)
+            {
+              case 2:
+                turno_jogador = "verde";
+                break;
+
+                case 3:
+                turno_jogador = "verde";
+                break;
+
+                case 4:
+                turno_jogador = "verde";
+                break;
+            }
+          }
+
+          if(caminho_jogador_amarelo_4.Length > 1)
+          {
+            iTween.MoveTo(jogador_amarelo_4, iTween.Hash("path", caminho_jogador_amarelo_4, "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_amarelo_4, iTween.Hash("position", caminho_jogador_amarelo_4[0], "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          nome_jogador_atual = "jogador_amarelo_4";
+        }
+        else{
+
+
+
+        if (selecionar_num_dado_animacao == 6 && local_peca_amarelo_4 == 0  )
+        {
+            Vector3[] caminho_jogador_amarelo_4 = new Vector3[1];
+            caminho_jogador_amarelo_4[0] = bloco_movimento_amarelo[local_peca_amarelo_4].transform.position;
+            local_peca_amarelo_4 +=1;
+            turno_jogador = "amarelo";
+            nome_jogador_atual = "jogador_amarelo_4";
+            iTween.MoveTo(jogador_amarelo_4, iTween.Hash("position", caminho_jogador_amarelo_4[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+        }
+      }
+    }
+
+
+    else{
+
+  if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_4)  == selecionar_num_dado_animacao)
+  
+  {
+    Vector3[] caminho_jogador_amarelo_4 = new Vector3[selecionar_num_dado_animacao];
+    for(int i = 0; i < selecionar_num_dado_animacao; i++)
+       {
+        caminho_jogador_amarelo_4[i] = bloco_movimento_amarelo[local_peca_amarelo_4 + i].transform.position;
+       }
+
+       //armazena o valor do dado para os próximos movimentos (onde está a peça)
+       local_peca_amarelo_4+= selecionar_num_dado_animacao;
+       if(caminho_jogador_amarelo_4.Length > 1)
+      {
+        iTween.MoveTo(jogador_amarelo_4, iTween.Hash("path", caminho_jogador_amarelo_4, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+      else
+      {
+        iTween.MoveTo(jogador_amarelo_4, iTween.Hash("position", caminho_jogador_amarelo_4[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+       turno_jogador = "amarelo";
+       totalamarelocasa +=1;
+       Debug.Log("Boa, chegou em casa meu veio!");
+       botao_jogador_amarelo_4.enabled=false;
+  }
+
+  else{
+    Debug.Log("You need" + (bloco_movimento_amarelo.Count - local_peca_amarelo_4).ToString() + "Steps to enter into the house");
+    if((local_peca_amarelo_1 + local_peca_amarelo_2 + local_peca_amarelo_3) == 0 && selecionar_num_dado_animacao !=6)
+    {
+
+        switch (MainMenuManager.howManyPlayers)
+        {
+                case 2:
+                turno_jogador = "verde";
+                break;
+
+                case 3:
+                turno_jogador = "verde";
+                break;
+
+                case 4:
+                turno_jogador = "verde";
+                break;
+
+    }
+    }
+  inicializardado();
+
+
+
+  
+  
+  
+  
+}
+
+}
+        
+
+}
+/*
+
+█   █  ███  █   █ █████ █   █ █████ █   █ █████  ███  
+██ ██ █   █ █   █   █   ██ ██ █     ██  █   █   █   █ 
+█ █ █ █   █  █ █    █   █ █ █ ████  █ █ █   █   █   █ 
+█   █ █   █  █ █    █   █   █ █     █  ██   █   █   █ 
+█   █  ███    █   █████ █   █ █████ █   █   █    ███  
+
+
+███  █████  ████  ███       
+█   █ █     █     █   █ 
+████  ████  █     █████ 
+█     █     █     █   █ 
+█     █████  ████ █   █ 
+
+█   █ █████ ████  ████  █████ 
+█   █ █     █   █ █   █ █     
+ █ █  ████  ████  █   █ ████  
+ █ █  █     █   █ █   █ █     
+  █   █████ █   █ ████  █████ 
+
+*/
+public void jogador_verde_1_movimento(){
+
+    SoundManager.playerAudioSource.Play();
+
+    borda_peca_verde_1.SetActive(false);
+    borda_peca_verde_2.SetActive(false);
+    borda_peca_verde_3.SetActive(false);
+    borda_peca_verde_4.SetActive(false);
+
+    botao_jogador_verde_1.interactable = false;
+    botao_jogador_verde_2.interactable = false;
+    botao_jogador_verde_3.interactable = false;
+    botao_jogador_verde_4.interactable = false;
+
+    if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_1) > selecionar_num_dado_animacao)
+    {
+        if (local_peca_verde_1 > 0 )
+        {
+            //armazena no vetor o valor que tirei no dado.
+           Vector3[] caminho_jogador_verde_1 = new Vector3[selecionar_num_dado_animacao];
+
+            //para cada valor do dado, mostra o movimento da peca
+           for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_verde_1[i] = bloco_movimento_verde[local_peca_verde_1 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_verde_1+= selecionar_num_dado_animacao;
+
+          //se tirar valor de 6 no dado e a peça já estiver em jogo
+          if (selecionar_num_dado_animacao == 6)
+          {
+            turno_jogador = "verde";
+          }
+
+          else
+          {
+            switch (MainMenuManager.howManyPlayers)
+            {
+                case 2:
+                turno_jogador = "amarelo";
+                break;
+
+                case 3:
+                turno_jogador = "vermelho";
+                break;
+
+                case 4:
+                turno_jogador = "vermelho";
+                break;
+            }
+          }
+
+          if(caminho_jogador_verde_1.Length > 1)
+          {
+            iTween.MoveTo(jogador_verde_1, iTween.Hash("path", caminho_jogador_verde_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_verde_1, iTween.Hash("position", caminho_jogador_verde_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          nome_jogador_atual = "jogador_verde_1";
+        }
+        else{
+
+
+        if (selecionar_num_dado_animacao == 6 && local_peca_verde_1 == 0  )
+        {
+            Vector3[] caminho_jogador_verde_1 = new Vector3[1];
+            caminho_jogador_verde_1[0] = bloco_movimento_verde[local_peca_verde_1].transform.position;
+            local_peca_verde_1 +=1;
+            turno_jogador = "verde";
+            nome_jogador_atual = "jogador_verde_1";
+            iTween.MoveTo(jogador_verde_1, iTween.Hash("position", caminho_jogador_verde_1[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+        }
+    }
+  }
+
+  else{
+
+  if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_1)  == selecionar_num_dado_animacao)
+  
+  {
+    Vector3[] caminho_jogador_verde_1 = new Vector3[selecionar_num_dado_animacao];
+    for(int i = 0; i < selecionar_num_dado_animacao; i++)
+       {
+        caminho_jogador_verde_1[i] = bloco_movimento_verde[local_peca_verde_1 + i].transform.position;
+       }
+
+       //armazena o valor do dado para os próximos movimentos (onde está a peça)
+       local_peca_verde_1+= selecionar_num_dado_animacao;
+       if(caminho_jogador_verde_1.Length > 1)
+      {
+        iTween.MoveTo(jogador_verde_1, iTween.Hash("path", caminho_jogador_verde_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+      else
+      {
+        iTween.MoveTo(jogador_verde_1, iTween.Hash("position", caminho_jogador_verde_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+       turno_jogador = "verde";
+       totalverdecasa +=1;
+       Debug.Log("Boa, chegou em casa meu veio!");
+       botao_jogador_verde_1.enabled=false;
+  }
+
+  else{
+    Debug.Log("You need" + (bloco_movimento_verde.Count - local_peca_verde_1).ToString() + "Steps to enter into the house");
+    if((local_peca_verde_2 + local_peca_verde_3 + local_peca_verde_4) == 0 && selecionar_num_dado_animacao !=6)
+    {
+
+        switch (MainMenuManager.howManyPlayers)
+        {
+           case 2:
+                turno_jogador = "amarelo";
+                break;
+
+                case 3:
+                turno_jogador = "vermelho";
+                break;
+
+                case 4:
+                turno_jogador = "vermelho";
+                break;
+
+    }
+    }
+  inicializardado();
+
+
+
+  
+  
+  
+}
+
+}
+
+
+
+        
+
+}
+
+
+///Movimentos das pecas verdes
+
+public void jogador_verde_2_movimento(){
+
+    SoundManager.playerAudioSource.Play();
+
+    borda_peca_verde_1.SetActive(false);
+    borda_peca_verde_2.SetActive(false);
+    borda_peca_verde_3.SetActive(false);
+    borda_peca_verde_4.SetActive(false);
+
+    botao_jogador_verde_1.interactable = false;
+    botao_jogador_verde_2.interactable = false;
+    botao_jogador_verde_3.interactable = false;
+    botao_jogador_verde_4.interactable = false;
+
+    if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_2) > selecionar_num_dado_animacao)
+    {
+
+         if (local_peca_verde_2 > 0 )
+        {
+            //armazena no vetor o valor que tirei no dado.
+           Vector3[] caminho_jogador_verde_2 = new Vector3[selecionar_num_dado_animacao];
+
+            //para cada valor do dado, mostra o movimento da peca
+           for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_verde_2[i] = bloco_movimento_verde[local_peca_verde_2 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_verde_2+= selecionar_num_dado_animacao;
+
+          //se tirar valor de 6 no dado e a peça já estiver em jogo
+          if (selecionar_num_dado_animacao == 6)
+          {
+            turno_jogador = "verde";
+          }
+
+          else
+          {
+            switch (MainMenuManager.howManyPlayers)
+            {
+                case 2:
+                turno_jogador = "amarelo";
+                break;
+
+                case 3:
+                turno_jogador = "vermelho";
+                break;
+
+                case 4:
+                turno_jogador = "vermelho";
+                break;
+            }
+          }
+
+          if(caminho_jogador_verde_2.Length > 1)
+          {
+            iTween.MoveTo(jogador_verde_2, iTween.Hash("path", caminho_jogador_verde_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_verde_2, iTween.Hash("position", caminho_jogador_verde_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          nome_jogador_atual = "jogador_verde_2";
+        }
+        else{
+
+        
+
+
+
+
+
+
+        if (selecionar_num_dado_animacao == 6 && local_peca_verde_2 == 0  )
+        {
+            Vector3[] caminho_jogador_verde_2 = new Vector3[1];
+            caminho_jogador_verde_2[0] = bloco_movimento_verde[local_peca_verde_2].transform.position;
+            local_peca_verde_2 +=1;
+            turno_jogador = "verde";
+            nome_jogador_atual = "jogador_verde_2";
+            iTween.MoveTo(jogador_verde_2, iTween.Hash("position", caminho_jogador_verde_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+        }
+      }
+    }
+  
+  else{
+
+  if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_2)  == selecionar_num_dado_animacao)
+  
+  {
+    Vector3[] caminho_jogador_verde_2 = new Vector3[selecionar_num_dado_animacao];
+    for(int i = 0; i < selecionar_num_dado_animacao; i++)
+       {
+        caminho_jogador_verde_2[i] = bloco_movimento_verde[local_peca_verde_2 + i].transform.position;
+       }
+
+       //armazena o valor do dado para os próximos movimentos (onde está a peça)
+       local_peca_verde_2+= selecionar_num_dado_animacao;
+       if(caminho_jogador_verde_2.Length > 1)
+      {
+        iTween.MoveTo(jogador_verde_2, iTween.Hash("path", caminho_jogador_verde_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+      else
+      {
+        iTween.MoveTo(jogador_verde_2, iTween.Hash("position", caminho_jogador_verde_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+       turno_jogador = "verde";
+       totalverdecasa +=1;
+       Debug.Log("Boa, chegou em casa meu veio!");
+       botao_jogador_verde_2.enabled=false;
+  }
+
+  else{
+    Debug.Log("You need" + (bloco_movimento_verde.Count - local_peca_verde_2).ToString() + "Steps to enter into the house");
+    if((local_peca_verde_1 + local_peca_verde_3 + local_peca_verde_4) == 0 && selecionar_num_dado_animacao !=6)
+    {
+
+        switch (MainMenuManager.howManyPlayers)
+        {
+           case 2:
+                turno_jogador = "amarelo";
+                break;
+
+                case 3:
+                turno_jogador = "vermelho";
+                break;
+
+                case 4:
+                turno_jogador = "vermelho";
+                break;
+
+    }
+    }
+    
+  inicializardado();
+
+
+
+  
+  
+  
+  
+}
+
+}
+    
+
+}
+
+public void jogador_verde_3_movimento(){
+
+    SoundManager.playerAudioSource.Play();
+
+    borda_peca_verde_1.SetActive(false);
+    borda_peca_verde_2.SetActive(false);
+    borda_peca_verde_3.SetActive(false);
+    borda_peca_verde_4.SetActive(false);
+
+    botao_jogador_verde_1.interactable = false;
+    botao_jogador_verde_2.interactable = false;
+    botao_jogador_verde_3.interactable = false;
+    botao_jogador_verde_4.interactable = false;
+
+    if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_3) > selecionar_num_dado_animacao)
+    {
+
+
+
+        if (local_peca_verde_3 > 0 )
+        {
+            //armazena no vetor o valor que tirei no dado.
+           Vector3[] caminho_jogador_verde_3 = new Vector3[selecionar_num_dado_animacao];
+
+            //para cada valor do dado, mostra o movimento da peca
+           for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_verde_3[i] = bloco_movimento_verde[local_peca_verde_3 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_verde_3+= selecionar_num_dado_animacao;
+
+          //se tirar valor de 6 no dado e a peça já estiver em jogo
+          if (selecionar_num_dado_animacao == 6)
+          {
+            turno_jogador = "verde";
+          }
+
+          else
+          {
+            switch (MainMenuManager.howManyPlayers)
+            {
+                case 2:
+                turno_jogador = "amarelo";
+                break;
+
+                case 3:
+                turno_jogador = "vermelho";
+                break;
+
+                case 4:
+                turno_jogador = "vermelho";
+                break;
+            }
+          }
+
+          if(caminho_jogador_verde_3.Length > 1)
+          {
+            iTween.MoveTo(jogador_verde_3, iTween.Hash("path", caminho_jogador_verde_3, "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_verde_3, iTween.Hash("position", caminho_jogador_verde_3[0], "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          nome_jogador_atual = "jogador_verde_3";
+        }
+        else{
+
+        
+
+
+
+        if (selecionar_num_dado_animacao == 6 && local_peca_verde_3 == 0  )
+        {
+            Vector3[] caminho_jogador_verde_3 = new Vector3[1];
+            caminho_jogador_verde_3[0] = bloco_movimento_verde[local_peca_verde_3].transform.position;
+            local_peca_verde_3 +=1;
+            turno_jogador = "verde";
+            nome_jogador_atual = "jogador_verde_3";
+            iTween.MoveTo(jogador_verde_3, iTween.Hash("position", caminho_jogador_verde_3[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+        }
+      }
+    }
+  else{
+
+  if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_3)  == selecionar_num_dado_animacao)
+  
+  {
+    Vector3[] caminho_jogador_verde_3 = new Vector3[selecionar_num_dado_animacao];
+    for(int i = 0; i < selecionar_num_dado_animacao; i++)
+       {
+        caminho_jogador_verde_3[i] = bloco_movimento_verde[local_peca_verde_3 + i].transform.position;
+       }
+
+       //armazena o valor do dado para os próximos movimentos (onde está a peça)
+       local_peca_verde_3+= selecionar_num_dado_animacao;
+       if(caminho_jogador_verde_3.Length > 1)
+      {
+        iTween.MoveTo(jogador_verde_3, iTween.Hash("path", caminho_jogador_verde_3, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+      else
+      {
+        iTween.MoveTo(jogador_verde_3, iTween.Hash("position", caminho_jogador_verde_3[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+       turno_jogador = "verde";
+       totalverdecasa +=1;
+       Debug.Log("Boa, chegou em casa meu veio!");
+       botao_jogador_verde_3.enabled=false;
+  }
+
+  else{
+    Debug.Log("You need" + (bloco_movimento_verde.Count - local_peca_verde_3).ToString() + "Steps to enter into the house");
+    if((local_peca_verde_1 + local_peca_verde_2 + local_peca_verde_4) == 0 && selecionar_num_dado_animacao !=6)
+    {
+
+        switch (MainMenuManager.howManyPlayers)
+        {
+           case 2:
+                turno_jogador = "amarelo";
+                break;
+
+                case 3:
+                turno_jogador = "vermelho";
+                break;
+
+                case 4:
+                turno_jogador = "vermelho";
+                break;
+
+    }
+    }
+    
+  inicializardado();
+
+
+
+  
+  
+  
+  
+}
+
+}
+
+        
+
+}
+
+public void jogador_verde_4_movimento(){
+
+    SoundManager.playerAudioSource.Play();
+
+    borda_peca_verde_1.SetActive(false);
+    borda_peca_verde_2.SetActive(false);
+    borda_peca_verde_3.SetActive(false);
+    borda_peca_verde_4.SetActive(false);
+
+    botao_jogador_verde_1.interactable = false;
+    botao_jogador_verde_2.interactable = false;
+    botao_jogador_verde_3.interactable = false;
+    botao_jogador_verde_4.interactable = false;
+
+    if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_4) > selecionar_num_dado_animacao)
+    {
+        if (local_peca_verde_4 > 0 )
+        {
+            //armazena no vetor o valor que tirei no dado.
+           Vector4[] caminho_jogador_verde_4 = new Vector4[selecionar_num_dado_animacao];
+
+            //para cada valor do dado, mostra o movimento da peca
+           for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_verde_4[i] = bloco_movimento_verde[local_peca_verde_4 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_verde_4+= selecionar_num_dado_animacao;
+
+          //se tirar valor de 6 no dado e a peça já estiver em jogo
+          if (selecionar_num_dado_animacao == 6)
+          {
+            turno_jogador = "verde";
+          }
+
+          else
+          {
+            switch (MainMenuManager.howManyPlayers)
+            {
+                case 2:
+                turno_jogador = "amarelo";
+                break;
+
+                case 3:
+                turno_jogador = "vermelho";
+                break;
+
+                case 4:
+                turno_jogador = "vermelho";
+                break;
+            }
+          }
+
+          if(caminho_jogador_verde_4.Length > 1)
+          {
+            iTween.MoveTo(jogador_verde_4, iTween.Hash("path", caminho_jogador_verde_4, "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_verde_4, iTween.Hash("position", caminho_jogador_verde_4[0], "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          nome_jogador_atual = "jogador_verde_4";
+        }
+        else{
+
+        
+        
+
+
+        if (selecionar_num_dado_animacao == 6 && local_peca_verde_4 == 0  )
+        {
+            Vector3[] caminho_jogador_verde_4 = new Vector3[1];
+            caminho_jogador_verde_4[0] = bloco_movimento_verde[local_peca_verde_4].transform.position;
+            local_peca_verde_4 +=1;
+            turno_jogador = "verde";
+            nome_jogador_atual = "jogador_verde_4";
+            iTween.MoveTo(jogador_verde_4, iTween.Hash("position", caminho_jogador_verde_4[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+        }
+      }
+    }
+
+  else{
+
+  if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_4)  == selecionar_num_dado_animacao)
+  
+  {
+    Vector3[] caminho_jogador_verde_4 = new Vector3[selecionar_num_dado_animacao];
+    for(int i = 0; i < selecionar_num_dado_animacao; i++)
+       {
+        caminho_jogador_verde_4[i] = bloco_movimento_verde[local_peca_verde_4 + i].transform.position;
+       }
+
+       //armazena o valor do dado para os próximos movimentos (onde está a peça)
+       local_peca_verde_4+= selecionar_num_dado_animacao;
+       if(caminho_jogador_verde_4.Length > 1)
+      {
+        iTween.MoveTo(jogador_verde_4, iTween.Hash("path", caminho_jogador_verde_4, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+      else
+      {
+        iTween.MoveTo(jogador_verde_4, iTween.Hash("position", caminho_jogador_verde_4[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+       turno_jogador = "verde";
+       totalverdecasa +=1;
+       Debug.Log("Boa, chegou em casa meu veio!");
+       botao_jogador_verde_4.enabled=false;
+  }
+
+  else{
+    Debug.Log("You need" + (bloco_movimento_verde.Count - local_peca_verde_4).ToString() + "Steps to enter into the house");
+    if((local_peca_verde_1 + local_peca_verde_2 + local_peca_verde_3) == 0 && selecionar_num_dado_animacao !=6)
+    {
+
+        switch (MainMenuManager.howManyPlayers)
+        {
+                case 2:
+                turno_jogador = "amarelo";
+                break;
+
+                case 3:
+                turno_jogador = "vermelho";
+                break;
+
+                case 4:
+                turno_jogador = "vermelho";
+                break;
+
+    }
+    }
+  inicializardado();
+
+
+
+  
+  
+  
+  
+}
+
+}
+
+
+}
+
+/*
+
+
+█   █  ███  █   █ █████ █   █ █████ █   █ █████  ███  
+██ ██ █   █ █   █   █   ██ ██ █     ██  █   █   █   █ 
+█ █ █ █   █  █ █    █   █ █ █ ████  █ █ █   █   █   █ 
+█   █ █   █  █ █    █   █   █ █     █  ██   █   █   █ 
+█   █  ███    █   █████ █   █ █████ █   █   █    ███  
+
+
+████  █████  ████  ███  
+█   █ █     █     █   █ 
+████  ████  █     █████ 
+█     █     █     █   █ 
+█     █████  ████ █   █ 
+█     █████  ████ █   █   
+
+
+
+█   █ █████ ████  █   █ █████ █     █   █  ███  
+█   █ █     █   █ ██ ██ █     █     █   █ █   █ 
+ █ █  ████  ████  █ █ █ ████  █     █████ █████ 
+ █ █  █     █   █ █   █ █     █     █   █ █   █ 
+  █   █████ █   █ █   █ █████ █████ █   █ █   █ 
+
+
+*/
+
+public void jogador_vermelho_1_movimento(){
+
+    SoundManager.playerAudioSource.Play();
+
+    borda_peca_vermelho_1.SetActive(false);
+    borda_peca_vermelho_2.SetActive(false);
+    borda_peca_vermelho_3.SetActive(false);
+    borda_peca_vermelho_4.SetActive(false);
+
+    botao_jogador_vermelho_1.interactable = false;
+    botao_jogador_vermelho_2.interactable = false;
+    botao_jogador_vermelho_3.interactable = false;
+    botao_jogador_vermelho_4.interactable = false;
+
+    if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_1) > selecionar_num_dado_animacao)
+    {
+        
+        //Mover a peca
+        if (local_peca_vermelho_1 > 0 )
+        {
+            //armazena no vetor o valor que tirei no dado.
+           Vector3[] caminho_jogador_vermelho_1 = new Vector3[selecionar_num_dado_animacao];
+
+            //para cada valor do dado, mostra o movimento da peca
+           for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_vermelho_1[i] = bloco_movimento_vermelho[local_peca_vermelho_1 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_vermelho_1+= selecionar_num_dado_animacao;
+
+          //se tirar valor de 6 no dado e a peça já estiver em jogo
+          if (selecionar_num_dado_animacao == 6)
+          {
+            turno_jogador = "vermelho";
+          }
+
+          else
+          {
+            switch (MainMenuManager.howManyPlayers)
+            {
+                case 2:
+                break;
+                case 3:
+                turno_jogador = "amarelo";
+                break;
+
+                case 4:
+                turno_jogador = "azul";
+                break;
+            }
+          }
+
+          if(caminho_jogador_vermelho_1.Length > 1)
+          {
+            iTween.MoveTo(jogador_vermelho_1, iTween.Hash("path", caminho_jogador_vermelho_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_vermelho_1, iTween.Hash("position", caminho_jogador_vermelho_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          nome_jogador_atual = "jogador_vermelho_1";
+        }
+        else
+        {
+
+      
+        //Mover a peca do inicio
+        if (selecionar_num_dado_animacao == 6 && local_peca_vermelho_1 == 0  )
+
+        {
+            Vector3[] caminho_jogador_vermelho_1 = new Vector3[1];
+            caminho_jogador_vermelho_1[0] = bloco_movimento_vermelho[local_peca_vermelho_1].transform.position;
+            local_peca_vermelho_1 +=1;
+            turno_jogador = "vermelho";
+            nome_jogador_atual = "jogador_vermelho_1";
+            iTween.MoveTo(jogador_vermelho_1, iTween.Hash("position", caminho_jogador_vermelho_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+        }
+      }
+        
+    }
+    else{
+
+      if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_1)  == selecionar_num_dado_animacao)
+      
+      {
+        Vector3[] caminho_jogador_vermelho_1 = new Vector3[selecionar_num_dado_animacao];
+        for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_vermelho_1[i] = bloco_movimento_vermelho[local_peca_vermelho_1 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_vermelho_1+= selecionar_num_dado_animacao;
+           if(caminho_jogador_vermelho_1.Length > 1)
+          {
+            iTween.MoveTo(jogador_vermelho_1, iTween.Hash("path", caminho_jogador_vermelho_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_vermelho_1, iTween.Hash("position", caminho_jogador_vermelho_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+           turno_jogador = "vermelho";
+           totalvermelhocasa +=1;
+           Debug.Log("Boa, chegou em casa meu veio!");
+           botao_jogador_vermelho_1.enabled=false;
+      }
+
+      else{
+        Debug.Log("You need" + (bloco_movimento_vermelho.Count - local_peca_vermelho_1).ToString() + "Steps to enter into the house");
+        if((local_peca_vermelho_2 + local_peca_vermelho_3 + local_peca_vermelho_4) == 0 && selecionar_num_dado_animacao !=6)
+        {
+
+            switch (MainMenuManager.howManyPlayers)
+            {
+                case 2:
+                break;
+                case 3:
+                turno_jogador = "amarelo";
+                break;
+
+                case 4:
+                turno_jogador = "azul";
+                break;
+            }
+
+        }
+        
+      inicializardado();
+
+
+
+      }
+      
+      
+      
+   }
+
+}
+
+
+
+public void jogador_vermelho_2_movimento(){
+
+    SoundManager.playerAudioSource.Play();
+
+    borda_peca_vermelho_1.SetActive(false);
+    borda_peca_vermelho_2.SetActive(false);
+    borda_peca_vermelho_3.SetActive(false);
+    borda_peca_vermelho_4.SetActive(false);
+
+    botao_jogador_vermelho_1.interactable = false;
+    botao_jogador_vermelho_2.interactable = false;
+    botao_jogador_vermelho_3.interactable = false;
+    botao_jogador_vermelho_4.interactable = false;
+
+    if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_2) > selecionar_num_dado_animacao)
+    {
+        if (local_peca_vermelho_2 > 0 )
+        {
+            //armazena no vetor o valor que tirei no dado.
+           Vector3[] caminho_jogador_vermelho_2 = new Vector3[selecionar_num_dado_animacao];
+
+            //para cada valor do dado, mostra o movimento da peca
+           for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_vermelho_2[i] = bloco_movimento_vermelho[local_peca_vermelho_2 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_vermelho_2+= selecionar_num_dado_animacao;
+
+          //se tirar valor de 6 no dado e a peça já estiver em jogo
+          if (selecionar_num_dado_animacao == 6)
+          {
+            turno_jogador = "vermelho";
+          }
+
+          else
+          {
+            switch (MainMenuManager.howManyPlayers)
+            {
+                case 2:
+                break;
+                case 3:
+                turno_jogador = "amarelo";
+                break;
+
+                case 4:
+                turno_jogador = "azul";
+                break;
+            }
+          }
+
+          if(caminho_jogador_vermelho_2.Length > 1)
+          {
+            iTween.MoveTo(jogador_vermelho_2, iTween.Hash("path", caminho_jogador_vermelho_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_vermelho_2, iTween.Hash("position", caminho_jogador_vermelho_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          nome_jogador_atual = "jogador_vermelho_2";
+        }
+        else{
+
+
+        if (selecionar_num_dado_animacao == 6 && local_peca_vermelho_2 == 0 )
+        {
+            Vector3[] caminho_jogador_vermelho_2 = new Vector3[1];
+            caminho_jogador_vermelho_2[0] = bloco_movimento_vermelho[local_peca_vermelho_2].transform.position;
+            local_peca_vermelho_2 +=1;
+            turno_jogador = "vermelho";
+            nome_jogador_atual = "jogador_vermelho_2";
+            iTween.MoveTo(jogador_vermelho_2, iTween.Hash("position", caminho_jogador_vermelho_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+        }
+
+        }
+    }
+
+    else{
+
+       if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_2)  == selecionar_num_dado_animacao)
+      
+      {
+        Vector3[] caminho_jogador_vermelho_2 = new Vector3[selecionar_num_dado_animacao];
+        for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_vermelho_2[i] = bloco_movimento_vermelho[local_peca_vermelho_2 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_vermelho_2+= selecionar_num_dado_animacao;
+           if(caminho_jogador_vermelho_2.Length > 1)
+          {
+            iTween.MoveTo(jogador_vermelho_2, iTween.Hash("path", caminho_jogador_vermelho_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_vermelho_2, iTween.Hash("position", caminho_jogador_vermelho_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+           turno_jogador = "vermelho";
+           totalvermelhocasa +=1;
+           Debug.Log("Boa, chegou em casa meu veio!");
+           botao_jogador_vermelho_2.enabled=false;
+      }
+
+      else{
+        Debug.Log("You need" + (bloco_movimento_vermelho.Count - local_peca_vermelho_2).ToString() + "Steps to enter into the house");
+        if((local_peca_vermelho_1 + local_peca_vermelho_3 + local_peca_vermelho_4) == 0 && selecionar_num_dado_animacao !=6)
+        {
+
+            switch (MainMenuManager.howManyPlayers)
+            {   
+                case 2:
+                break;
+                case 3:
+                turno_jogador = "amarelo";
+                break;
+
+                case 4:
+                turno_jogador = "azul";
+                break;
+            }
+
+        }
+        
+      inicializardado();
+
+
+
+      }
+
+    }
+        
+
+}
+
+
+public void jogador_vermelho_3_movimento(){
+
+    SoundManager.playerAudioSource.Play();
+
+    borda_peca_vermelho_1.SetActive(false);
+    borda_peca_vermelho_2.SetActive(false);
+    borda_peca_vermelho_3.SetActive(false);
+    borda_peca_vermelho_4.SetActive(false);
+
+    botao_jogador_vermelho_1.interactable = false;
+    botao_jogador_vermelho_2.interactable = false;
+    botao_jogador_vermelho_3.interactable = false;
+    botao_jogador_vermelho_4.interactable = false;
+
+    if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_3) > selecionar_num_dado_animacao)
+    {
+
+        if (local_peca_vermelho_3 > 0 )
+        {
+            //armazena no vetor o valor que tirei no dado.
+           Vector3[] caminho_jogador_vermelho_3 = new Vector3[selecionar_num_dado_animacao];
+
+            //para cada valor do dado, mostra o movimento da peca
+           for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_vermelho_3[i] = bloco_movimento_vermelho[local_peca_vermelho_3 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_vermelho_3+= selecionar_num_dado_animacao;
+
+          //se tirar valor de 6 no dado e a peça já estiver em jogo
+          if (selecionar_num_dado_animacao == 6)
+          {
+            turno_jogador = "vermelho";
+          }
+
+          else
+          {
+            switch (MainMenuManager.howManyPlayers)
+            {
+                case 2:
+                break;
+                case 3:
+                turno_jogador = "amarelo";
+                break;
+
+                case 4:
+                turno_jogador = "azul";
+                break;
+            }
+          }
+
+          if(caminho_jogador_vermelho_3.Length > 1)
+          {
+            iTween.MoveTo(jogador_vermelho_3, iTween.Hash("path", caminho_jogador_vermelho_3, "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_vermelho_3, iTween.Hash("position", caminho_jogador_vermelho_3[0], "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          nome_jogador_atual = "jogador_vermelho_3";
+        }
+        else{
+
+
+        if (selecionar_num_dado_animacao == 6 && local_peca_vermelho_3 == 0  )
+        {
+            Vector3[] caminho_jogador_vermelho_3 = new Vector3[1];
+            caminho_jogador_vermelho_3[0] = bloco_movimento_vermelho[local_peca_vermelho_3].transform.position;
+            local_peca_vermelho_3 +=1;
+            turno_jogador = "vermelho";
+            nome_jogador_atual = "jogador_vermelho_3";
+            iTween.MoveTo(jogador_vermelho_3, iTween.Hash("position", caminho_jogador_vermelho_3[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+        }
+      }
+    }
+    else{
+
+       if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_3)  == selecionar_num_dado_animacao)
+      
+      {
+        Vector3[] caminho_jogador_vermelho_3 = new Vector3[selecionar_num_dado_animacao];
+        for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_vermelho_3[i] = bloco_movimento_vermelho[local_peca_vermelho_3 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_vermelho_3+= selecionar_num_dado_animacao;
+           if(caminho_jogador_vermelho_3.Length > 1)
+          {
+            iTween.MoveTo(jogador_vermelho_3, iTween.Hash("path", caminho_jogador_vermelho_3, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_vermelho_3, iTween.Hash("position", caminho_jogador_vermelho_3[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+           turno_jogador = "vermelho";
+           totalvermelhocasa +=1;
+           Debug.Log("Boa, chegou em casa meu veio!");
+           botao_jogador_vermelho_3.enabled=false;
+      }
+
+      else{
+        Debug.Log("You need" + (bloco_movimento_vermelho.Count - local_peca_vermelho_3).ToString() + "Steps to enter into the house");
+        if((local_peca_vermelho_1 + local_peca_vermelho_2 + local_peca_vermelho_4) == 0 && selecionar_num_dado_animacao !=6)
+        {
+
+            switch (MainMenuManager.howManyPlayers)
+            {
+                case 2:
+                break;
+                case 3:
+                turno_jogador = "amarelo";
+                break;
+
+                case 4:
+                turno_jogador = "azul";
+                break;
+            }
+
+        }
+        
+      inicializardado();
+
+
+
+      }
+
+
+    }
+
+
+}
+
+
+
+public void jogador_vermelho_4_movimento(){
+
+    SoundManager.playerAudioSource.Play();
+
+    borda_peca_vermelho_1.SetActive(false);
+    borda_peca_vermelho_2.SetActive(false);
+    borda_peca_vermelho_3.SetActive(false);
+    borda_peca_vermelho_4.SetActive(false);
+
+    botao_jogador_vermelho_1.interactable = false;
+    botao_jogador_vermelho_2.interactable = false;
+    botao_jogador_vermelho_3.interactable = false;
+    botao_jogador_vermelho_4.interactable = false;
+
+    if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_4) > selecionar_num_dado_animacao)
+    {
+        if (local_peca_vermelho_4 > 0 )
+        {
+            //armazena no vetor o valor que tirei no dado.
+           Vector4[] caminho_jogador_vermelho_4 = new Vector4[selecionar_num_dado_animacao];
+
+            //para cada valor do dado, mostra o movimento da peca
+           for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_vermelho_4[i] = bloco_movimento_vermelho[local_peca_vermelho_4 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_vermelho_4+= selecionar_num_dado_animacao;
+
+          //se tirar valor de 6 no dado e a peça já estiver em jogo
+          if (selecionar_num_dado_animacao == 6)
+          {
+            turno_jogador = "vermelho";
+          }
+
+          else
+          {
+            switch (MainMenuManager.howManyPlayers)
+            {
+                case 2:
+                break;
+                case 3:
+                turno_jogador = "amarelo";
+                break;
+
+                case 4:
+                turno_jogador = "azul";
+                break;
+            }
+          }
+
+          if(caminho_jogador_vermelho_4.Length > 1)
+          {
+            iTween.MoveTo(jogador_vermelho_4, iTween.Hash("path", caminho_jogador_vermelho_4, "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_vermelho_4, iTween.Hash("position", caminho_jogador_vermelho_4[0], "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          nome_jogador_atual = "jogador_vermelho_4";          
+        }
+        else{
+        
+        if (selecionar_num_dado_animacao == 6 && local_peca_vermelho_4 == 0  )
+        {
+            Vector3[] caminho_jogador_vermelho_4 = new Vector3[1];
+            caminho_jogador_vermelho_4[0] = bloco_movimento_vermelho[local_peca_vermelho_4].transform.position;
+            local_peca_vermelho_4 +=1;
+            turno_jogador = "vermelho";
+            nome_jogador_atual = "jogador_vermelho_4";
+            iTween.MoveTo(jogador_vermelho_4, iTween.Hash("position", caminho_jogador_vermelho_4[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+        }
+        }
+    }
+    else{
+
+       if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_4)  == selecionar_num_dado_animacao)
+      
+      {
+        Vector3[] caminho_jogador_vermelho_4 = new Vector3[selecionar_num_dado_animacao];
+        for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_vermelho_4[i] = bloco_movimento_vermelho[local_peca_vermelho_4 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_vermelho_4+= selecionar_num_dado_animacao;
+           if(caminho_jogador_vermelho_4.Length > 1)
+          {
+            iTween.MoveTo(jogador_vermelho_4, iTween.Hash("path", caminho_jogador_vermelho_4, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_vermelho_4, iTween.Hash("position", caminho_jogador_vermelho_4[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+           turno_jogador = "vermelho";
+           totalvermelhocasa +=1;
+           Debug.Log("Boa, chegou em casa meu veio!");
+           botao_jogador_vermelho_4.enabled=false;
+      }
+
+      else{
+        Debug.Log("You need" + (bloco_movimento_vermelho.Count - local_peca_vermelho_4).ToString() + "Steps to enter into the house");
+        if((local_peca_vermelho_1 + local_peca_vermelho_2 + local_peca_vermelho_3) == 0 && selecionar_num_dado_animacao !=6)
+        {
+
+            switch (MainMenuManager.howManyPlayers)
+            {
+                case 2:
+                break;
+                case 3:
+                turno_jogador = "amarelo";
+                break;
+
+                case 4:
+                turno_jogador = "azul";
+                break;
+            }
+
+        }
+        
+      inicializardado();
+
+
+
+      }
+
+    }
+        
+
+}
+/*
+
+█   █  ███  █   █ █████ █   █ █████ █   █ █████  ███  
+██ ██ █   █ █   █   █   ██ ██ █     ██  █   █   █   █ 
+█ █ █ █   █  █ █    █   █ █ █ ████  █ █ █   █   █   █ 
+█   █ █   █  █ █    █   █   █ █     █  ██   █   █   █ 
+█   █  ███    █   █████ █   █ █████ █   █   █    ███  
+
+
+███  █████  ████  ███       
+█   █ █     █     █   █ 
+████  ████  █     █████ 
+█     █     █     █   █ 
+█     █████  ████ █   █ 
+
+ ███  █████ █   █ █     
+█   █    █  █   █ █     
+█████   █   █   █ █     
+█   █  █    █   █ █     
+█   █ █████ █████ █████ 
+*/
+
+public void jogador_azul_1_movimento(){
+
+    SoundManager.playerAudioSource.Play();
+
+    borda_peca_azul_1.SetActive(false);
+    borda_peca_azul_2.SetActive(false);
+    borda_peca_azul_3.SetActive(false);
+    borda_peca_azul_4.SetActive(false);
+
+    botao_jogador_azul_1.interactable = false;
+    botao_jogador_azul_2.interactable = false;
+    botao_jogador_azul_3.interactable = false;
+    botao_jogador_azul_4.interactable = false;
+
+    if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_1) > selecionar_num_dado_animacao)
+    {
+
+
+        if (local_peca_azul_1 > 0 )
+        {
+            //armazena no vetor o valor que tirei no dado.
+           Vector3[] caminho_jogador_azul_1 = new Vector3[selecionar_num_dado_animacao];
+
+            //para cada valor do dado, mostra o movimento da peca
+           for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_azul_1[i] = bloco_movimento_azul[local_peca_azul_1 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_azul_1+= selecionar_num_dado_animacao;
+
+          //se tirar valor de 6 no dado e a peça já estiver em jogo
+          if (selecionar_num_dado_animacao == 6)
+          {
+            turno_jogador = "azul";
+          }
+
+          else
+          {
+            switch (MainMenuManager.howManyPlayers)
+            {
+                case 2:
+                break;
+                case 3:
+                break;
+                case 4:
+                turno_jogador = "amarelo";
+                break;
+            }
+          }
+
+          if(caminho_jogador_azul_1.Length > 1)
+          {
+            iTween.MoveTo(jogador_azul_1, iTween.Hash("path", caminho_jogador_azul_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_azul_1, iTween.Hash("position", caminho_jogador_azul_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          nome_jogador_atual = "jogador_azul_1";
+        }
+        else{
+
+
+        if (selecionar_num_dado_animacao == 6 && local_peca_azul_1 == 0  )
+        {
+            Vector3[] caminho_jogador_azul_1 = new Vector3[1];
+            caminho_jogador_azul_1[0] = bloco_movimento_azul[local_peca_azul_1].transform.position;
+            local_peca_azul_1 +=1;
+            turno_jogador = "azul";
+            nome_jogador_atual = "jogador_azul_1";
+            iTween.MoveTo(jogador_azul_1, iTween.Hash("position", caminho_jogador_azul_1[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+        }
+        }
+    }
+
+    else{
+
+  if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_1)  == selecionar_num_dado_animacao)
+  
+  {
+    Vector3[] caminho_jogador_azul_1 = new Vector3[selecionar_num_dado_animacao];
+    for(int i = 0; i < selecionar_num_dado_animacao; i++)
+       {
+        caminho_jogador_azul_1[i] = bloco_movimento_azul[local_peca_azul_1 + i].transform.position;
+       }
+
+       //armazena o valor do dado para os próximos movimentos (onde está a peça)
+       local_peca_azul_1+= selecionar_num_dado_animacao;
+       if(caminho_jogador_azul_1.Length > 1)
+      {
+        iTween.MoveTo(jogador_azul_1, iTween.Hash("path", caminho_jogador_azul_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+      else
+      {
+        iTween.MoveTo(jogador_azul_1, iTween.Hash("position", caminho_jogador_azul_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+       turno_jogador = "azul";
+       totalazulcasa +=1;
+       Debug.Log("Boa, chegou em casa meu veio!");
+       botao_jogador_azul_1.enabled=false;
+  }
+
+  else{
+    Debug.Log("You need" + (bloco_movimento_azul.Count - local_peca_azul_1).ToString() + "Steps to enter into the house");
+    if((local_peca_azul_2 + local_peca_azul_3 + local_peca_azul_4) == 0 && selecionar_num_dado_animacao !=6)
+    {
+
+        switch (MainMenuManager.howManyPlayers)
+        {
+                case 2:
+                break;
+                case 3:
+                break;
+                case 4:
+                turno_jogador = "amarelo";
+                break;
+
+    }
+    }
+    
+  inicializardado();
+
+
+
+  
+  
+  
+  
+}
+
+}
+        
+
+}
+
+
+
+public void jogador_azul_2_movimento(){
+
+    SoundManager.playerAudioSource.Play();
+
+    borda_peca_azul_1.SetActive(false);
+    borda_peca_azul_2.SetActive(false);
+    borda_peca_azul_3.SetActive(false);
+    borda_peca_azul_4.SetActive(false);
+
+    botao_jogador_azul_1.interactable = false;
+    botao_jogador_azul_2.interactable = false;
+    botao_jogador_azul_3.interactable = false;
+    botao_jogador_azul_4.interactable = false;
+
+    if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_2) > selecionar_num_dado_animacao)
+    {
+
+        if (local_peca_azul_2 > 0 )
+        {
+            //armazena no vetor o valor que tirei no dado.
+           Vector3[] caminho_jogador_azul_2 = new Vector3[selecionar_num_dado_animacao];
+
+            //para cada valor do dado, mostra o movimento da peca
+           for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_azul_2[i] = bloco_movimento_azul[local_peca_azul_2 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_azul_2+= selecionar_num_dado_animacao;
+
+          //se tirar valor de 6 no dado e a peça já estiver em jogo
+          if (selecionar_num_dado_animacao == 6)
+          {
+            turno_jogador = "azul";
+          }
+
+          else
+          {
+            switch (MainMenuManager.howManyPlayers)
+            {
+                case 2:
+                break;
+                case 3:
+                break;
+                case 4:
+                turno_jogador = "amarelo";
+                break;
+            }
+          }
+
+          if(caminho_jogador_azul_2.Length > 1)
+          {
+            iTween.MoveTo(jogador_azul_2, iTween.Hash("path", caminho_jogador_azul_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_azul_2, iTween.Hash("position", caminho_jogador_azul_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          nome_jogador_atual = "jogador_azul_2";
+        }
+        else{
+
+
+        if (selecionar_num_dado_animacao == 6 && local_peca_azul_2 == 0  )
+        {
+            Vector3[] caminho_jogador_azul_2 = new Vector3[1];
+            caminho_jogador_azul_2[0] = bloco_movimento_azul[local_peca_azul_2].transform.position;
+            local_peca_azul_2 +=1;
+            turno_jogador = "azul";
+            nome_jogador_atual = "jogador_azul_2";
+            iTween.MoveTo(jogador_azul_2, iTween.Hash("position", caminho_jogador_azul_2[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+        }
+      }
+    }
+    else{
+
+  if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_2)  == selecionar_num_dado_animacao)
+  
+  {
+    Vector3[] caminho_jogador_azul_2 = new Vector3[selecionar_num_dado_animacao];
+    for(int i = 0; i < selecionar_num_dado_animacao; i++)
+       {
+        caminho_jogador_azul_2[i] = bloco_movimento_azul[local_peca_azul_2 + i].transform.position;
+       }
+
+       //armazena o valor do dado para os próximos movimentos (onde está a peça)
+       local_peca_azul_2+= selecionar_num_dado_animacao;
+       if(caminho_jogador_azul_2.Length > 1)
+      {
+        iTween.MoveTo(jogador_azul_2, iTween.Hash("path", caminho_jogador_azul_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+      else
+      {
+        iTween.MoveTo(jogador_azul_2, iTween.Hash("position", caminho_jogador_azul_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+       turno_jogador = "azul";
+       totalazulcasa +=1;
+       Debug.Log("Boa, chegou em casa meu veio!");
+       botao_jogador_azul_2.enabled=false;
+  }
+
+  else{
+    Debug.Log("You need" + (bloco_movimento_azul.Count - local_peca_azul_2).ToString() + "Steps to enter into the house");
+    if((local_peca_azul_1 + local_peca_azul_3 + local_peca_azul_4) == 0 && selecionar_num_dado_animacao !=6)
+    {
+
+        switch (MainMenuManager.howManyPlayers)
+        {
+                case 2:
+                break;
+                case 3:
+                break;
+                case 4:
+                turno_jogador = "amarelo";
+                break;
+
+    }
+    }
+  inicializardado();
+
+
+
+  
+  
+  
+  
+}
+
+}
+        
+
+}
+
+public void jogador_azul_3_movimento(){
+
+    SoundManager.playerAudioSource.Play();
+
+    borda_peca_azul_1.SetActive(false);
+    borda_peca_azul_2.SetActive(false);
+    borda_peca_azul_3.SetActive(false);
+    borda_peca_azul_4.SetActive(false);
+
+    botao_jogador_azul_1.interactable = false;
+    botao_jogador_azul_2.interactable = false;
+    botao_jogador_azul_3.interactable = false;
+    botao_jogador_azul_4.interactable = false;
+
+    if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_3) > selecionar_num_dado_animacao)
+    {
+
+
+        
+        if (local_peca_azul_3 > 0 )
+        {
+            //armazena no vetor o valor que tirei no dado.
+           Vector3[] caminho_jogador_azul_3 = new Vector3[selecionar_num_dado_animacao];
+
+            //para cada valor do dado, mostra o movimento da peca
+           for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_azul_3[i] = bloco_movimento_azul[local_peca_azul_3 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_azul_3+= selecionar_num_dado_animacao;
+
+          //se tirar valor de 6 no dado e a peça já estiver em jogo
+          if (selecionar_num_dado_animacao == 6)
+          {
+            turno_jogador = "azul";
+          }
+
+          else
+          {
+            switch (MainMenuManager.howManyPlayers)
+            {
+                case 2:
+                break;
+                case 3:
+                break;
+                case 4:
+                turno_jogador = "amarelo";
+                break;
+            }
+          }
+
+          if(caminho_jogador_azul_3.Length > 1)
+          {
+            iTween.MoveTo(jogador_azul_3, iTween.Hash("path", caminho_jogador_azul_3, "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_azul_3, iTween.Hash("position", caminho_jogador_azul_3[0], "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          nome_jogador_atual = "jogador_azul_3";
+        }
+        else{
+
+        
+
+
+
+
+
+        if (selecionar_num_dado_animacao == 6 && local_peca_azul_3 == 0  )
+        {
+            Vector3[] caminho_jogador_azul_3 = new Vector3[1];
+            caminho_jogador_azul_3[0] = bloco_movimento_azul[local_peca_azul_3].transform.position;
+            local_peca_azul_3 +=1;
+            turno_jogador = "azul";
+            nome_jogador_atual = "jogador_azul_3";
+            iTween.MoveTo(jogador_azul_3, iTween.Hash("position", caminho_jogador_azul_3[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+        }
+      }
+    }
+
+  else{
+
+  if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_3)  == selecionar_num_dado_animacao)
+  
+  {
+    Vector3[] caminho_jogador_azul_3 = new Vector3[selecionar_num_dado_animacao];
+    for(int i = 0; i < selecionar_num_dado_animacao; i++)
+       {
+        caminho_jogador_azul_3[i] = bloco_movimento_azul[local_peca_azul_3 + i].transform.position;
+       }
+
+       //armazena o valor do dado para os próximos movimentos (onde está a peça)
+       local_peca_azul_3+= selecionar_num_dado_animacao;
+       if(caminho_jogador_azul_3.Length > 1)
+      {
+        iTween.MoveTo(jogador_azul_3, iTween.Hash("path", caminho_jogador_azul_3, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+      else
+      {
+        iTween.MoveTo(jogador_azul_3, iTween.Hash("position", caminho_jogador_azul_3[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+       turno_jogador = "azul";
+       totalazulcasa +=1;
+       Debug.Log("Boa, chegou em casa meu veio!");
+       botao_jogador_azul_3.enabled=false;
+  }
+
+  else{
+    Debug.Log("You need" + (bloco_movimento_azul.Count - local_peca_azul_3).ToString() + "Steps to enter into the house");
+    if((local_peca_azul_1 + local_peca_azul_2 + local_peca_azul_4) == 0 && selecionar_num_dado_animacao !=6)
+    {
+
+        switch (MainMenuManager.howManyPlayers)
+        {
+                case 2:
+                break;
+                case 3:
+                break;
+                case 4:
+                turno_jogador = "amarelo";
+                break;
+
+    }
+    }
+  inicializardado();
+
+
+
+  
+  
+  
+  
+}
+
+}
+        
+
+}
+
+public void jogador_azul_4_movimento(){
+
+    SoundManager.playerAudioSource.Play();
+
+    borda_peca_azul_1.SetActive(false);
+    borda_peca_azul_2.SetActive(false);
+    borda_peca_azul_3.SetActive(false);
+    borda_peca_azul_4.SetActive(false);
+
+    botao_jogador_azul_1.interactable = false;
+    botao_jogador_azul_2.interactable = false;
+    botao_jogador_azul_3.interactable = false;
+    botao_jogador_azul_4.interactable = false;
+
+    if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_4) > selecionar_num_dado_animacao)
+    {
+
+        if (local_peca_azul_4 > 0 )
+        {
+            //armazena no vetor o valor que tirei no dado.
+           Vector4[] caminho_jogador_azul_4 = new Vector4[selecionar_num_dado_animacao];
+
+            //para cada valor do dado, mostra o movimento da peca
+           for(int i = 0; i < selecionar_num_dado_animacao; i++)
+           {
+            caminho_jogador_azul_4[i] = bloco_movimento_azul[local_peca_azul_4 + i].transform.position;
+           }
+
+           //armazena o valor do dado para os próximos movimentos (onde está a peça)
+           local_peca_azul_4+= selecionar_num_dado_animacao;
+
+          //se tirar valor de 6 no dado e a peça já estiver em jogo
+          if (selecionar_num_dado_animacao == 6)
+          {
+            turno_jogador = "azul";
+          }
+
+          else
+          {
+            switch (MainMenuManager.howManyPlayers)
+            {
+                case 2:
+                break;
+                case 3:
+                break;
+                case 4:
+                turno_jogador = "amarelo";
+                break;
+            }
+          }
+
+          if(caminho_jogador_azul_4.Length > 1)
+          {
+            iTween.MoveTo(jogador_azul_4, iTween.Hash("path", caminho_jogador_azul_4, "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          else
+          {
+            iTween.MoveTo(jogador_azul_4, iTween.Hash("position", caminho_jogador_azul_4[0], "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+          }
+          nome_jogador_atual = "jogador_azul_4";
+        }
+        else{
+        
+
+
+        if (selecionar_num_dado_animacao == 6 && local_peca_azul_4 == 0  )
+        {
+            Vector3[] caminho_jogador_azul_4 = new Vector3[1];
+            caminho_jogador_azul_4[0] = bloco_movimento_azul[local_peca_azul_4].transform.position;
+            local_peca_azul_4 +=1;
+            turno_jogador = "azul";
+            nome_jogador_atual = "jogador_azul_4";
+            iTween.MoveTo(jogador_azul_4, iTween.Hash("position", caminho_jogador_azul_4[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+        }
+      }
+    }
+
+  else{
+
+  if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_4)  == selecionar_num_dado_animacao)
+  
+  {
+    Vector3[] caminho_jogador_azul_4 = new Vector3[selecionar_num_dado_animacao];
+    for(int i = 0; i < selecionar_num_dado_animacao; i++)
+       {
+        caminho_jogador_azul_4[i] = bloco_movimento_azul[local_peca_azul_4 + i].transform.position;
+       }
+
+       //armazena o valor do dado para os próximos movimentos (onde está a peça)
+       local_peca_azul_4+= selecionar_num_dado_animacao;
+       if(caminho_jogador_azul_4.Length > 1)
+      {
+        iTween.MoveTo(jogador_azul_4, iTween.Hash("path", caminho_jogador_azul_4, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+      else
+      {
+        iTween.MoveTo(jogador_azul_4, iTween.Hash("position", caminho_jogador_azul_4[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
+      }
+       turno_jogador = "azul";
+       totalazulcasa +=1;
+       Debug.Log("Boa, chegou em casa meu veio!");
+       botao_jogador_azul_4.enabled=false;
+  }
+
+  else{
+    Debug.Log("You need" + (bloco_movimento_azul.Count - local_peca_azul_4).ToString() + "Steps to enter into the house");
+    if((local_peca_azul_1 + local_peca_azul_2 + local_peca_azul_3) == 0 && selecionar_num_dado_animacao !=6)
+    {
+
+        switch (MainMenuManager.howManyPlayers)
+        {
+                case 2:
+                break;
+                case 3:
+                break;
+                case 4:
+                turno_jogador = "amarelo";
+                break;
+
+    }
+    }
+    
+  inicializardado();
+
+
+
+  
+  
+  
+  
+}
+
+}
+
+}        
 
 
 
@@ -2406,10 +4819,10 @@ void Start(){
                 frame_azul.SetActive(false);
                 frame_verde.SetActive(false);
 
-                jogador_verde_1.SetActive(false);
-                jogador_verde_2.SetActive(false);
-                jogador_verde_3.SetActive(false);
-                jogador_verde_4.SetActive(false);
+                jogador_azul_1.SetActive(false);
+                jogador_azul_2.SetActive(false);
+                jogador_azul_3.SetActive(false);
+                jogador_azul_4.SetActive(false);
 
                 rodar_dado.position = dado_amarelo_rolagem.position;
 
@@ -2438,2331 +4851,8 @@ void Start(){
 
 
 
-/*
 
 
-█   █  ███  █   █ █████ █   █ █████ █   █ █████  ███  
-██ ██ █   █ █   █   █   ██ ██ █     ██  █   █   █   █ 
-█ █ █ █   █  █ █    █   █ █ █ ████  █ █ █   █   █   █ 
-█   █ █   █  █ █    █   █   █ █     █  ██   █   █   █ 
-█   █  ███    █   █████ █   █ █████ █   █   █    ███  
-
-
-████  █████  ████  ███  
-█   █ █     █     █   █ 
-████  ████  █     █████ 
-█     █     █     █   █ 
-█     █████  ████ █   █ 
-█     █████  ████ █   █   
-
-
-
-█   █ █████ ████  █   █ █████ █     █   █  ███  
-█   █ █     █   █ ██ ██ █     █     █   █ █   █ 
- █ █  ████  ████  █ █ █ ████  █     █████ █████ 
- █ █  █     █   █ █   █ █     █     █   █ █   █ 
-  █   █████ █   █ █   █ █████ █████ █   █ █   █ 
-
-
-*/
-
-public void jogador_vermelho_1_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_vermelho_1.SetActive(false);
-    borda_peca_vermelho_2.SetActive(false);
-    borda_peca_vermelho_3.SetActive(false);
-    borda_peca_vermelho_4.SetActive(false);
-
-    botao_jogador_vermelho_1.interactable = false;
-    botao_jogador_vermelho_2.interactable = false;
-    botao_jogador_vermelho_3.interactable = false;
-    botao_jogador_vermelho_4.interactable = false;
-
-    if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_1) > selecionar_animacao_dado)
-    {
-        
-        //Mover a peca
-        if (local_peca_vermelho_1 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_vermelho_1 = new Vector3[selecionar_animacao_dado];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_vermelho_1[i] = bloco_movimento_vermelho[local_peca_vermelho_1 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_vermelho_1+= selecionar_animacao_dado;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_animacao_dado == 6)
-          {
-            turno_jogador = "vermelho";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 3:
-                turno_jogador = "amarelo";
-                break;
-
-                case 4:
-                turno_jogador = "azul";
-                break;
-            }
-          }
-
-          if(caminho_jogador_vermelho_1.Length > 1)
-          {
-            iTween.MoveTo(jogador_vermelho_1, iTween.Hash("path", caminho_jogador_vermelho_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_vermelho_1, iTween.Hash("position", caminho_jogador_vermelho_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_vermelho_1";
-        }
-        else
-        {
-
-      
-        //Mover a peca do inicio
-        if (selecionar_animacao_dado == 6 && local_peca_vermelho_1 == 0  )
-
-        {
-            Vector3[] caminho_jogador_vermelho_1 = new Vector3[1];
-            caminho_jogador_vermelho_1[0] = bloco_movimento_vermelho[local_peca_vermelho_1].transform.position;
-            local_peca_vermelho_1 +=1;
-            turno_jogador = "vermelho";
-            nome_jogador_atual = "jogador_vermelho_1";
-            iTween.MoveTo(jogador_vermelho_1, iTween.Hash("position", caminho_jogador_vermelho_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-        
-    }
-    else{
-
-      if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_1)  == selecionar_animacao_dado)
-      
-      {
-        Vector3[] caminho_jogador_vermelho_1 = new Vector3[selecionar_animacao_dado];
-        for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_vermelho_1[i] = bloco_movimento_vermelho[local_peca_vermelho_1 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_vermelho_1+= selecionar_animacao_dado;
-           if(caminho_jogador_vermelho_1.Length > 1)
-          {
-            iTween.MoveTo(jogador_vermelho_1, iTween.Hash("path", caminho_jogador_vermelho_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_vermelho_1, iTween.Hash("position", caminho_jogador_vermelho_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-           turno_jogador = "vermelho";
-           totalvermelhocasa +=1;
-           Debug.Log("Boa, chegou em casa meu veio!");
-           botao_jogador_vermelho_1.enabled=false;
-      }
-
-      else{
-        Debug.Log("You need" + (bloco_movimento_vermelho.Count - local_peca_vermelho_1).ToString() + "Steps to enter into the house");
-        if((local_peca_vermelho_2 + local_peca_vermelho_3 + local_peca_vermelho_4) == 0 && selecionar_animacao_dado !=6)
-        {
-
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 3:
-                turno_jogador = "amarelo";
-                break;
-
-                case 4:
-                turno_jogador = "azul";
-                break;
-            }
-
-        }
-        
-      inicializardado();
-
-
-
-      }
-      
-      
-      
-   }
-
-}
-
-
-
-public void jogador_vermelho_2_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_vermelho_1.SetActive(false);
-    borda_peca_vermelho_2.SetActive(false);
-    borda_peca_vermelho_3.SetActive(false);
-    borda_peca_vermelho_4.SetActive(false);
-
-    botao_jogador_vermelho_1.interactable = false;
-    botao_jogador_vermelho_2.interactable = false;
-    botao_jogador_vermelho_3.interactable = false;
-    botao_jogador_vermelho_4.interactable = false;
-
-    if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_2) > selecionar_animacao_dado)
-    {
-        if (local_peca_vermelho_2 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_vermelho_2 = new Vector3[selecionar_animacao_dado];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_vermelho_2[i] = bloco_movimento_vermelho[local_peca_vermelho_2 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_vermelho_2+= selecionar_animacao_dado;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_animacao_dado == 6)
-          {
-            turno_jogador = "vermelho";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 3:
-                turno_jogador = "amarelo";
-                break;
-
-                case 4:
-                turno_jogador = "azul";
-                break;
-            }
-          }
-
-          if(caminho_jogador_vermelho_2.Length > 1)
-          {
-            iTween.MoveTo(jogador_vermelho_2, iTween.Hash("path", caminho_jogador_vermelho_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_vermelho_2, iTween.Hash("position", caminho_jogador_vermelho_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_vermelho_2";
-        }
-        else{
-
-
-        if (selecionar_animacao_dado == 6 && local_peca_vermelho_2 == 0 )
-        {
-            Vector3[] caminho_jogador_vermelho_2 = new Vector3[1];
-            caminho_jogador_vermelho_2[0] = bloco_movimento_vermelho[local_peca_vermelho_2].transform.position;
-            local_peca_vermelho_2 +=1;
-            turno_jogador = "vermelho";
-            nome_jogador_atual = "jogador_vermelho_2";
-            iTween.MoveTo(jogador_vermelho_2, iTween.Hash("position", caminho_jogador_vermelho_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-
-        }
-    }
-
-    else{
-
-       if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_2)  == selecionar_animacao_dado)
-      
-      {
-        Vector3[] caminho_jogador_vermelho_2 = new Vector3[selecionar_animacao_dado];
-        for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_vermelho_2[i] = bloco_movimento_vermelho[local_peca_vermelho_2 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_vermelho_2+= selecionar_animacao_dado;
-           if(caminho_jogador_vermelho_2.Length > 1)
-          {
-            iTween.MoveTo(jogador_vermelho_2, iTween.Hash("path", caminho_jogador_vermelho_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_vermelho_2, iTween.Hash("position", caminho_jogador_vermelho_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-           turno_jogador = "vermelho";
-           totalvermelhocasa +=1;
-           Debug.Log("Boa, chegou em casa meu veio!");
-           botao_jogador_vermelho_2.enabled=false;
-      }
-
-      else{
-        Debug.Log("You need" + (bloco_movimento_vermelho.Count - local_peca_vermelho_2).ToString() + "Steps to enter into the house");
-        if((local_peca_vermelho_1 + local_peca_vermelho_3 + local_peca_vermelho_4) == 0 && selecionar_animacao_dado !=6)
-        {
-
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 3:
-                turno_jogador = "amarelo";
-                break;
-
-                case 4:
-                turno_jogador = "azul";
-                break;
-            }
-
-        }
-        
-      inicializardado();
-
-
-
-      }
-
-    }
-        
-
-}
-
-
-public void jogador_vermelho_3_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_vermelho_1.SetActive(false);
-    borda_peca_vermelho_2.SetActive(false);
-    borda_peca_vermelho_3.SetActive(false);
-    borda_peca_vermelho_4.SetActive(false);
-
-    botao_jogador_vermelho_1.interactable = false;
-    botao_jogador_vermelho_2.interactable = false;
-    botao_jogador_vermelho_3.interactable = false;
-    botao_jogador_vermelho_4.interactable = false;
-
-    if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_3) > selecionar_animacao_dado)
-    {
-
-        if (local_peca_vermelho_3 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_vermelho_3 = new Vector3[selecionar_animacao_dado];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_vermelho_3[i] = bloco_movimento_vermelho[local_peca_vermelho_3 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_vermelho_3+= selecionar_animacao_dado;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_animacao_dado == 6)
-          {
-            turno_jogador = "vermelho";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 3:
-                turno_jogador = "amarelo";
-                break;
-
-                case 4:
-                turno_jogador = "azul";
-                break;
-            }
-          }
-
-          if(caminho_jogador_vermelho_3.Length > 1)
-          {
-            iTween.MoveTo(jogador_vermelho_3, iTween.Hash("path", caminho_jogador_vermelho_3, "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_vermelho_3, iTween.Hash("position", caminho_jogador_vermelho_3[0], "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_vermelho_3";
-        }
-        else{
-
-
-        if (selecionar_animacao_dado == 6 && local_peca_vermelho_3 == 0  )
-        {
-            Vector3[] caminho_jogador_vermelho_3 = new Vector3[1];
-            caminho_jogador_vermelho_3[0] = bloco_movimento_vermelho[local_peca_vermelho_3].transform.position;
-            local_peca_vermelho_3 +=1;
-            turno_jogador = "vermelho";
-            nome_jogador_atual = "jogador_vermelho_3";
-            iTween.MoveTo(jogador_vermelho_3, iTween.Hash("position", caminho_jogador_vermelho_3[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-    else{
-
-       if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_3)  == selecionar_animacao_dado)
-      
-      {
-        Vector3[] caminho_jogador_vermelho_3 = new Vector3[selecionar_animacao_dado];
-        for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_vermelho_3[i] = bloco_movimento_vermelho[local_peca_vermelho_3 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_vermelho_3+= selecionar_animacao_dado;
-           if(caminho_jogador_vermelho_3.Length > 1)
-          {
-            iTween.MoveTo(jogador_vermelho_3, iTween.Hash("path", caminho_jogador_vermelho_3, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_vermelho_3, iTween.Hash("position", caminho_jogador_vermelho_3[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-           turno_jogador = "vermelho";
-           totalvermelhocasa +=1;
-           Debug.Log("Boa, chegou em casa meu veio!");
-           botao_jogador_vermelho_3.enabled=false;
-      }
-
-      else{
-        Debug.Log("You need" + (bloco_movimento_vermelho.Count - local_peca_vermelho_3).ToString() + "Steps to enter into the house");
-        if((local_peca_vermelho_1 + local_peca_vermelho_2 + local_peca_vermelho_4) == 0 && selecionar_animacao_dado !=6)
-        {
-
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 3:
-                turno_jogador = "amarelo";
-                break;
-
-                case 4:
-                turno_jogador = "azul";
-                break;
-            }
-
-        }
-        
-      inicializardado();
-
-
-
-      }
-
-
-    }
-
-
-}
-
-
-
-public void jogador_vermelho_4_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_vermelho_1.SetActive(false);
-    borda_peca_vermelho_2.SetActive(false);
-    borda_peca_vermelho_3.SetActive(false);
-    borda_peca_vermelho_4.SetActive(false);
-
-    botao_jogador_vermelho_1.interactable = false;
-    botao_jogador_vermelho_2.interactable = false;
-    botao_jogador_vermelho_3.interactable = false;
-    botao_jogador_vermelho_4.interactable = false;
-
-    if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_4) > selecionar_animacao_dado)
-    {
-        if (local_peca_vermelho_4 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector4[] caminho_jogador_vermelho_4 = new Vector4[selecionar_animacao_dado];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_vermelho_4[i] = bloco_movimento_vermelho[local_peca_vermelho_4 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_vermelho_4+= selecionar_animacao_dado;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_animacao_dado == 6)
-          {
-            turno_jogador = "vermelho";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 3:
-                turno_jogador = "amarelo";
-                break;
-
-                case 4:
-                turno_jogador = "azul";
-                break;
-            }
-          }
-
-          if(caminho_jogador_vermelho_4.Length > 1)
-          {
-            iTween.MoveTo(jogador_vermelho_4, iTween.Hash("path", caminho_jogador_vermelho_4, "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_vermelho_4, iTween.Hash("position", caminho_jogador_vermelho_4[0], "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_vermelho_4";          
-        }
-        else{
-        
-        if (selecionar_animacao_dado == 6 && local_peca_vermelho_4 == 0  )
-        {
-            Vector3[] caminho_jogador_vermelho_4 = new Vector3[1];
-            caminho_jogador_vermelho_4[0] = bloco_movimento_vermelho[local_peca_vermelho_4].transform.position;
-            local_peca_vermelho_4 +=1;
-            turno_jogador = "vermelho";
-            nome_jogador_atual = "jogador_vermelho_4";
-            iTween.MoveTo(jogador_vermelho_4, iTween.Hash("position", caminho_jogador_vermelho_4[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-        }
-    }
-    else{
-
-       if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_4)  == selecionar_animacao_dado)
-      
-      {
-        Vector3[] caminho_jogador_vermelho_4 = new Vector3[selecionar_animacao_dado];
-        for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_vermelho_4[i] = bloco_movimento_vermelho[local_peca_vermelho_4 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_vermelho_4+= selecionar_animacao_dado;
-           if(caminho_jogador_vermelho_4.Length > 1)
-          {
-            iTween.MoveTo(jogador_vermelho_4, iTween.Hash("path", caminho_jogador_vermelho_4, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_vermelho_4, iTween.Hash("position", caminho_jogador_vermelho_4[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-           turno_jogador = "vermelho";
-           totalvermelhocasa +=1;
-           Debug.Log("Boa, chegou em casa meu veio!");
-           botao_jogador_vermelho_4.enabled=false;
-      }
-
-      else{
-        Debug.Log("You need" + (bloco_movimento_vermelho.Count - local_peca_vermelho_4).ToString() + "Steps to enter into the house");
-        if((local_peca_vermelho_1 + local_peca_vermelho_2 + local_peca_vermelho_3) == 0 && selecionar_animacao_dado !=6)
-        {
-
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 3:
-                turno_jogador = "amarelo";
-                break;
-
-                case 4:
-                turno_jogador = "azul";
-                break;
-            }
-
-        }
-        
-      inicializardado();
-
-
-
-      }
-
-    }
-        
-
-}
-/*
-
-█   █  ███  █   █ █████ █   █ █████ █   █ █████  ███  
-██ ██ █   █ █   █   █   ██ ██ █     ██  █   █   █   █ 
-█ █ █ █   █  █ █    █   █ █ █ ████  █ █ █   █   █   █ 
-█   █ █   █  █ █    █   █   █ █     █  ██   █   █   █ 
-█   █  ███    █   █████ █   █ █████ █   █   █    ███  
-
-
-███  █████  ████  ███       
-█   █ █     █     █   █ 
-████  ████  █     █████ 
-█     █     █     █   █ 
-█     █████  ████ █   █ 
-
-█   █ █████ ████  ████  █████ 
-█   █ █     █   █ █   █ █     
- █ █  ████  ████  █   █ ████  
- █ █  █     █   █ █   █ █     
-  █   █████ █   █ ████  █████ 
-
-*/
-public void jogador_verde_1_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_verde_1.SetActive(false);
-    borda_peca_verde_2.SetActive(false);
-    borda_peca_verde_3.SetActive(false);
-    borda_peca_verde_4.SetActive(false);
-
-    botao_jogador_verde_1.interactable = false;
-    botao_jogador_verde_2.interactable = false;
-    botao_jogador_verde_3.interactable = false;
-    botao_jogador_verde_4.interactable = false;
-
-    if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_1) > selecionar_animacao_dado)
-    {
-        if (local_peca_verde_1 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_verde_1 = new Vector3[selecionar_animacao_dado];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_verde_1[i] = bloco_movimento_verde[local_peca_verde_1 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_verde_1+= selecionar_animacao_dado;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_animacao_dado == 6)
-          {
-            turno_jogador = "verde";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                turno_jogador = "amarelo";
-                break;
-
-                case 3:
-                turno_jogador = "vermelho";
-                break;
-
-                case 4:
-                turno_jogador = "vermelho";
-                break;
-            }
-          }
-
-          if(caminho_jogador_verde_1.Length > 1)
-          {
-            iTween.MoveTo(jogador_verde_1, iTween.Hash("path", caminho_jogador_verde_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_verde_1, iTween.Hash("position", caminho_jogador_verde_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_verde_1";
-        }
-        else{
-
-
-        if (selecionar_animacao_dado == 6 && local_peca_verde_1 == 0  )
-        {
-            Vector3[] caminho_jogador_verde_1 = new Vector3[1];
-            caminho_jogador_verde_1[0] = bloco_movimento_verde[local_peca_verde_1].transform.position;
-            local_peca_verde_1 +=1;
-            turno_jogador = "verde";
-            nome_jogador_atual = "jogador_verde_1";
-            iTween.MoveTo(jogador_verde_1, iTween.Hash("position", caminho_jogador_verde_1[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-    }
-  }
-
-  else{
-
-  if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_1)  == selecionar_animacao_dado)
-  
-  {
-    Vector3[] caminho_jogador_verde_1 = new Vector3[selecionar_animacao_dado];
-    for(int i = 0; i < selecionar_animacao_dado; i++)
-       {
-        caminho_jogador_verde_1[i] = bloco_movimento_verde[local_peca_verde_1 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_verde_1+= selecionar_animacao_dado;
-       if(caminho_jogador_verde_1.Length > 1)
-      {
-        iTween.MoveTo(jogador_verde_1, iTween.Hash("path", caminho_jogador_verde_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_verde_1, iTween.Hash("position", caminho_jogador_verde_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "verde";
-       totalverdecasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_verde_1.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_verde.Count - local_peca_verde_1).ToString() + "Steps to enter into the house");
-    if((local_peca_verde_2 + local_peca_verde_3 + local_peca_verde_4) == 0 && selecionar_animacao_dado !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-           case 2:
-                turno_jogador = "amarelo";
-                break;
-
-                case 3:
-                turno_jogador = "vermelho";
-                break;
-
-                case 4:
-                turno_jogador = "vermelho";
-                break;
-
-    }
-    }
-  inicializardado();
-
-
-
-  
-  
-  
-}
-
-}
-
-
-
-        
-
-}
-
-
-///Movimentos das pecas verdes
-
-public void jogador_verde_2_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_verde_1.SetActive(false);
-    borda_peca_verde_2.SetActive(false);
-    borda_peca_verde_3.SetActive(false);
-    borda_peca_verde_4.SetActive(false);
-
-    botao_jogador_verde_1.interactable = false;
-    botao_jogador_verde_2.interactable = false;
-    botao_jogador_verde_3.interactable = false;
-    botao_jogador_verde_4.interactable = false;
-
-    if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_2) > selecionar_animacao_dado)
-    {
-
-         if (local_peca_verde_2 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_verde_2 = new Vector3[selecionar_animacao_dado];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_verde_2[i] = bloco_movimento_verde[local_peca_verde_2 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_verde_2+= selecionar_animacao_dado;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_animacao_dado == 6)
-          {
-            turno_jogador = "verde";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                turno_jogador = "amarelo";
-                break;
-
-                case 3:
-                turno_jogador = "vermelho";
-                break;
-
-                case 4:
-                turno_jogador = "vermelho";
-                break;
-            }
-          }
-
-          if(caminho_jogador_verde_2.Length > 1)
-          {
-            iTween.MoveTo(jogador_verde_2, iTween.Hash("path", caminho_jogador_verde_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_verde_2, iTween.Hash("position", caminho_jogador_verde_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_verde_2";
-        }
-        else{
-
-        
-
-
-
-
-
-
-        if (selecionar_animacao_dado == 6 && local_peca_verde_2 == 0  )
-        {
-            Vector3[] caminho_jogador_verde_2 = new Vector3[1];
-            caminho_jogador_verde_2[0] = bloco_movimento_verde[local_peca_verde_2].transform.position;
-            local_peca_verde_2 +=1;
-            turno_jogador = "verde";
-            nome_jogador_atual = "jogador_verde_2";
-            iTween.MoveTo(jogador_verde_2, iTween.Hash("position", caminho_jogador_verde_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-  
-  else{
-
-  if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_2)  == selecionar_animacao_dado)
-  
-  {
-    Vector3[] caminho_jogador_verde_2 = new Vector3[selecionar_animacao_dado];
-    for(int i = 0; i < selecionar_animacao_dado; i++)
-       {
-        caminho_jogador_verde_2[i] = bloco_movimento_verde[local_peca_verde_2 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_verde_2+= selecionar_animacao_dado;
-       if(caminho_jogador_verde_2.Length > 1)
-      {
-        iTween.MoveTo(jogador_verde_2, iTween.Hash("path", caminho_jogador_verde_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_verde_2, iTween.Hash("position", caminho_jogador_verde_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "verde";
-       totalverdecasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_verde_2.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_verde.Count - local_peca_verde_2).ToString() + "Steps to enter into the house");
-    if((local_peca_verde_1 + local_peca_verde_3 + local_peca_verde_4) == 0 && selecionar_animacao_dado !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-           case 2:
-                turno_jogador = "amarelo";
-                break;
-
-                case 3:
-                turno_jogador = "vermelho";
-                break;
-
-                case 4:
-                turno_jogador = "vermelho";
-                break;
-
-    }
-    }
-    
-  inicializardado();
-
-
-
-  
-  
-  
-  
-}
-
-}
-    
-
-}
-
-public void jogador_verde_3_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_verde_1.SetActive(false);
-    borda_peca_verde_2.SetActive(false);
-    borda_peca_verde_3.SetActive(false);
-    borda_peca_verde_4.SetActive(false);
-
-    botao_jogador_verde_1.interactable = false;
-    botao_jogador_verde_2.interactable = false;
-    botao_jogador_verde_3.interactable = false;
-    botao_jogador_verde_4.interactable = false;
-
-    if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_3) > selecionar_animacao_dado)
-    {
-
-
-
-        if (local_peca_verde_3 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_verde_3 = new Vector3[selecionar_animacao_dado];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_verde_3[i] = bloco_movimento_verde[local_peca_verde_3 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_verde_3+= selecionar_animacao_dado;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_animacao_dado == 6)
-          {
-            turno_jogador = "verde";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                turno_jogador = "amarelo";
-                break;
-
-                case 3:
-                turno_jogador = "vermelho";
-                break;
-
-                case 4:
-                turno_jogador = "vermelho";
-                break;
-            }
-          }
-
-          if(caminho_jogador_verde_3.Length > 1)
-          {
-            iTween.MoveTo(jogador_verde_3, iTween.Hash("path", caminho_jogador_verde_3, "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_verde_3, iTween.Hash("position", caminho_jogador_verde_3[0], "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_verde_3";
-        }
-        else{
-
-        
-
-
-
-        if (selecionar_animacao_dado == 6 && local_peca_verde_3 == 0  )
-        {
-            Vector3[] caminho_jogador_verde_3 = new Vector3[1];
-            caminho_jogador_verde_3[0] = bloco_movimento_verde[local_peca_verde_3].transform.position;
-            local_peca_verde_3 +=1;
-            turno_jogador = "verde";
-            nome_jogador_atual = "jogador_verde_3";
-            iTween.MoveTo(jogador_verde_3, iTween.Hash("position", caminho_jogador_verde_3[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-  else{
-
-  if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_3)  == selecionar_animacao_dado)
-  
-  {
-    Vector3[] caminho_jogador_verde_3 = new Vector3[selecionar_animacao_dado];
-    for(int i = 0; i < selecionar_animacao_dado; i++)
-       {
-        caminho_jogador_verde_3[i] = bloco_movimento_verde[local_peca_verde_3 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_verde_3+= selecionar_animacao_dado;
-       if(caminho_jogador_verde_3.Length > 1)
-      {
-        iTween.MoveTo(jogador_verde_3, iTween.Hash("path", caminho_jogador_verde_3, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_verde_3, iTween.Hash("position", caminho_jogador_verde_3[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "verde";
-       totalverdecasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_verde_3.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_verde.Count - local_peca_verde_3).ToString() + "Steps to enter into the house");
-    if((local_peca_verde_1 + local_peca_verde_2 + local_peca_verde_4) == 0 && selecionar_animacao_dado !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-           case 2:
-                turno_jogador = "amarelo";
-                break;
-
-                case 3:
-                turno_jogador = "vermelho";
-                break;
-
-                case 4:
-                turno_jogador = "vermelho";
-                break;
-
-    }
-    }
-    
-  inicializardado();
-
-
-
-  
-  
-  
-  
-}
-
-}
-
-        
-
-}
-
-public void jogador_verde_4_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_verde_1.SetActive(false);
-    borda_peca_verde_2.SetActive(false);
-    borda_peca_verde_3.SetActive(false);
-    borda_peca_verde_4.SetActive(false);
-
-    botao_jogador_verde_1.interactable = false;
-    botao_jogador_verde_2.interactable = false;
-    botao_jogador_verde_3.interactable = false;
-    botao_jogador_verde_4.interactable = false;
-
-    if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_4) > selecionar_animacao_dado)
-    {
-        if (local_peca_verde_4 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector4[] caminho_jogador_verde_4 = new Vector4[selecionar_animacao_dado];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_verde_4[i] = bloco_movimento_verde[local_peca_verde_4 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_verde_4+= selecionar_animacao_dado;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_animacao_dado == 6)
-          {
-            turno_jogador = "verde";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                 case 2:
-                turno_jogador = "amarelo";
-                break;
-
-                case 3:
-                turno_jogador = "vermelho";
-                break;
-
-                case 4:
-                turno_jogador = "vermelho";
-                break;
-            }
-          }
-
-          if(caminho_jogador_verde_4.Length > 1)
-          {
-            iTween.MoveTo(jogador_verde_4, iTween.Hash("path", caminho_jogador_verde_4, "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_verde_4, iTween.Hash("position", caminho_jogador_verde_4[0], "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_verde_4";
-        }
-        else{
-
-        
-        
-
-
-        if (selecionar_animacao_dado == 6 && local_peca_verde_4 == 0  )
-        {
-            Vector3[] caminho_jogador_verde_4 = new Vector3[1];
-            caminho_jogador_verde_4[0] = bloco_movimento_verde[local_peca_verde_4].transform.position;
-            local_peca_verde_4 +=1;
-            turno_jogador = "verde";
-            nome_jogador_atual = "jogador_verde_4";
-            iTween.MoveTo(jogador_verde_4, iTween.Hash("position", caminho_jogador_verde_4[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-
-  else{
-
-  if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_4)  == selecionar_animacao_dado)
-  
-  {
-    Vector3[] caminho_jogador_verde_4 = new Vector3[selecionar_animacao_dado];
-    for(int i = 0; i < selecionar_animacao_dado; i++)
-       {
-        caminho_jogador_verde_4[i] = bloco_movimento_verde[local_peca_verde_4 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_verde_4+= selecionar_animacao_dado;
-       if(caminho_jogador_verde_4.Length > 1)
-      {
-        iTween.MoveTo(jogador_verde_4, iTween.Hash("path", caminho_jogador_verde_4, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_verde_4, iTween.Hash("position", caminho_jogador_verde_4[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "verde";
-       totalverdecasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_verde_4.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_verde.Count - local_peca_verde_4).ToString() + "Steps to enter into the house");
-    if((local_peca_verde_1 + local_peca_verde_2 + local_peca_verde_3) == 0 && selecionar_animacao_dado !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-           case 2:
-                turno_jogador = "amarelo";
-                break;
-
-                case 3:
-                turno_jogador = "vermelho";
-                break;
-
-                case 4:
-                turno_jogador = "vermelho";
-                break;
-
-    }
-    }
-  inicializardado();
-
-
-
-  
-  
-  
-  
-}
-
-}
-
-
-}
-/*
-
-█   █  ███  █   █ █████ █   █ █████ █   █ █████  ███  
-██ ██ █   █ █   █   █   ██ ██ █     ██  █   █   █   █ 
-█ █ █ █   █  █ █    █   █ █ █ ████  █ █ █   █   █   █ 
-█   █ █   █  █ █    █   █   █ █     █  ██   █   █   █ 
-█   █  ███    █   █████ █   █ █████ █   █   █    ███  
-
-
-███  █████  ████  ███       
-█   █ █     █     █   █ 
-████  ████  █     █████ 
-█     █     █     █   █ 
-█     █████  ████ █   █ 
-
- ███  █████ █   █ █     
-█   █    █  █   █ █     
-█████   █   █   █ █     
-█   █  █    █   █ █     
-█   █ █████ █████ █████ 
-*/
-
-public void jogador_azul_1_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_azul_1.SetActive(false);
-    borda_peca_azul_2.SetActive(false);
-    borda_peca_azul_3.SetActive(false);
-    borda_peca_azul_4.SetActive(false);
-
-    botao_jogador_azul_1.interactable = false;
-    botao_jogador_azul_2.interactable = false;
-    botao_jogador_azul_3.interactable = false;
-    botao_jogador_azul_4.interactable = false;
-
-    if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_1) > selecionar_animacao_dado)
-    {
-
-
-        if (local_peca_azul_1 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_azul_1 = new Vector3[selecionar_animacao_dado];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_azul_1[i] = bloco_movimento_azul[local_peca_azul_1 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_azul_1+= selecionar_animacao_dado;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_animacao_dado == 6)
-          {
-            turno_jogador = "azul";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-               
-                case 4:
-                turno_jogador = "amarelo";
-                break;
-            }
-          }
-
-          if(caminho_jogador_azul_1.Length > 1)
-          {
-            iTween.MoveTo(jogador_azul_1, iTween.Hash("path", caminho_jogador_azul_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_azul_1, iTween.Hash("position", caminho_jogador_azul_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_azul_1";
-        }
-        else{
-
-
-        if (selecionar_animacao_dado == 6 && local_peca_azul_1 == 0  )
-        {
-            Vector3[] caminho_jogador_azul_1 = new Vector3[1];
-            caminho_jogador_azul_1[0] = bloco_movimento_azul[local_peca_azul_1].transform.position;
-            local_peca_azul_1 +=1;
-            turno_jogador = "azul";
-            nome_jogador_atual = "jogador_azul_1";
-            iTween.MoveTo(jogador_azul_1, iTween.Hash("position", caminho_jogador_azul_1[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-        }
-    }
-
-    else{
-
-  if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_1)  == selecionar_animacao_dado)
-  
-  {
-    Vector3[] caminho_jogador_azul_1 = new Vector3[selecionar_animacao_dado];
-    for(int i = 0; i < selecionar_animacao_dado; i++)
-       {
-        caminho_jogador_azul_1[i] = bloco_movimento_azul[local_peca_azul_1 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_azul_1+= selecionar_animacao_dado;
-       if(caminho_jogador_azul_1.Length > 1)
-      {
-        iTween.MoveTo(jogador_azul_1, iTween.Hash("path", caminho_jogador_azul_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_azul_1, iTween.Hash("position", caminho_jogador_azul_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "azul";
-       totalazulcasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_azul_1.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_azul.Count - local_peca_azul_1).ToString() + "Steps to enter into the house");
-    if((local_peca_azul_2 + local_peca_azul_3 + local_peca_azul_4) == 0 && selecionar_animacao_dado !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-                case 4:
-                turno_jogador = "amarelo";
-                break;
-
-    }
-    }
-    
-  inicializardado();
-
-
-
-  
-  
-  
-  
-}
-
-}
-        
-
-}
-
-
-
-public void jogador_azul_2_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_azul_1.SetActive(false);
-    borda_peca_azul_2.SetActive(false);
-    borda_peca_azul_3.SetActive(false);
-    borda_peca_azul_4.SetActive(false);
-
-    botao_jogador_azul_1.interactable = false;
-    botao_jogador_azul_2.interactable = false;
-    botao_jogador_azul_3.interactable = false;
-    botao_jogador_azul_4.interactable = false;
-
-    if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_2) > selecionar_animacao_dado)
-    {
-
-        if (local_peca_azul_2 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_azul_2 = new Vector3[selecionar_animacao_dado];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_azul_2[i] = bloco_movimento_azul[local_peca_azul_2 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_azul_2+= selecionar_animacao_dado;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_animacao_dado == 6)
-          {
-            turno_jogador = "azul";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                 case 4:
-                turno_jogador = "amarelo";
-                break;
-            }
-          }
-
-          if(caminho_jogador_azul_2.Length > 1)
-          {
-            iTween.MoveTo(jogador_azul_2, iTween.Hash("path", caminho_jogador_azul_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_azul_2, iTween.Hash("position", caminho_jogador_azul_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_azul_2";
-        }
-        else{
-
-
-        if (selecionar_animacao_dado == 6 && local_peca_azul_2 == 0  )
-        {
-            Vector3[] caminho_jogador_azul_2 = new Vector3[1];
-            caminho_jogador_azul_2[0] = bloco_movimento_azul[local_peca_azul_2].transform.position;
-            local_peca_azul_2 +=1;
-            turno_jogador = "azul";
-            nome_jogador_atual = "jogador_azul_2";
-            iTween.MoveTo(jogador_azul_2, iTween.Hash("position", caminho_jogador_azul_2[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-    else{
-
-  if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_2)  == selecionar_animacao_dado)
-  
-  {
-    Vector3[] caminho_jogador_azul_2 = new Vector3[selecionar_animacao_dado];
-    for(int i = 0; i < selecionar_animacao_dado; i++)
-       {
-        caminho_jogador_azul_2[i] = bloco_movimento_azul[local_peca_azul_2 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_azul_2+= selecionar_animacao_dado;
-       if(caminho_jogador_azul_2.Length > 1)
-      {
-        iTween.MoveTo(jogador_azul_2, iTween.Hash("path", caminho_jogador_azul_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_azul_2, iTween.Hash("position", caminho_jogador_azul_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "azul";
-       totalazulcasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_azul_2.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_azul.Count - local_peca_azul_2).ToString() + "Steps to enter into the house");
-    if((local_peca_azul_1 + local_peca_azul_3 + local_peca_azul_4) == 0 && selecionar_animacao_dado !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-                case 4:
-                turno_jogador = "amarelo";
-                break;
-
-    }
-    }
-  inicializardado();
-
-
-
-  
-  
-  
-  
-}
-
-}
-        
-
-}
-
-public void jogador_azul_3_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_azul_1.SetActive(false);
-    borda_peca_azul_2.SetActive(false);
-    borda_peca_azul_3.SetActive(false);
-    borda_peca_azul_4.SetActive(false);
-
-    botao_jogador_azul_1.interactable = false;
-    botao_jogador_azul_2.interactable = false;
-    botao_jogador_azul_3.interactable = false;
-    botao_jogador_azul_4.interactable = false;
-
-    if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_3) > selecionar_animacao_dado)
-    {
-
-
-        
-        if (local_peca_azul_3 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_azul_3 = new Vector3[selecionar_animacao_dado];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_azul_3[i] = bloco_movimento_azul[local_peca_azul_3 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_azul_3+= selecionar_animacao_dado;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_animacao_dado == 6)
-          {
-            turno_jogador = "azul";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 4:
-                turno_jogador = "amarelo";
-                break;
-            }
-          }
-
-          if(caminho_jogador_azul_3.Length > 1)
-          {
-            iTween.MoveTo(jogador_azul_3, iTween.Hash("path", caminho_jogador_azul_3, "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_azul_3, iTween.Hash("position", caminho_jogador_azul_3[0], "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_azul_3";
-        }
-        else{
-
-        
-
-
-
-
-
-        if (selecionar_animacao_dado == 6 && local_peca_azul_3 == 0  )
-        {
-            Vector3[] caminho_jogador_azul_3 = new Vector3[1];
-            caminho_jogador_azul_3[0] = bloco_movimento_azul[local_peca_azul_3].transform.position;
-            local_peca_azul_3 +=1;
-            turno_jogador = "azul";
-            nome_jogador_atual = "jogador_azul_3";
-            iTween.MoveTo(jogador_azul_3, iTween.Hash("position", caminho_jogador_azul_3[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-
-  else{
-
-  if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_3)  == selecionar_animacao_dado)
-  
-  {
-    Vector3[] caminho_jogador_azul_3 = new Vector3[selecionar_animacao_dado];
-    for(int i = 0; i < selecionar_animacao_dado; i++)
-       {
-        caminho_jogador_azul_3[i] = bloco_movimento_azul[local_peca_azul_3 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_azul_3+= selecionar_animacao_dado;
-       if(caminho_jogador_azul_3.Length > 1)
-      {
-        iTween.MoveTo(jogador_azul_3, iTween.Hash("path", caminho_jogador_azul_3, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_azul_3, iTween.Hash("position", caminho_jogador_azul_3[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "azul";
-       totalazulcasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_azul_3.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_azul.Count - local_peca_azul_3).ToString() + "Steps to enter into the house");
-    if((local_peca_azul_1 + local_peca_azul_2 + local_peca_azul_4) == 0 && selecionar_animacao_dado !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-                case 4:
-                turno_jogador = "amarelo";
-                break;
-
-    }
-    }
-  inicializardado();
-
-
-
-  
-  
-  
-  
-}
-
-}
-        
-
-}
-
-public void jogador_azul_4_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_azul_1.SetActive(false);
-    borda_peca_azul_2.SetActive(false);
-    borda_peca_azul_3.SetActive(false);
-    borda_peca_azul_4.SetActive(false);
-
-    botao_jogador_azul_1.interactable = false;
-    botao_jogador_azul_2.interactable = false;
-    botao_jogador_azul_3.interactable = false;
-    botao_jogador_azul_4.interactable = false;
-
-    if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_4) > selecionar_animacao_dado)
-    {
-
-        if (local_peca_azul_4 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector4[] caminho_jogador_azul_4 = new Vector4[selecionar_animacao_dado];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_azul_4[i] = bloco_movimento_azul[local_peca_azul_4 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_azul_4+= selecionar_animacao_dado;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_animacao_dado == 6)
-          {
-            turno_jogador = "azul";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 4:
-                turno_jogador = "amarelo";
-                break;
-            }
-          }
-
-          if(caminho_jogador_azul_4.Length > 1)
-          {
-            iTween.MoveTo(jogador_azul_4, iTween.Hash("path", caminho_jogador_azul_4, "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_azul_4, iTween.Hash("position", caminho_jogador_azul_4[0], "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_azul_4";
-        }
-        else{
-        
-
-
-        if (selecionar_animacao_dado == 6 && local_peca_azul_4 == 0  )
-        {
-            Vector3[] caminho_jogador_azul_4 = new Vector3[1];
-            caminho_jogador_azul_4[0] = bloco_movimento_azul[local_peca_azul_4].transform.position;
-            local_peca_azul_4 +=1;
-            turno_jogador = "azul";
-            nome_jogador_atual = "jogador_azul_4";
-            iTween.MoveTo(jogador_azul_4, iTween.Hash("position", caminho_jogador_azul_4[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-
-  else{
-
-  if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_4)  == selecionar_animacao_dado)
-  
-  {
-    Vector3[] caminho_jogador_azul_4 = new Vector3[selecionar_animacao_dado];
-    for(int i = 0; i < selecionar_animacao_dado; i++)
-       {
-        caminho_jogador_azul_4[i] = bloco_movimento_azul[local_peca_azul_4 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_azul_4+= selecionar_animacao_dado;
-       if(caminho_jogador_azul_4.Length > 1)
-      {
-        iTween.MoveTo(jogador_azul_4, iTween.Hash("path", caminho_jogador_azul_4, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_azul_4, iTween.Hash("position", caminho_jogador_azul_4[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "azul";
-       totalazulcasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_azul_4.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_azul.Count - local_peca_azul_4).ToString() + "Steps to enter into the house");
-    if((local_peca_azul_1 + local_peca_azul_2 + local_peca_azul_3) == 0 && selecionar_animacao_dado !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-                case 4:
-                turno_jogador = "amarelo";
-                break;
-
-    }
-    }
-    
-  inicializardado();
-
-
-
-  
-  
-  
-  
-}
-
-}
-
-}        
-
-/*
-
-█   █  ███  █   █ █████ █   █ █████ █   █ █████  ███  
-██ ██ █   █ █   █   █   ██ ██ █     ██  █   █   █   █ 
-█ █ █ █   █  █ █    █   █ █ █ ████  █ █ █   █   █   █ 
-█   █ █   █  █ █    █   █   █ █     █  ██   █   █   █ 
-█   █  ███    █   █████ █   █ █████ █   █   █    ███  
-
-
-███  █████  ████  ███       
-█   █ █     █     █   █ 
-████  ████  █     █████ 
-█     █     █     █   █ 
-█     █████  ████ █   █ 
-
- ███  █   █  ███  ████  █████ █      ███  
-█   █ ██ ██ █   █ █   █ █     █     █   █ 
-█████ █ █ █ █████ ████  ████  █     █   █ 
-█   █ █   █ █   █ █   █ █     █     █   █ 
-█   █ █   █ █   █ █   █ █████ █████  ███  
-
-*/
-
-
-
-public void jogador_amarelo_1_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_amarelo_1.SetActive(false);
-    borda_peca_amarelo_2.SetActive(false);
-    borda_peca_amarelo_3.SetActive(false);
-    borda_peca_amarelo_4.SetActive(false);
-
-    botao_jogador_amarelo_1.interactable = false;
-    botao_jogador_amarelo_2.interactable = false;
-    botao_jogador_amarelo_3.interactable = false;
-    botao_jogador_amarelo_4.interactable = false;
-
-    if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_1) > selecionar_animacao_dado)
-    {
-
-         if (local_peca_amarelo_1 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_amarelo_1 = new Vector3[selecionar_animacao_dado];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_amarelo_1[i] = bloco_movimento_amarelo[local_peca_amarelo_1 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_amarelo_1+= selecionar_animacao_dado;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_animacao_dado == 6)
-          {
-            turno_jogador = "amarelo";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                turno_jogador = "verde";
-                break;
-
-                case 3:
-                turno_jogador = "verde";
-                break;
-
-                case 4:
-                turno_jogador = "verde";
-                break;
-            }
-          }
-
-          if(caminho_jogador_amarelo_1.Length > 1)
-          {
-            iTween.MoveTo(jogador_amarelo_1, iTween.Hash("path", caminho_jogador_amarelo_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_amarelo_1, iTween.Hash("position", caminho_jogador_amarelo_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_amarelo_1";
-        }
-        else{
-
-
-
-        if (selecionar_animacao_dado == 6 && local_peca_amarelo_1 == 0  )
-        {
-            Vector3[] caminho_jogador_amarelo_1 = new Vector3[1];
-            caminho_jogador_amarelo_1[0] = bloco_movimento_amarelo[local_peca_amarelo_1].transform.position;
-            local_peca_amarelo_1 +=1;
-            turno_jogador = "amarelo";
-            nome_jogador_atual = "jogador_amarelo_1";
-            iTween.MoveTo(jogador_amarelo_1, iTween.Hash("position", caminho_jogador_amarelo_1[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-        }
-    }
-    else{
-
-  if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_1)  == selecionar_animacao_dado)
-  
-  {
-    Vector3[] caminho_jogador_amarelo_1 = new Vector3[selecionar_animacao_dado];
-    for(int i = 0; i < selecionar_animacao_dado; i++)
-       {
-        caminho_jogador_amarelo_1[i] = bloco_movimento_amarelo[local_peca_amarelo_1 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_amarelo_1+= selecionar_animacao_dado;
-       if(caminho_jogador_amarelo_1.Length > 1)
-      {
-        iTween.MoveTo(jogador_amarelo_1, iTween.Hash("path", caminho_jogador_amarelo_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_amarelo_1, iTween.Hash("position", caminho_jogador_amarelo_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "amarelo";
-       totalamarelocasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_amarelo_1.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_amarelo.Count - local_peca_amarelo_1).ToString() + "Steps to enter into the house");
-    if((local_peca_amarelo_2 + local_peca_amarelo_3 + local_peca_amarelo_4) == 0 && selecionar_animacao_dado !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-                case 2:
-                turno_jogador = "verde";
-                break;
-
-                case 3:
-                turno_jogador = "verde";
-                break;
-
-                case 4:
-                turno_jogador = "verde";
-                break;
-
-    }
-    }
-    
-  inicializardado();
-
-
-
- 
-  
-  
-  
-}
-    
-}        
-
-}
-
-public void jogador_amarelo_2_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_amarelo_1.SetActive(false);
-    borda_peca_amarelo_2.SetActive(false);
-    borda_peca_amarelo_3.SetActive(false);
-    borda_peca_amarelo_4.SetActive(false);
-
-    botao_jogador_amarelo_1.interactable = false;
-    botao_jogador_amarelo_2.interactable = false;
-    botao_jogador_amarelo_3.interactable = false;
-    botao_jogador_amarelo_4.interactable = false;
-
-    if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_2) > selecionar_animacao_dado)
-    {
-
-         if (local_peca_amarelo_2 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_amarelo_2 = new Vector3[selecionar_animacao_dado];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_amarelo_2[i] = bloco_movimento_amarelo[local_peca_amarelo_2 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_amarelo_2+= selecionar_animacao_dado;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_animacao_dado == 6)
-          {
-            turno_jogador = "amarelo";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                turno_jogador = "verde";
-                break;
-
-                case 3:
-                turno_jogador = "verde";
-                break;
-
-                case 4:
-                turno_jogador = "verde";
-                break;
-            }
-          }
-
-          if(caminho_jogador_amarelo_2.Length > 1)
-          {
-            iTween.MoveTo(jogador_amarelo_2, iTween.Hash("path", caminho_jogador_amarelo_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_amarelo_2, iTween.Hash("position", caminho_jogador_amarelo_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_amarelo_2";
-        }
-        else{
-
-        
-        
-
-        if (selecionar_animacao_dado == 6 && local_peca_amarelo_2 == 0  )
-        {
-            Vector3[] caminho_jogador_amarelo_2 = new Vector3[1];
-            caminho_jogador_amarelo_2[0] = bloco_movimento_amarelo[local_peca_amarelo_2].transform.position;
-            local_peca_amarelo_2 +=1;
-            turno_jogador = "amarelo";
-            nome_jogador_atual = "jogador_amarelo_2";
-            iTween.MoveTo(jogador_amarelo_2, iTween.Hash("position", caminho_jogador_amarelo_2[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-
-
-  else{
-
-  if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_2)  == selecionar_animacao_dado)
-  
-  {
-    Vector3[] caminho_jogador_amarelo_2 = new Vector3[selecionar_animacao_dado];
-    for(int i = 0; i < selecionar_animacao_dado; i++)
-       {
-        caminho_jogador_amarelo_2[i] = bloco_movimento_amarelo[local_peca_amarelo_2 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_amarelo_2+= selecionar_animacao_dado;
-       if(caminho_jogador_amarelo_2.Length > 1)
-      {
-        iTween.MoveTo(jogador_amarelo_2, iTween.Hash("path", caminho_jogador_amarelo_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_amarelo_2, iTween.Hash("position", caminho_jogador_amarelo_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "amarelo";
-       totalamarelocasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_amarelo_2.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_amarelo.Count - local_peca_amarelo_2).ToString() + "Steps to enter into the house");
-    if((local_peca_amarelo_1 + local_peca_amarelo_3 + local_peca_amarelo_4) == 0 && selecionar_animacao_dado !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-                case 2:
-                turno_jogador = "verde";
-                break;
-
-                case 3:
-                turno_jogador = "verde";
-                break;
-
-                case 4:
-                turno_jogador = "verde";
-                break;
-
-    }
-    }
-  inicializardado();
-
-
-
-  
-  
-  
-  
-}
-
-}
-        
-
-}
-
-public void jogador_amarelo_3_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_amarelo_1.SetActive(false);
-    borda_peca_amarelo_2.SetActive(false);
-    borda_peca_amarelo_3.SetActive(false);
-    borda_peca_amarelo_4.SetActive(false);
-
-    botao_jogador_amarelo_1.interactable = false;
-    botao_jogador_amarelo_2.interactable = false;
-    botao_jogador_amarelo_3.interactable = false;
-    botao_jogador_amarelo_4.interactable = false;
-
-    if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_3) > selecionar_animacao_dado)
-    {
-
-
-         if (local_peca_amarelo_3 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_amarelo_3 = new Vector3[selecionar_animacao_dado];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_amarelo_3[i] = bloco_movimento_amarelo[local_peca_amarelo_3 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_amarelo_3+= selecionar_animacao_dado;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_animacao_dado == 6)
-          {
-            turno_jogador = "amarelo";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-               case 2:
-                turno_jogador = "verde";
-                break;
-
-                case 3:
-                turno_jogador = "verde";
-                break;
-
-                case 4:
-                turno_jogador = "verde";
-                break;
-            }
-          }
-
-          if(caminho_jogador_amarelo_3.Length > 1)
-          {
-            iTween.MoveTo(jogador_amarelo_3, iTween.Hash("path", caminho_jogador_amarelo_3, "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_amarelo_3, iTween.Hash("position", caminho_jogador_amarelo_3[0], "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_amarelo_3";
-        }
-        else{
-
-
-
-
-
-
-        if (selecionar_animacao_dado == 6 && local_peca_amarelo_3 == 0  )
-        {
-            Vector3[] caminho_jogador_amarelo_3 = new Vector3[1];
-            caminho_jogador_amarelo_3[0] = bloco_movimento_amarelo[local_peca_amarelo_3].transform.position;
-            local_peca_amarelo_3 +=1;
-            turno_jogador = "amarelo";
-            nome_jogador_atual = "jogador_amarelo_3";
-            iTween.MoveTo(jogador_amarelo_3, iTween.Hash("position", caminho_jogador_amarelo_3[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-
-
-    else{
-
-  if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_3)  == selecionar_animacao_dado)
-  
-  {
-    Vector3[] caminho_jogador_amarelo_3 = new Vector3[selecionar_animacao_dado];
-    for(int i = 0; i < selecionar_animacao_dado; i++)
-       {
-        caminho_jogador_amarelo_3[i] = bloco_movimento_amarelo[local_peca_amarelo_3 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_amarelo_3+= selecionar_animacao_dado;
-       if(caminho_jogador_amarelo_3.Length > 1)
-      {
-        iTween.MoveTo(jogador_amarelo_3, iTween.Hash("path", caminho_jogador_amarelo_3, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_amarelo_3, iTween.Hash("position", caminho_jogador_amarelo_3[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "amarelo";
-       totalamarelocasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_amarelo_3.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_amarelo.Count - local_peca_amarelo_3).ToString() + "Steps to enter into the house");
-    if((local_peca_amarelo_1 + local_peca_amarelo_2 + local_peca_amarelo_4) == 0 && selecionar_animacao_dado !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-                case 2:
-                turno_jogador = "verde";
-                break;
-
-                case 3:
-                turno_jogador = "verde";
-                break;
-
-                case 4:
-                turno_jogador = "verde";
-                break;
-
-    }
-    }
-    
-  inicializardado();
-
-
-
- 
-  
-  
-  
-}
-
-}
-        
-
-}
-
-public void jogador_amarelo_4_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_amarelo_1.SetActive(false);
-    borda_peca_amarelo_2.SetActive(false);
-    borda_peca_amarelo_3.SetActive(false);
-    borda_peca_amarelo_4.SetActive(false);
-
-    botao_jogador_amarelo_1.interactable = false;
-    botao_jogador_amarelo_2.interactable = false;
-    botao_jogador_amarelo_3.interactable = false;
-    botao_jogador_amarelo_4.interactable = false;
-
-    if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_4) > selecionar_animacao_dado)
-    {
-
-
-        if (local_peca_amarelo_4 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector4[] caminho_jogador_amarelo_4 = new Vector4[selecionar_animacao_dado];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_animacao_dado; i++)
-           {
-            caminho_jogador_amarelo_4[i] = bloco_movimento_amarelo[local_peca_amarelo_4 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_amarelo_4+= selecionar_animacao_dado;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_animacao_dado == 6)
-          {
-            turno_jogador = "amarelo";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-              case 2:
-                turno_jogador = "verde";
-                break;
-
-                case 3:
-                turno_jogador = "verde";
-                break;
-
-                case 4:
-                turno_jogador = "verde";
-                break;
-            }
-          }
-
-          if(caminho_jogador_amarelo_4.Length > 1)
-          {
-            iTween.MoveTo(jogador_amarelo_4, iTween.Hash("path", caminho_jogador_amarelo_4, "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_amarelo_4, iTween.Hash("position", caminho_jogador_amarelo_4[0], "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_amarelo_4";
-        }
-        else{
-
-
-
-        if (selecionar_animacao_dado == 6 && local_peca_amarelo_4 == 0  )
-        {
-            Vector3[] caminho_jogador_amarelo_4 = new Vector3[1];
-            caminho_jogador_amarelo_4[0] = bloco_movimento_amarelo[local_peca_amarelo_4].transform.position;
-            local_peca_amarelo_4 +=1;
-            turno_jogador = "amarelo";
-            nome_jogador_atual = "jogador_amarelo_4";
-            iTween.MoveTo(jogador_amarelo_4, iTween.Hash("position", caminho_jogador_amarelo_4[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-
-
-    else{
-
-  if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_4)  == selecionar_animacao_dado)
-  
-  {
-    Vector3[] caminho_jogador_amarelo_4 = new Vector3[selecionar_animacao_dado];
-    for(int i = 0; i < selecionar_animacao_dado; i++)
-       {
-        caminho_jogador_amarelo_4[i] = bloco_movimento_amarelo[local_peca_amarelo_4 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_amarelo_4+= selecionar_animacao_dado;
-       if(caminho_jogador_amarelo_4.Length > 1)
-      {
-        iTween.MoveTo(jogador_amarelo_4, iTween.Hash("path", caminho_jogador_amarelo_4, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_amarelo_4, iTween.Hash("position", caminho_jogador_amarelo_4[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "amarelo";
-       totalamarelocasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_amarelo_4.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_amarelo.Count - local_peca_amarelo_4).ToString() + "Steps to enter into the house");
-    if((local_peca_amarelo_1 + local_peca_amarelo_2 + local_peca_amarelo_3) == 0 && selecionar_animacao_dado !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-                case 2:
-                turno_jogador = "verde";
-                break;
-
-                case 3:
-                turno_jogador = "verde";
-                break;
-
-                case 4:
-                turno_jogador = "verde";
-                break;
-
-    }
-    }
-  inicializardado();
-
-
-
-  
-  
-  
-  
-}
-
-}
-        
-
-}
 
 
 
