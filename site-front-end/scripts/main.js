@@ -24,7 +24,7 @@ if (getCookie("loginToken") && !isCookieExpired("loginToken")) {
     alert("usuario ta logado");
 } else {
     alert("usuario nao ta logado, rediricionando a pagina de login...");
-    window.location.href = "login.html";
+    window.location.href = "cadastro.html";
 }
 
 
