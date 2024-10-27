@@ -1,3 +1,5 @@
 site-back-end/obj
 site-back-end/bin
 ludo-game/Library
+launch.json
+tasks.json
