@@ -1,4866 +1,3962 @@
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-/*
-Disclaimer: 
-Por enquanto, estou trabalhando com essa quantidade gigantesca de objetos sem ser em array, o que pode complicar o projeto no futuro e não ideal para trabalhar.
-Primeiro vou deixar de pé, depois quero ver se consigo consertar isso:
+public class GameScript : MonoBehaviour {
 
-Não é fácil, pois temos que descobrir um jeito de assinalar X a 1, 2, 3, 4 de alguma forma.
+	private int totalBlueInHouse,totalRedInHouse,totalGreenInHouse,totalYellowInHouse;
 
-*/
+	public GameObject frameRed,frameGreen, frameBlue, frameYellow;
 
-public class GameScript : MonoBehaviour{
+	public GameObject redPlayerI_Border,redPlayerII_Border,redPlayerIII_Border,redPlayerIV_Border;
+	public GameObject greenPlayerI_Border,greenPlayerII_Border,greenPlayerIII_Border,greenPlayerIV_Border;
+	public GameObject bluePlayerI_Border,bluePlayerII_Border,bluePlayerIII_Border,bluePlayerIV_Border;
+	public GameObject yellowPlayerI_Border,yellowPlayerII_Border,yellowPlayerIII_Border,yellowPlayerIV_Border;
 
-    // Se total é igual a 1 temos 3 peças no tabuleiro da casa de cor. Vai armazenar quanto falta para acabar.
-    private int totalvermelhocasa, totalverdecasa, totalazulcasa, totalamarelocasa;
+	public Vector3 redPlayerI_Pos,redPlayerII_Pos,redPlayerIII_Pos,redPlayerIV_Pos;
+	public Vector3 greenPlayerI_Pos,greenPlayerII_Pos,greenPlayerIII_Pos,greenPlayerIV_Pos;
+	public Vector3 bluePlayerI_Pos,bluePlayerII_Pos,bluePlayerIII_Pos,bluePlayerIV_Pos;
+	public Vector3 yellowPlayerI_Pos,yellowPlayerII_Pos,yellowPlayerIII_Pos,yellowPlayerIV_Pos;
 
-    //Borda da casa inteira, mostrando que é o turno do jogador. Tem que criar os objetos.
-    public GameObject frame_vermelho, frame_verde, frame_amarelo, frame_azul;
+	public Button RedPlayerI_Button, RedPlayerII_Button,RedPlayerIII_Button, RedPlayerIV_Button;
+	public Button GreenPlayerI_Button, GreenPlayerII_Button,GreenPlayerIII_Button, GreenPlayerIV_Button;
+	public Button BluePlayerI_Button, BluePlayerII_Button,BluePlayerIII_Button, BluePlayerIV_Button;
+	public Button YellowPlayerI_Button, YellowPlayerII_Button,YellowPlayerIII_Button, YellowPlayerIV_Button;
 
-    //Bordas para mostrar que a peça está disponível para jogo. Temos que criar os objetos ainda. 
-    public GameObject borda_peca_vermelho_1, borda_peca_vermelho_2, borda_peca_vermelho_3, borda_peca_vermelho_4;
-    public GameObject borda_peca_verde_1, borda_peca_verde_2, borda_peca_verde_3, borda_peca_verde_4;
-    public GameObject borda_peca_amarelo_1, borda_peca_amarelo_2, borda_peca_amarelo_3, borda_peca_amarelo_4;
-    public GameObject borda_peca_azul_1, borda_peca_azul_2, borda_peca_azul_3, borda_peca_azul_4;  
+	public GameObject blueScreen, greenScreen, redScreen, yellowScreen;
+	public Text blueRankText, greenRankText, redRankText, yellowRankText;
 
-    //Vetores para assinalar a posição das peças do tabuleiro, vinculadas a algum dos objetos já inseridos internamente
+	private string playerTurn = "RED";
+	public Transform diceRoll;
+	public Button DiceRollButton;
+	public Transform redDiceRollPos, greenDiceRollPos, blueDiceRollPos, yellowDiceRollPos;
 
-    public Vector3 posicao_peca_vermelho_1, posicao_peca_vermelho_2, posicao_peca_vermelho_3, posicao_peca_vermelho_4;
-    public Vector3 posicao_peca_verde_1, posicao_peca_verde_2, posicao_peca_verde_3, posicao_peca_verde_4;
-    public Vector3 posicao_peca_amarelo_1, posicao_peca_amarelo_2, posicao_peca_amarelo_3, posicao_peca_amarelo_4;
-    public Vector3 posicao_peca_azul_1, posicao_peca_azul_2, posicao_peca_azul_3, posicao_peca_azul_4;
-    
-    //Determina quando ou não podemos selecionar as peças de cada cor para jogar.
-    public Button botao_jogador_vermelho_1, botao_jogador_vermelho_2,botao_jogador_vermelho_3, botao_jogador_vermelho_4;
-    public Button botao_jogador_verde_1, botao_jogador_verde_2, botao_jogador_verde_3, botao_jogador_verde_4;
-    public Button botao_jogador_amarelo_1, botao_jogador_amarelo_2, botao_jogador_amarelo_3 , botao_jogador_amarelo_4;
-    public Button botao_jogador_azul_1, botao_jogador_azul_2, botao_jogador_azul_3, botao_jogador_azul_4;
+	private string currentPlayer = "none";
+	private string currentPlayerName = "none";
 
-    //Vai cobrir cada canto de jogador com alguma coisa que mostre que ele venceu, pode ser um minimapa de ludo, um quadrado dizendo venceu, qualquer coisa.
-    public GameObject vitoria_azul, vitoria_verde, vitoria_amarelo, vitoria_vermelho;
+	public GameObject redPlayerI,redPlayerII,redPlayerIII,redPlayerIV;
+	public GameObject greenPlayerI,greenPlayerII,greenPlayerIII,greenPlayerIV;
+	public GameObject bluePlayerI,bluePlayerII,bluePlayerIII,bluePlayerIV;
+	public GameObject yellowPlayerI,yellowPlayerII,yellowPlayerIII,yellowPlayerIV;
 
-//Responsável pela animação do dado. Não criei a animação dentro do unity ainda, só assinalei as imagens.
-    public Transform rodar_dado;
+	private int redPlayerI_Steps,redPlayerII_Steps,redPlayerIII_Steps,redPlayerIV_Steps;
+	private int greenPlayerI_Steps,greenPlayerII_Steps,greenPlayerIII_Steps,greenPlayerIV_Steps;
+	private int bluePlayerI_Steps,bluePlayerII_Steps,bluePlayerIII_Steps,bluePlayerIV_Steps;
+	private int yellowPlayerI_Steps,yellowPlayerII_Steps,yellowPlayerIII_Steps,yellowPlayerIV_Steps;
+	//selection of dice numbers animation...
+	private int selectDiceNumAnimation;
 
-//Assinalar o dado a qualquer uma das posicoes de jogador. Podemos tirar isso, acho que fica muito poluído.
+	//--------------- Dice Animations------
+	public GameObject dice1_Roll_Animation;
+	public GameObject dice2_Roll_Animation;
+	public GameObject dice3_Roll_Animation;
+	public GameObject dice4_Roll_Animation;
+	public GameObject dice5_Roll_Animation;
+	public GameObject dice6_Roll_Animation;
 
-    public Transform dado_vermelho_rolagem, dado_verde_rolagem, dado_azul_rolagem, dado_amarelo_rolagem;
+	// Players movement corenspoding to blocks...
+	public List<GameObject> redMovementBlocks = new List<GameObject>();
+	public List<GameObject> greenMovementBlocks = new List<GameObject>();
+	public List<GameObject> yellowMovementBlocks = new List<GameObject>();
+	public List<GameObject> blueMovementBlocks = new List<GameObject>();
 
-//Botao que faz que o dado só funcione para o jogador clickar quando for devido.
-    public Button botaodado;
+	// Random generation of dice numbers...
+	private System.Random randomNo;
+	public GameObject confirmScreen;
+	public GameObject gameCompletedScreen;
 
-
-
-
-   /* 
-
-   ----------DISCLAIMER--------
-   ATIVA DEPOIS, só para não ficar com flag de warning no unity
-   */
-    private string turno_jogador = "amarelo";
-    private string jogador_atual = "none";
-    private string nome_jogador_atual = "none";
-
-//Responsável pelo movimento das peças. Após todas as etapas de movimento anterior. Da para escolher qual peça jogar, falei merda.
-
-    public GameObject jogador_vermelho_1, jogador_vermelho_2, jogador_vermelho_3, jogador_vermelho_4;
-    public GameObject jogador_verde_1, jogador_verde_2, jogador_verde_3, jogador_verde_4;
-    public GameObject jogador_amarelo_1, jogador_amarelo_2, jogador_amarelo_3, jogador_amarelo_4;
-    public GameObject jogador_azul_1, jogador_azul_2, jogador_azul_3, jogador_azul_4;
-
-
-
-
-//vai armazenar a posição de onde está cada peça
-
-    private int local_peca_vermelho_1, local_peca_vermelho_2, local_peca_vermelho_3, local_peca_vermelho_4;
-    private int local_peca_verde_1, local_peca_verde_2, local_peca_verde_3, local_peca_verde_4;
-    private int local_peca_amarelo_1, local_peca_amarelo_2, local_peca_amarelo_3, local_peca_amarelo_4;
-    private int local_peca_azul_1, local_peca_azul_2, local_peca_azul_3, local_peca_azul_4;
-
-
-    //Animações do dado abaixo
-    private int selecionar_num_dado_animacao;
-
-    public GameObject animacao_dado_1, animacao_dado_2, animacao_dado_3, animacao_dado_4, animacao_dado_5, animacao_dado_6;
-
-    // Aqui associamos cada uma das posições do tabuleiro para cada um dos jogadores a uma lista que podemos associar a valores do dado.
-
-    public List<GameObject> bloco_movimento_vermelho = new List<GameObject>();
-    public List<GameObject> bloco_movimento_verde = new List<GameObject>();
-    public List<GameObject> bloco_movimento_azul = new List<GameObject>();
-    public List<GameObject> bloco_movimento_amarelo = new List<GameObject>();
-
-//Valores aleatórios de 1 a 6 para o dado :);
-    private System.Random randNo;
-    //Tela do Deseja sair? sim/nao
-    public GameObject tela_confirmar_sair;
-
-    //O jogo acabou uhu
-    public GameObject tela_jogo_acabou;
-
-
-// ================================================================================= CLIQUEI NO BOTAO SAIR ====================================================================
-//métodos de entrada e saída do jogo
-    public void sairjogo () 
-    {
-    SoundManager.buttonAudioSource.Play ();
-    tela_confirmar_sair.SetActive(true);
-    }
-
-    public void simsairjogo () {
-    SoundManager.buttonAudioSource.Play ();
-		SceneManager.LoadScene ("Main Menu");
-    }
-//TROCAR O NOME PARA MENUPRINCIPAL OU A CENA QUE VOU USAR
-    public void naosairjogo()
+	//===== UI Button ===================
+	public void yesGameCompleted()
 	{
-		SoundManager.buttonAudioSource.Play ();
-		tela_confirmar_sair.SetActive (false);
+		SoundManagerScript.buttonAudioSource.Play ();
+		SceneManager.LoadScene ("Ludo");
 	}
 
-
-
-//================================================================================= O JOGO ACABOU -- FUNCOES ===================================================================
-
-    IEnumerator jogocompletorotina ()
-    {
-
-    yield return new WaitForSeconds (1.5f);
-    tela_jogo_acabou.SetActive(true);
-    } 
-
-
-//Sim quero jogar de novo
-    public void simjogoacabou ()
-    {   
-    SoundManager.buttonAudioSource.Play ();
-    SceneManager.LoadScene("Ludo");
-    }
-
-//Nao quero jogar de novo
-    public void naojogoacabou ()
-    {
-    SoundManager.buttonAudioSource.Play ();
-    SceneManager.LoadScene("Main Menu");
-    }
-
-
-
-
-
-/*
-██████░██████▄░██████░▄█████░██████░▄████▄░██░░░░░██████░███████░▄████▄░█████▄░░░██████▄░▄████▄░██████▄░▄█████▄
-░░██░░░██░░░██░░░██░░░██░░░░░░░██░░░██░░██░██░░░░░░░██░░░░░░░░██░██░░██░██░░██░░░██░░░██░██░░██░██░░░██░██░░░██
-░░██░░░██░░░██░░░██░░░██░░░░░░░██░░░██░░██░██░░░░░░░██░░░▄█████▀░██░░██░█████▀░░░██░░░██░██░░██░██░░░██░██░░░██
-░░██░░░██░░░██░░░██░░░██░░░░░░░██░░░██████░██░░░░░░░██░░░██░░░░░░██████░██░░██░░░██░░░██░██████░██░░░██░██░░░██
-██████░██░░░██░██████░▀█████░██████░██░░██░██████░██████░███████░██░░██░██░░██░░░██████▀░██░░██░██████▀░▀█████▀
-░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-
-
-
-
-===================================== Rotina que inicializa o dado no início ou nos finais de turno ===================================================================
-
-*/
-
-   private void inicializardado ()
-{   
-        botaodado.interactable = true;
-        animacao_dado_1.SetActive(false);
-        animacao_dado_2.SetActive(false);
-        animacao_dado_3.SetActive(false);
-        animacao_dado_4.SetActive(false);
-        animacao_dado_5.SetActive(false);
-        animacao_dado_6.SetActive(false);
-
-        /*
-
-
-           ███████╗ ██╗ ███╗░░░███╗   ██████╗░ ░█████╗░   ░░░░░██╗ ░█████╗░ ░██████╗░ ░█████╗░
-           ██╔════╝ ██║ ████╗░████║   ██╔══██╗ ██╔══██╗   ░░░░░██║ ██╔══██╗ ██╔════╝░ ██╔══██╗
-           █████╗░░ ██║ ██╔████╔██║   ██║░░██║ ██║░░██║   ░░░░░██║ ██║░░██║ ██║░░██╗░ ██║░░██║
-           ██╔══╝░░ ██║ ██║╚██╔╝██║   ██║░░██║ ██║░░██║   ██╗░░██║ ██║░░██║ ██║░░╚██╗ ██║░░██║
-           ██║░░░░░ ██║ ██║░╚═╝░██║   ██████╔╝ ╚█████╔╝   ╚█████╔╝ ╚█████╔╝ ╚██████╔╝ ╚█████╔╝
-           ╚═╝░░░░░ ╚═╝ ╚═╝░░░░░╚═╝   ╚═════╝░ ░╚════╝░   ░╚════╝░ ░╚════╝░ ░╚═════╝░ ░╚════╝░
-
-
-
-====================================== Conferindo quais jogadores venceram a partida ======================================================
-         */
-        
-
-            
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-          case 2:
-//Só PODE VENCER VERDE E AMARELO
-          if(totalamarelocasa > 3)
-          {
-            SoundManager.winAudioSource.Play();
-            vitoria_amarelo.SetActive(true);
-            StartCoroutine("jogocompletorotina");
-            turno_jogador = "none";            
-          }
-          if(totalverdecasa > 3)
-          {
-            SoundManager.winAudioSource.Play();
-            vitoria_verde.SetActive(true);
-            StartCoroutine("jogocompletorotina");
-            turno_jogador = "none";            
-          }
-          break;
-
-          case 3:
-//============== QUANDO O PRIMEIRO DE 3 JOGADORES VENCEU
-
-          if(totalamarelocasa > 3 && totalverdecasa < 4 && totalvermelhocasa < 4 && turno_jogador == "amarelo")
-          {
-            if(!vitoria_amarelo.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }  
-            vitoria_amarelo.SetActive(true);
-            Debug.Log("jogador amarelo venceu");
-          
-            turno_jogador = "verde";
-                     
-          }
-          if(totalverdecasa > 3 && totalamarelocasa < 4 && totalvermelhocasa < 4 && turno_jogador == "verde")
-          {
-            if(!vitoria_verde.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }  
-            vitoria_verde.SetActive(true);
-            Debug.Log("jogador verde venceu");
-            
-            turno_jogador = "vermelho";
-                     
-          }
-        
-          if(totalvermelhocasa > 3 && totalamarelocasa < 4 && totalvermelhocasa < 4 && turno_jogador == "vermelho")
-          {
-            if(!vitoria_vermelho.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }  
-            vitoria_vermelho.SetActive(true);
-            Debug.Log("jogador vermelho venceu");
-            
-            turno_jogador = "amarelo";
-                     
-          }
-
-
-          //===========================================================QUANDO O SEGUNDO DOS 3 JOGADORES VENCEU ===========================================================
-
-          if (totalamarelocasa > 3 && totalverdecasa > 3 && totalvermelhocasa < 4 )
-          {
-
-            if (!vitoria_amarelo.activeInHierarchy)
-            {
-              SoundManager.winAudioSource.Play();
-            }
-            if(!vitoria_verde.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            } 
-            vitoria_amarelo.SetActive(true);
-            vitoria_verde.SetActive(true);
-
-
-            StartCoroutine("jogocompletorotina");
-            Debug.Log("Jogo concluido");
-            turno_jogador = "none";
-
-          }
-
-
-          if (totalamarelocasa > 3 && totalvermelhocasa > 3 && totalverdecasa < 4 )
-          {
-
-            if (!vitoria_amarelo.activeInHierarchy)
-            {
-              SoundManager.winAudioSource.Play();
-            }
-            if(!vitoria_vermelho.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            } 
-            vitoria_amarelo.SetActive(true);
-            vitoria_vermelho.SetActive(true);
-
-
-            StartCoroutine("jogocompletorotina");
-            Debug.Log("Jogo concluido");
-            turno_jogador = "none";
-
-          }
-
-
-          
-          if (totalverdecasa > 3 && totalvermelhocasa > 3 && totalamarelocasa < 4 )
-          {
-
-            if (!vitoria_verde.activeInHierarchy)
-            {
-              SoundManager.winAudioSource.Play();
-            }
-            if(!vitoria_vermelho.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            } 
-            vitoria_verde.SetActive(true);
-            vitoria_vermelho.SetActive(true);
-
-
-            StartCoroutine("jogocompletorotina");
-            Debug.Log("Jogo concluido");
-            turno_jogador = "none";
-
-          }
-          break;
-    
-
-
-    
-           case 4:
-//======================================================== QUANDO O PRIMEIRO DOS QUATRO JOGADORES VENCEU ====================================================
-
-            if(totalamarelocasa > 3 && totalverdecasa < 4 && totalvermelhocasa < 4 && totalazulcasa < 4 && turno_jogador == "amarelo")
-          {
-            if(!vitoria_amarelo.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }  
-            vitoria_amarelo.SetActive(true);
-            Debug.Log("jogador amarelo venceu");
-          
-            turno_jogador = "verde";
-                     
-          }
-
-
-          if(totalverdecasa > 3 && totalamarelocasa < 4 && totalvermelhocasa < 4 && totalazulcasa < 4 && turno_jogador == "verde")
-          {
-            if(!vitoria_verde.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }  
-            vitoria_verde.SetActive(true);
-            Debug.Log("jogador verde venceu");
-            
-            turno_jogador = "vermelho";
-                     
-          }
-
-          if(totalvermelhocasa > 3 && totalamarelocasa < 4 && totalvermelhocasa < 4 && totalazulcasa < 4  && turno_jogador == "vermelho")
-          {
-            if(!vitoria_vermelho.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }  
-            vitoria_vermelho.SetActive(true);
-            Debug.Log("jogador vermelho venceu");
-            
-            turno_jogador = "azul";
-                     
-          }
-          if(totalazulcasa > 3 && totalamarelocasa < 4 && totalazulcasa < 4 && totalvermelhocasa < 4  && turno_jogador == "azul")
-          {
-            if(!vitoria_azul.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }  
-            vitoria_azul.SetActive(true);
-            Debug.Log("jogador azul venceu");
-            
-            turno_jogador = "amarelo";
-                     
-          }
-
-
-
-
-          //============================================================QUANDO O SEGUNDO DOS 4 JOGADORES VENCEU===========================================================
-        
-
-           if(totalamarelocasa > 3 && totalverdecasa > 3 && totalvermelhocasa < 4 && totalazulcasa < 4 && (turno_jogador == "amarelo" || turno_jogador == "verde"))
-          {
-            if(!vitoria_amarelo.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }
-            if(!vitoria_verde.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }  
-            vitoria_amarelo.SetActive(true);
-            vitoria_verde.SetActive(true);
-            Debug.Log("jogador amarelo e verde venceram");
-        
-            if(turno_jogador == "amarelo")
-            {
-              turno_jogador = "vermelho";
-            }
-            else{
-              if(turno_jogador == "verde")
-              {
-              turno_jogador = "vermelho";
-              }
-            }                          
-          }
-
-
-         if(totalamarelocasa > 3 && totalazulcasa > 3 && totalvermelhocasa < 4 && totalverdecasa < 4 && (turno_jogador == "amarelo" || turno_jogador == "azul"))
-          {
-            if(!vitoria_amarelo.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }
-            if(!vitoria_azul.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }  
-            vitoria_amarelo.SetActive(true);
-            vitoria_azul.SetActive(true);
-            Debug.Log("jogador amarelo e azul venceram");
-        
-            if(turno_jogador == "amarelo")
-            {
-              turno_jogador = "verde";
-            }
-            else{
-            if(turno_jogador == "azul")
-            {
-              turno_jogador = "verde";
-            }
-            }                          
-          }
-
-         if(totalamarelocasa > 3 && totalvermelhocasa > 3 && totalazulcasa < 4 && totalverdecasa < 4 && (turno_jogador == "amarelo" || turno_jogador == "vermelho"))
-          {
-            if(!vitoria_amarelo.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }
-            if(!vitoria_vermelho.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }  
-            vitoria_amarelo.SetActive(true);
-            vitoria_vermelho.SetActive(true);
-            Debug.Log("jogador amarelo e vermelho venceram");
-        
-            if(turno_jogador == "amarelo")
-            {
-              turno_jogador = "verde";
-            }
-            else{
-            if(turno_jogador == "vermelho")
-            {
-              turno_jogador = "azul";
-            }
-            }                          
-          }
-
-          
-         if(totalverdecasa > 3 && totalazulcasa > 3 && totalvermelhocasa < 4 && totalamarelocasa < 4 && turno_jogador == "verde" || turno_jogador == "azul")
-          {
-            if(!vitoria_verde.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }
-            if(!vitoria_azul.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }  
-            vitoria_verde.SetActive(true);
-            vitoria_azul.SetActive(true);
-            Debug.Log("jogador verde e azul venceram");
-        
-            if(turno_jogador == "verde")
-            {
-              turno_jogador = "vermelho";
-            }
-            else{
-            if(turno_jogador == "azul")
-            {
-              turno_jogador = "amarelo";
-            }
-            }                          
-          }
-
-
-          
-         if(totalverdecasa > 3 && totalvermelhocasa > 3 && totalazulcasa < 4 && totalamarelocasa < 4 && (turno_jogador == "verde" || turno_jogador == "vermelho"))
-          {
-            if(!vitoria_verde.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }
-            if(!vitoria_vermelho.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }  
-            vitoria_verde.SetActive(true);
-            vitoria_vermelho.SetActive(true);
-            Debug.Log("jogador verde e vermelho venceram");
-        
-            if(turno_jogador == "verde")
-            {
-              turno_jogador = "azul";
-            }
-            else{
-            if(turno_jogador == "vermelho")
-            {
-              turno_jogador = "azul";
-            }    
-            }                      
-          }
-
-             if(totalazulcasa > 3 && totalvermelhocasa > 3 && totalverdecasa < 4 && totalamarelocasa < 4 && (turno_jogador == "azul" || turno_jogador == "vermelho"))
-          {
-            if(!vitoria_azul.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }
-            if(!vitoria_vermelho.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }  
-            vitoria_azul.SetActive(true);
-            vitoria_vermelho.SetActive(true);
-            Debug.Log("jogador azul e vermelho venceram");
-        
-            if(turno_jogador == "azul")
-            {
-              turno_jogador = "amarelo";
-            }
-            else{
-            if(turno_jogador == "vermelho")
-            {
-              turno_jogador = "amarelo";
-            }    
-            }                      
-          }
-        
-
-          //==============================================QUANDO O TERCEIRO DOS 4 JOGADORES VENCEU ==============================================================
-            if(totalamarelocasa > 3 && totalverdecasa > 3 && totalvermelhocasa > 3 && totalazulcasa < 4)
-          {
-            if(!vitoria_amarelo.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }
-            if(!vitoria_verde.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }  
-            if(!vitoria_vermelho.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            } 
-            vitoria_amarelo.SetActive(true);
-            vitoria_verde.SetActive(true);
-            vitoria_vermelho.SetActive(true);
-            StartCoroutine("jogocompletorotina");
-            Debug.Log("o jogo acabou");
-            turno_jogador = "none";
-        
-                                    
-          }
-            if(totalamarelocasa > 3 && totalverdecasa > 3 && totalazulcasa > 3 && totalvermelhocasa < 4)
-          {
-            if(!vitoria_amarelo.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }
-            if(!vitoria_verde.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }  
-            if(!vitoria_azul.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            } 
-            vitoria_amarelo.SetActive(true);
-            vitoria_verde.SetActive(true);
-            vitoria_azul.SetActive(true);
-            StartCoroutine("jogocompletorotina");
-            Debug.Log("o jogo acabou");
-            turno_jogador = "none";
-        
-                                    
-          }
-
-            if(totalamarelocasa > 3 && totalvermelhocasa > 3 && totalazulcasa > 3 && totalverdecasa < 4)
-          {
-            if(!vitoria_amarelo.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }
-            if(!vitoria_vermelho.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }  
-            if(!vitoria_azul.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            } 
-            vitoria_amarelo.SetActive(true);
-            vitoria_vermelho.SetActive(true);
-            vitoria_azul.SetActive(true);
-            StartCoroutine("jogocompletorotina");
-            Debug.Log("o jogo acabou");
-            turno_jogador = "none";
-        
-                                    
-          }
-
-            if(totalverdecasa > 3 && totalvermelhocasa > 3 && totalazulcasa > 3 && totalamarelocasa < 4)
-          {
-            if(!vitoria_verde.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }
-            if(!vitoria_vermelho.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            }  
-            if(!vitoria_azul.activeInHierarchy)
-            {
-            SoundManager.winAudioSource.Play();
-            } 
-            vitoria_verde.SetActive(true);
-            vitoria_vermelho.SetActive(true);
-            vitoria_azul.SetActive(true);
-            StartCoroutine("jogocompletorotina");
-            Debug.Log("o jogo acabou");
-            turno_jogador = "none";
-        
-                                    
-          }
-
-
-          break;
-        }
-
-       
-
-      if(nome_jogador_atual.Contains("jogador_vermelho"))
-      {
-        if(nome_jogador_atual == "jogador_vermelho_1" ) {
-          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
-          jogador_atual = codjogadorvermelho1.codjogadorvermelho1col;
-        }
-        if(nome_jogador_atual == "jogador_vermelho_2" ) {
-          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
-          jogador_atual = codjogadorvermelho2.codjogadorvermelho2col;
-        }
-        if(nome_jogador_atual == "jogador_vermelho_3" ) {
-          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
-          jogador_atual = codjogadorvermelho3.codjogadorvermelho3col;
-        }
-        if(nome_jogador_atual == "jogador_vermelho_4" ) {
-          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
-          jogador_atual = codjogadorvermelho4.codjogadorvermelho4col;
-        }
-      }
-
-      if(nome_jogador_atual.Contains("jogador_verde"))
-      {
-        if(nome_jogador_atual == "jogador_verde_1" ) {
-          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
-          jogador_atual = codjogadorverde1.codjogadorverde1col;
-        }
-        if(nome_jogador_atual == "jogador_verde_2" ) {
-          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
-          jogador_atual = codjogadorverde2.codjogadorverde2col;
-        }
-        if(nome_jogador_atual == "jogador_verde_3" ) {
-          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
-          jogador_atual = codjogadorverde3.codjogadorverde3col;
-        }
-        if(nome_jogador_atual == "jogador_verde_4" ) {
-          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
-          jogador_atual = codjogadorverde4.codjogadorverde4col;
-        }
-      }
-
-      if(nome_jogador_atual.Contains("jogador_azul"))
-      {
-        if(nome_jogador_atual == "jogador_azul_1" ) {
-          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
-          jogador_atual = codjogadorazul1.codjogadorazul1col;
-        }
-        if(nome_jogador_atual == "jogador_azul_2" ) {
-          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
-          jogador_atual = codjogadorazul2.codjogadorazul2col;
-        }
-        if(nome_jogador_atual == "jogador_azul_3" ) {
-          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
-          jogador_atual = codjogadorazul3.codjogadorazul3col;
-        }
-        if(nome_jogador_atual == "jogador_azul_4" ) {
-          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
-          jogador_atual = codjogadorazul4.codjogadorazul4col;
-        }
-      }
-
-
-      if(nome_jogador_atual.Contains("jogador_amarelo"))
-      {
-        if(nome_jogador_atual == "jogador_amarelo_1" ) {
-          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
-          jogador_atual = codjogadoramarelo1.codjogadoramarelo1col;
-        }
-        if(nome_jogador_atual == "jogador_amarelo_2" ) {
-          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
-          jogador_atual = codjogadoramarelo2.codjogadoramarelo2col;
-        }
-        if(nome_jogador_atual == "jogador_amarelo_3" ) {
-          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
-          jogador_atual = codjogadoramarelo3.codjogadoramarelo3col;
-        }
-        if(nome_jogador_atual == "jogador_amarelo_4" ) {
-          Debug.Log ("nome_jogador_atual = " + nome_jogador_atual);
-          jogador_atual = codjogadoramarelo4.codjogadoramarelo4col;
-        }
-      }
-
-
-    //=============================================================JOGADOR VS OPONENTE (SE PASSOU POR CIMA) COLISAO ===========================================================================================================
-  /*
-
-  ▄█████░▄█████▄░██░░░░░██████░▄██████░▄████▄░▄█████▄░░░█████▄░░░█████░▄█████▄░▄██████░▄████▄░██████▄░▄█████▄░█████▄░▄█████░▄██████
-  ██░░░░░██░░░██░██░░░░░░░██░░░██░░░░░░██░░██░██░░░██░░░░░░░██░░░░░░██░██░░░██░██░░░░░░██░░██░██░░░██░██░░░██░██░░██░██░░░░░██░░░░░
-  ██░░░░░██░░░██░██░░░░░░░██░░░▀█████▄░██░░██░██░░░██░░░▄████▀░░░░░░██░██░░░██░██░░███░██░░██░██░░░██░██░░░██░█████▀░█████░░▀█████▄
-  ██░░░░░██░░░██░██░░░░░░░██░░░░░░░░██░██████░██░░░██░░░██░░░░░░░▄▄░██░██░░░██░██░░░██░██████░██░░░██░██░░░██░██░░██░██░░░░░░░░░░██
-  ▀█████░▀█████▀░██████░██████░██████▀░██░░██░▀█████▀░░░██████░░░█████░▀█████▀░▀█████▀░██░░██░██████▀░▀█████▀░██░░██░▀█████░██████▀
-  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-
-
-
-
-  */
-    if(nome_jogador_atual != "none")
-    {
-      switch (MainMenuManager.howManyPlayers)
-      {
-        case 2:
-        if(nome_jogador_atual.Contains("jogador_amarelo"))
-        {
-          if(jogador_atual == codjogadorverde1.codjogadorverde1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_1.transform.position = posicao_peca_verde_1;
-            codjogadorverde1.codjogadorverde1col = "none";
-            local_peca_verde_1 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-          if(jogador_atual == codjogadorverde2.codjogadorverde2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_2.transform.position = posicao_peca_verde_2;
-            codjogadorverde2.codjogadorverde2col = "none";
-            local_peca_verde_2 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-
-          if(jogador_atual == codjogadorverde3.codjogadorverde3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_3.transform.position = posicao_peca_verde_3;
-            codjogadorverde3.codjogadorverde3col = "none";
-            local_peca_verde_3 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-          if(jogador_atual == codjogadorverde4.codjogadorverde4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_4.transform.position = posicao_peca_verde_4;
-            codjogadorverde4.codjogadorverde4col = "none";
-            local_peca_verde_4 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-        }
-        if(nome_jogador_atual.Contains("jogador_verde"))
-        {
-          if(jogador_atual == codjogadoramarelo1.codjogadoramarelo1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_1.transform.position = posicao_peca_amarelo_1;
-            codjogadoramarelo1.codjogadoramarelo1col = "none";
-            local_peca_amarelo_1 = 0;
-            turno_jogador = "verde";
-            
-          }
-          if(jogador_atual == codjogadoramarelo2.codjogadoramarelo2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_2.transform.position = posicao_peca_amarelo_2;
-            codjogadoramarelo2.codjogadoramarelo2col = "none";
-            local_peca_amarelo_2 = 0;
-            turno_jogador = "verde";
-            
-          }
-          if(jogador_atual == codjogadoramarelo3.codjogadoramarelo3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_3.transform.position = posicao_peca_amarelo_3;
-            codjogadoramarelo3.codjogadoramarelo3col = "none";
-            local_peca_amarelo_3 = 0;
-            turno_jogador = "verde";
-            
-          }
-          if(jogador_atual == codjogadoramarelo4.codjogadoramarelo4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_4.transform.position = posicao_peca_amarelo_4;
-            codjogadoramarelo4.codjogadoramarelo4col = "none";
-            local_peca_amarelo_4 = 0;
-            turno_jogador = "verde";
-            
-          }
-        }
-        break;
-  /*
-
-
-  ▄█████░▄█████▄░██░░░░░██████░▄██████░▄████▄░▄█████▄░░░█████▄░░░█████░▄█████▄░▄██████░▄████▄░██████▄░▄█████▄░█████▄░▄█████░▄██████
-  ██░░░░░██░░░██░██░░░░░░░██░░░██░░░░░░██░░██░██░░░██░░░░░░░██░░░░░░██░██░░░██░██░░░░░░██░░██░██░░░██░██░░░██░██░░██░██░░░░░██░░░░░
-  ██░░░░░██░░░██░██░░░░░░░██░░░▀█████▄░██░░██░██░░░██░░░░████░░░░░░░██░██░░░██░██░░███░██░░██░██░░░██░██░░░██░█████▀░█████░░▀█████▄
-  ██░░░░░██░░░██░██░░░░░░░██░░░░░░░░██░██████░██░░░██░░░░░░░██░░░▄▄░██░██░░░██░██░░░██░██████░██░░░██░██░░░██░██░░██░██░░░░░░░░░░██
-  ▀█████░▀█████▀░██████░██████░██████▀░██░░██░▀█████▀░░░█████▀░░░█████░▀█████▀░▀█████▀░██░░██░██████▀░▀█████▀░██░░██░▀█████░██████▀
-  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-
-
-
-
-
-
-  */
-        case 3:
-
-        if(nome_jogador_atual.Contains("jogador_amarelo"))
-        {
-          if(jogador_atual == codjogadorverde1.codjogadorverde1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_1.transform.position = posicao_peca_verde_1;
-            codjogadorverde1.codjogadorverde1col = "none";
-            local_peca_verde_1 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-          if(jogador_atual == codjogadorverde2.codjogadorverde2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_2.transform.position = posicao_peca_verde_2;
-            codjogadorverde2.codjogadorverde2col = "none";
-            local_peca_verde_2 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-
-          if(jogador_atual == codjogadorverde3.codjogadorverde3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_3.transform.position = posicao_peca_verde_3;
-            codjogadorverde3.codjogadorverde3col = "none";
-            local_peca_verde_3 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-          if(jogador_atual == codjogadorverde4.codjogadorverde4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_4.transform.position = posicao_peca_verde_4;
-            codjogadorverde4.codjogadorverde4col = "none";
-            local_peca_verde_4 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-           if(jogador_atual == codjogadorvermelho1.codjogadorvermelho1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_1.transform.position = posicao_peca_vermelho_1;
-            codjogadorvermelho1.codjogadorvermelho1col = "none";
-            local_peca_vermelho_1 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-          if(jogador_atual == codjogadorvermelho2.codjogadorvermelho2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_2.transform.position = posicao_peca_vermelho_2;
-            codjogadorvermelho2.codjogadorvermelho2col = "none";
-            local_peca_vermelho_2 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-
-          if(jogador_atual == codjogadorvermelho3.codjogadorvermelho3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_3.transform.position = posicao_peca_vermelho_3;
-            codjogadorvermelho3.codjogadorvermelho3col = "none";
-            local_peca_vermelho_3 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-          if(jogador_atual == codjogadorvermelho4.codjogadorvermelho4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_4.transform.position = posicao_peca_vermelho_4;
-            codjogadorvermelho4.codjogadorvermelho4col = "none";
-            local_peca_vermelho_4 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-        }
-
-      if(nome_jogador_atual.Contains("jogador_verde"))
-        {
-          if(jogador_atual == codjogadoramarelo1.codjogadoramarelo1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_1.transform.position = posicao_peca_amarelo_1;
-            codjogadoramarelo1.codjogadoramarelo1col = "none";
-            local_peca_amarelo_1 = 0;
-            turno_jogador = "verde";
-            
-          }
-          if(jogador_atual == codjogadoramarelo2.codjogadoramarelo2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_2.transform.position = posicao_peca_amarelo_2;
-            codjogadoramarelo2.codjogadoramarelo2col = "none";
-            local_peca_amarelo_2 = 0;
-            turno_jogador = "verde";
-            
-          }
-          if(jogador_atual == codjogadoramarelo3.codjogadoramarelo3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_3.transform.position = posicao_peca_amarelo_3;
-            codjogadoramarelo3.codjogadoramarelo3col = "none";
-            local_peca_amarelo_3 = 0;
-            turno_jogador = "verde";
-            
-          }
-          if(jogador_atual == codjogadoramarelo4.codjogadoramarelo4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_4.transform.position = posicao_peca_amarelo_4;
-            codjogadoramarelo4.codjogadoramarelo4col = "none";
-            local_peca_amarelo_4 = 0;
-            turno_jogador = "verde";
-            
-          }
-
-          if(jogador_atual == codjogadorvermelho1.codjogadorvermelho1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_1.transform.position = posicao_peca_vermelho_1;
-            codjogadorvermelho1.codjogadorvermelho1col = "none";
-            local_peca_vermelho_1 = 0;
-            turno_jogador = "verde";
-            
-          }
-          if(jogador_atual == codjogadorvermelho2.codjogadorvermelho2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_2.transform.position = posicao_peca_vermelho_2;
-            codjogadorvermelho2.codjogadorvermelho2col = "none";
-            local_peca_vermelho_2 = 0;
-            turno_jogador = "verde";
-            
-          }
-          if(jogador_atual == codjogadorvermelho3.codjogadorvermelho3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_3.transform.position = posicao_peca_vermelho_3;
-            codjogadorvermelho3.codjogadorvermelho3col = "none";
-            local_peca_vermelho_3 = 0;
-            turno_jogador = "verde";
-            
-          }
-          if(jogador_atual == codjogadorvermelho4.codjogadorvermelho4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_4.transform.position = posicao_peca_vermelho_4;
-            codjogadorvermelho4.codjogadorvermelho4col = "none";
-            local_peca_vermelho_4 = 0;
-            turno_jogador = "verde";
-            
-          }
-        }
-        if(nome_jogador_atual.Contains("jogador_vermelho"))
-        {
-          if(jogador_atual == codjogadoramarelo1.codjogadoramarelo1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_1.transform.position = posicao_peca_amarelo_1;
-            codjogadoramarelo1.codjogadoramarelo1col = "none";
-            local_peca_amarelo_1 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-          if(jogador_atual == codjogadoramarelo2.codjogadoramarelo2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_2.transform.position = posicao_peca_amarelo_2;
-            codjogadoramarelo2.codjogadoramarelo2col = "none";
-            local_peca_amarelo_2 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-          if(jogador_atual == codjogadoramarelo3.codjogadoramarelo3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_3.transform.position = posicao_peca_amarelo_3;
-            codjogadoramarelo3.codjogadoramarelo3col = "none";
-            local_peca_amarelo_3 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-          if(jogador_atual == codjogadoramarelo4.codjogadoramarelo4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_4.transform.position = posicao_peca_amarelo_4;
-            codjogadoramarelo4.codjogadoramarelo4col = "none";
-            local_peca_amarelo_4 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-
-          if(jogador_atual == codjogadorverde1.codjogadorverde1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_1.transform.position = posicao_peca_verde_1;
-            codjogadorverde1.codjogadorverde1col = "none";
-            local_peca_verde_1 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-          if(jogador_atual == codjogadorverde2.codjogadorverde2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_2.transform.position = posicao_peca_verde_2;
-            codjogadorverde2.codjogadorverde2col = "none";
-            local_peca_verde_2 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-
-          if(jogador_atual == codjogadorverde3.codjogadorverde3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_3.transform.position = posicao_peca_verde_3;
-            codjogadorverde3.codjogadorverde3col = "none";
-            local_peca_verde_3 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-          if(jogador_atual == codjogadorverde4.codjogadorverde4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_4.transform.position = posicao_peca_verde_4;
-            codjogadorverde4.codjogadorverde4col = "none";
-            local_peca_verde_4 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-
-        }
-        break;
-        /*
-        
-      ▄█████░▄█████▄░██░░░░░██████░▄██████░▄████▄░▄█████▄░░░██░░░██░░░█████░▄█████▄░▄██████░▄████▄░██████▄░▄█████▄░█████▄░▄█████░▄██████
-      ██░░░░░██░░░██░██░░░░░░░██░░░██░░░░░░██░░██░██░░░██░░░██░░░██░░░░░░██░██░░░██░██░░░░░░██░░██░██░░░██░██░░░██░██░░██░██░░░░░██░░░░░
-      ██░░░░░██░░░██░██░░░░░░░██░░░▀█████▄░██░░██░██░░░██░░░███████░░░░░░██░██░░░██░██░░███░██░░██░██░░░██░██░░░██░█████▀░█████░░▀█████▄
-      ██░░░░░██░░░██░██░░░░░░░██░░░░░░░░██░██████░██░░░██░░░░░░░░██░░░▄▄░██░██░░░██░██░░░██░██████░██░░░██░██░░░██░██░░██░██░░░░░░░░░░██
-      ▀█████░▀█████▀░██████░██████░██████▀░██░░██░▀█████▀░░░░░░░░██░░░█████░▀█████▀░▀█████▀░██░░██░██████▀░▀█████▀░██░░██░▀█████░██████▀
-      ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-
-        */
-        case 4:
-
-      if(nome_jogador_atual.Contains("jogador_amarelo"))
-        {
-          if(jogador_atual == codjogadorverde1.codjogadorverde1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_1.transform.position = posicao_peca_verde_1;
-            codjogadorverde1.codjogadorverde1col = "none";
-            local_peca_verde_1 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-          if(jogador_atual == codjogadorverde2.codjogadorverde2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_2.transform.position = posicao_peca_verde_2;
-            codjogadorverde2.codjogadorverde2col = "none";
-            local_peca_verde_2 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-
-          if(jogador_atual == codjogadorverde3.codjogadorverde3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_3.transform.position = posicao_peca_verde_3;
-            codjogadorverde3.codjogadorverde3col = "none";
-            local_peca_verde_3 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-          if(jogador_atual == codjogadorverde4.codjogadorverde4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_4.transform.position = posicao_peca_verde_4;
-            codjogadorverde4.codjogadorverde4col = "none";
-            local_peca_verde_4 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-           if(jogador_atual == codjogadorvermelho1.codjogadorvermelho1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_1.transform.position = posicao_peca_vermelho_1;
-            codjogadorvermelho1.codjogadorvermelho1col = "none";
-            local_peca_vermelho_1 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-          if(jogador_atual == codjogadorvermelho2.codjogadorvermelho2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_2.transform.position = posicao_peca_vermelho_2;
-            codjogadorvermelho2.codjogadorvermelho2col = "none";
-            local_peca_vermelho_2 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-
-          if(jogador_atual == codjogadorvermelho3.codjogadorvermelho3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_3.transform.position = posicao_peca_vermelho_3;
-            codjogadorvermelho3.codjogadorvermelho3col = "none";
-            local_peca_vermelho_3 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-          if(jogador_atual == codjogadorvermelho4.codjogadorvermelho4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_4.transform.position = posicao_peca_vermelho_4;
-            codjogadorvermelho4.codjogadorvermelho4col = "none";
-            local_peca_vermelho_4 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-          if(jogador_atual == codjogadorazul1.codjogadorazul1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_azul_1.transform.position = posicao_peca_azul_1;
-            codjogadorazul1.codjogadorazul1col = "none";
-            local_peca_azul_1 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-          if(jogador_atual == codjogadorazul2.codjogadorazul2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_azul_2.transform.position = posicao_peca_azul_2;
-            codjogadorazul2.codjogadorazul2col = "none";
-            local_peca_azul_2 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-
-          if(jogador_atual == codjogadorazul3.codjogadorazul3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_azul_3.transform.position = posicao_peca_azul_3;
-            codjogadorazul3.codjogadorazul3col = "none";
-            local_peca_azul_3 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-          if(jogador_atual == codjogadorazul4.codjogadorazul4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_azul_4.transform.position = posicao_peca_azul_4;
-            codjogadorazul4.codjogadorazul4col = "none";
-            local_peca_azul_4 = 0;
-            turno_jogador = "amarelo";
-            
-          }
-        }
-
-
-       if(nome_jogador_atual.Contains("jogador_verde"))
-        {
-          if(jogador_atual == codjogadoramarelo1.codjogadoramarelo1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_1.transform.position = posicao_peca_amarelo_1;
-            codjogadoramarelo1.codjogadoramarelo1col = "none";
-            local_peca_amarelo_1 = 0;
-            turno_jogador = "verde";
-            
-          }
-          if(jogador_atual == codjogadoramarelo2.codjogadoramarelo2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_2.transform.position = posicao_peca_amarelo_2;
-            codjogadoramarelo2.codjogadoramarelo2col = "none";
-            local_peca_amarelo_2 = 0;
-            turno_jogador = "verde";
-            
-          }
-          if(jogador_atual == codjogadoramarelo3.codjogadoramarelo3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_3.transform.position = posicao_peca_amarelo_3;
-            codjogadoramarelo3.codjogadoramarelo3col = "none";
-            local_peca_amarelo_3 = 0;
-            turno_jogador = "verde";
-            
-          }
-          if(jogador_atual == codjogadoramarelo4.codjogadoramarelo4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_4.transform.position = posicao_peca_amarelo_4;
-            codjogadoramarelo4.codjogadoramarelo4col = "none";
-            local_peca_amarelo_4 = 0;
-            turno_jogador = "verde";
-            
-          }
-
-          if(jogador_atual == codjogadorvermelho1.codjogadorvermelho1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_1.transform.position = posicao_peca_vermelho_1;
-            codjogadorvermelho1.codjogadorvermelho1col = "none";
-            local_peca_vermelho_1 = 0;
-            turno_jogador = "verde";
-            
-          }
-          if(jogador_atual == codjogadorvermelho2.codjogadorvermelho2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_2.transform.position = posicao_peca_vermelho_2;
-            codjogadorvermelho2.codjogadorvermelho2col = "none";
-            local_peca_vermelho_2 = 0;
-            turno_jogador = "verde";
-            
-          }
-          if(jogador_atual == codjogadorvermelho3.codjogadorvermelho3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_3.transform.position = posicao_peca_vermelho_3;
-            codjogadorvermelho3.codjogadorvermelho3col = "none";
-            local_peca_vermelho_3 = 0;
-            turno_jogador = "verde";
-            
-          }
-          if(jogador_atual == codjogadorvermelho4.codjogadorvermelho4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_4.transform.position = posicao_peca_vermelho_4;
-            codjogadorvermelho4.codjogadorvermelho4col = "none";
-            local_peca_vermelho_4 = 0;
-            turno_jogador = "verde";
-            
-          }
-            if(jogador_atual == codjogadorazul1.codjogadorazul1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_azul_1.transform.position = posicao_peca_azul_1;
-            codjogadorazul1.codjogadorazul1col = "none";
-            local_peca_azul_1 = 0;
-            turno_jogador = "verde";
-            
-          }
-          if(jogador_atual == codjogadorazul2.codjogadorazul2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_azul_2.transform.position = posicao_peca_azul_2;
-            codjogadorazul2.codjogadorazul2col = "none";
-            local_peca_azul_2 = 0;
-            turno_jogador = "verde";
-            
-          }
-          if(jogador_atual == codjogadorazul3.codjogadorazul3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_azul_3.transform.position = posicao_peca_azul_3;
-            codjogadorazul3.codjogadorazul3col = "none";
-            local_peca_azul_3 = 0;
-            turno_jogador = "verde";
-            
-          }
-          if(jogador_atual == codjogadorazul4.codjogadorazul4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_azul_4.transform.position = posicao_peca_azul_4;
-            codjogadorazul4.codjogadorazul4col = "none";
-            local_peca_azul_4 = 0;
-            turno_jogador = "verde";
-            
-          }
-        }
-
-      if(nome_jogador_atual.Contains("jogador_vermelho"))
-        {
-          if(jogador_atual == codjogadoramarelo1.codjogadoramarelo1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_1.transform.position = posicao_peca_amarelo_1;
-            codjogadoramarelo1.codjogadoramarelo1col = "none";
-            local_peca_amarelo_1 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-          if(jogador_atual == codjogadoramarelo2.codjogadoramarelo2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_2.transform.position = posicao_peca_amarelo_2;
-            codjogadoramarelo2.codjogadoramarelo2col = "none";
-            local_peca_amarelo_2 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-          if(jogador_atual == codjogadoramarelo3.codjogadoramarelo3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_3.transform.position = posicao_peca_amarelo_3;
-            codjogadoramarelo3.codjogadoramarelo3col = "none";
-            local_peca_amarelo_3 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-          if(jogador_atual == codjogadoramarelo4.codjogadoramarelo4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_4.transform.position = posicao_peca_amarelo_4;
-            codjogadoramarelo4.codjogadoramarelo4col = "none";
-            local_peca_amarelo_4 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-
-          if(jogador_atual == codjogadorverde1.codjogadorverde1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_1.transform.position = posicao_peca_verde_1;
-            codjogadorverde1.codjogadorverde1col = "none";
-            local_peca_verde_1 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-          if(jogador_atual == codjogadorverde2.codjogadorverde2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_2.transform.position = posicao_peca_verde_2;
-            codjogadorverde2.codjogadorverde2col = "none";
-            local_peca_verde_2 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-
-          if(jogador_atual == codjogadorverde3.codjogadorverde3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_3.transform.position = posicao_peca_verde_3;
-            codjogadorverde3.codjogadorverde3col = "none";
-            local_peca_verde_3 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-          if(jogador_atual == codjogadorverde4.codjogadorverde4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_4.transform.position = posicao_peca_verde_4;
-            codjogadorverde4.codjogadorverde4col = "none";
-            local_peca_verde_4 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-
-
-          if(jogador_atual == codjogadorazul1.codjogadorazul1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_azul_1.transform.position = posicao_peca_azul_1;
-            codjogadorazul1.codjogadorazul1col = "none";
-            local_peca_azul_1 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-          if(jogador_atual == codjogadorazul2.codjogadorazul2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_azul_2.transform.position = posicao_peca_azul_2;
-            codjogadorazul2.codjogadorazul2col = "none";
-            local_peca_azul_2 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-
-          if(jogador_atual == codjogadorazul3.codjogadorazul3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_azul_3.transform.position = posicao_peca_azul_3;
-            codjogadorazul3.codjogadorazul3col = "none";
-            local_peca_azul_3 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-          if(jogador_atual == codjogadorazul4.codjogadorazul4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_azul_4.transform.position = posicao_peca_azul_4;
-            codjogadorazul4.codjogadorazul4col = "none";
-            local_peca_azul_4 = 0;
-            turno_jogador = "vermelho";
-            
-          }
-
-        }
-        if(nome_jogador_atual.Contains("jogador_azul"))
-        {
-          if(jogador_atual == codjogadoramarelo1.codjogadoramarelo1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_1.transform.position = posicao_peca_amarelo_1;
-            codjogadoramarelo1.codjogadoramarelo1col = "none";
-            local_peca_amarelo_1 = 0;
-            turno_jogador = "azul";
-            
-          }
-          if(jogador_atual == codjogadoramarelo2.codjogadoramarelo2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_2.transform.position = posicao_peca_amarelo_2;
-            codjogadoramarelo2.codjogadoramarelo2col = "none";
-            local_peca_amarelo_2 = 0;
-            turno_jogador = "azul";
-            
-          }
-          if(jogador_atual == codjogadoramarelo3.codjogadoramarelo3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_3.transform.position = posicao_peca_amarelo_3;
-            codjogadoramarelo3.codjogadoramarelo3col = "none";
-            local_peca_amarelo_3 = 0;
-            turno_jogador = "azul";
-            
-          }
-          if(jogador_atual == codjogadoramarelo4.codjogadoramarelo4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_amarelo_4.transform.position = posicao_peca_amarelo_4;
-            codjogadoramarelo4.codjogadoramarelo4col = "none";
-            local_peca_amarelo_4 = 0;
-            turno_jogador = "azul";
-            
-          }
-
-          if(jogador_atual == codjogadorverde1.codjogadorverde1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_1.transform.position = posicao_peca_verde_1;
-            codjogadorverde1.codjogadorverde1col = "none";
-            local_peca_verde_1 = 0;
-            turno_jogador = "azul";
-            
-          }
-          if(jogador_atual == codjogadorverde2.codjogadorverde2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_2.transform.position = posicao_peca_verde_2;
-            codjogadorverde2.codjogadorverde2col = "none";
-            local_peca_verde_2 = 0;
-            turno_jogador = "azul";
-            
-          }
-
-          if(jogador_atual == codjogadorverde3.codjogadorverde3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_3.transform.position = posicao_peca_verde_3;
-            codjogadorverde3.codjogadorverde3col = "none";
-            local_peca_verde_3 = 0;
-            turno_jogador = "azul";
-            
-          }
-          if(jogador_atual == codjogadorverde4.codjogadorverde4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_verde_4.transform.position = posicao_peca_verde_4;
-            codjogadorverde4.codjogadorverde4col = "none";
-            local_peca_verde_4 = 0;
-            turno_jogador = "azul";
-            
-          }
-
-
-           if(jogador_atual == codjogadorvermelho1.codjogadorvermelho1col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_1.transform.position = posicao_peca_vermelho_1;
-            codjogadorvermelho1.codjogadorvermelho1col = "none";
-            local_peca_vermelho_1 = 0;
-            turno_jogador = "azul";
-            
-          }
-          if(jogador_atual == codjogadorvermelho2.codjogadorvermelho2col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_2.transform.position = posicao_peca_vermelho_2;
-            codjogadorvermelho2.codjogadorvermelho2col = "none";
-            local_peca_vermelho_2 = 0;
-            turno_jogador = "azul";
-            
-          }
-          if(jogador_atual == codjogadorvermelho3.codjogadorvermelho3col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_3.transform.position = posicao_peca_vermelho_3;
-            codjogadorvermelho3.codjogadorvermelho3col = "none";
-            local_peca_vermelho_3 = 0;
-            turno_jogador = "azul";
-            
-          }
-          if(jogador_atual == codjogadorvermelho4.codjogadorvermelho4col && jogador_atual!= "Estrela")
-          {
-            SoundManager.diceAudioSource.Play();
-            jogador_vermelho_4.transform.position = posicao_peca_vermelho_4;
-            codjogadorvermelho4.codjogadorvermelho4col = "none";
-            local_peca_vermelho_4 = 0;
-            turno_jogador = "azul";
-            
-          }
-        }
-      break;
-      }
-    }
-
-        switch(MainMenuManager.howManyPlayers)
-        {
-            case 2:
-                if(turno_jogador == "verde")
-                    {
-                    rodar_dado.position = dado_verde_rolagem.position;
-                    frame_verde.SetActive(true);
-                    frame_amarelo.SetActive(false);
-                    frame_vermelho.SetActive(false);
-                    frame_azul.SetActive(false);
-                    }
-                if(turno_jogador == "amarelo")
-                    {
-                    rodar_dado.position = dado_amarelo_rolagem.position;
-                    frame_amarelo.SetActive(true);
-                    frame_verde.SetActive(false);
-                    frame_vermelho.SetActive(false);
-                    frame_azul.SetActive(false);
-                    }
-                botao_jogador_amarelo_1.interactable = false;
-                botao_jogador_amarelo_2.interactable = false;
-                botao_jogador_amarelo_3.interactable = false;
-                botao_jogador_amarelo_4.interactable = false;
-
-                botao_jogador_verde_1.interactable = false;
-                botao_jogador_verde_2.interactable = false;
-                botao_jogador_verde_3.interactable = false;
-                botao_jogador_verde_4.interactable = false;
-
-
-
-                borda_peca_amarelo_1.SetActive(false);
-                borda_peca_amarelo_2.SetActive(false);
-                borda_peca_amarelo_3.SetActive(false);
-                borda_peca_amarelo_4.SetActive(false);
-
-                borda_peca_verde_1.SetActive(false);
-                borda_peca_verde_2.SetActive(false);
-                borda_peca_verde_3.SetActive(false);
-                borda_peca_verde_4.SetActive(false);
-                break;
-            
-             case 3:
-                if(turno_jogador == "verde")
-                    {
-                    rodar_dado.position = dado_verde_rolagem.position;
-                    frame_verde.SetActive(true);
-                    frame_amarelo.SetActive(false);
-                    frame_vermelho.SetActive(false);
-                    }
-                if(turno_jogador == "amarelo")
-                    {
-                    rodar_dado.position = dado_amarelo_rolagem.position;
-                    frame_amarelo.SetActive(true);
-                    frame_verde.SetActive(false);
-                    frame_vermelho.SetActive(false);
-                    }
-                if(turno_jogador == "vermelho")
-                    {
-                    rodar_dado.position = dado_vermelho_rolagem.position;
-                    frame_amarelo.SetActive(false);
-                    frame_verde.SetActive(false);
-                    frame_vermelho.SetActive(true);
-                    }
-                botao_jogador_amarelo_1.interactable = false;
-                botao_jogador_amarelo_2.interactable = false;
-                botao_jogador_amarelo_3.interactable = false;
-                botao_jogador_amarelo_4.interactable = false;
-
-                botao_jogador_verde_1.interactable = false;
-                botao_jogador_verde_2.interactable = false;
-                botao_jogador_verde_3.interactable = false;
-                botao_jogador_verde_4.interactable = false;
-
-                botao_jogador_vermelho_1.interactable = false;
-                botao_jogador_vermelho_2.interactable = false;
-                botao_jogador_vermelho_3.interactable = false;
-                botao_jogador_vermelho_4.interactable = false;
-
-
-
-                borda_peca_amarelo_1.SetActive(false);
-                borda_peca_amarelo_2.SetActive(false);
-                borda_peca_amarelo_3.SetActive(false);
-                borda_peca_amarelo_4.SetActive(false);
-
-                borda_peca_verde_1.SetActive(false);
-                borda_peca_verde_2.SetActive(false);
-                borda_peca_verde_3.SetActive(false);
-                borda_peca_verde_4.SetActive(false);
-
-                borda_peca_vermelho_1.SetActive(false);
-                borda_peca_vermelho_2.SetActive(false);
-                borda_peca_vermelho_3.SetActive(false);
-                borda_peca_vermelho_4.SetActive(false);
-                break;
-
-
-            case 4:
-                if(turno_jogador == "verde")
-                    {
-                    rodar_dado.position = dado_verde_rolagem.position;
-                    frame_verde.SetActive(true);
-                    frame_amarelo.SetActive(false);
-                    frame_vermelho.SetActive(false);
-                    frame_azul.SetActive(false);
-                    }
-                if(turno_jogador == "amarelo")
-                    {
-                    rodar_dado.position = dado_amarelo_rolagem.position;
-                    frame_amarelo.SetActive(true);
-                    frame_verde.SetActive(false);
-                    frame_vermelho.SetActive(false);
-                    frame_azul.SetActive(false);
-                    }
-                if(turno_jogador == "vermelho")
-                    {
-                    rodar_dado.position = dado_vermelho_rolagem.position;
-                    frame_amarelo.SetActive(false);
-                    frame_verde.SetActive(false);
-                    frame_vermelho.SetActive(true);
-                    frame_azul.SetActive(false);
-                    }
-
-                  if(turno_jogador == "azul")
-                    {
-                    rodar_dado.position = dado_azul_rolagem.position;
-                    frame_amarelo.SetActive(false);
-                    frame_verde.SetActive(false);
-                    frame_vermelho.SetActive(false);
-                    frame_azul.SetActive(true);
-                    }
-                botao_jogador_amarelo_1.interactable = false;
-                botao_jogador_amarelo_2.interactable = false;
-                botao_jogador_amarelo_3.interactable = false;
-                botao_jogador_amarelo_4.interactable = false;
-
-                botao_jogador_verde_1.interactable = false;
-                botao_jogador_verde_2.interactable = false;
-                botao_jogador_verde_3.interactable = false;
-                botao_jogador_verde_4.interactable = false;
-
-                botao_jogador_vermelho_1.interactable = false;
-                botao_jogador_vermelho_2.interactable = false;
-                botao_jogador_vermelho_3.interactable = false;
-                botao_jogador_vermelho_4.interactable = false;
-
-                botao_jogador_azul_1.interactable = false;
-                botao_jogador_azul_2.interactable = false;
-                botao_jogador_azul_3.interactable = false;
-                botao_jogador_azul_4.interactable = false;
-
-
-
-                borda_peca_amarelo_1.SetActive(false);
-                borda_peca_amarelo_2.SetActive(false);
-                borda_peca_amarelo_3.SetActive(false);
-                borda_peca_amarelo_4.SetActive(false);
-
-                borda_peca_verde_1.SetActive(false);
-                borda_peca_verde_2.SetActive(false);
-                borda_peca_verde_3.SetActive(false);
-                borda_peca_verde_4.SetActive(false);
-
-                borda_peca_vermelho_1.SetActive(false);
-                borda_peca_vermelho_2.SetActive(false);
-                borda_peca_vermelho_3.SetActive(false);
-                borda_peca_vermelho_4.SetActive(false);
-
-                borda_peca_azul_1.SetActive(false);
-                borda_peca_azul_2.SetActive(false);
-                borda_peca_azul_3.SetActive(false);
-                borda_peca_azul_4.SetActive(false);        
-                break;
-
-
-
-        }
-
-    selecionar_num_dado_animacao = 0;
-}
-
-/*
-
-
-██████░██████░▄██▄▄██▄░░░██████░██████▄░██████░▄█████░██████░▄████▄░██░░░░░██████░███████░▄████▄░█████▄░░░██████▄░▄████▄░██████▄░▄█████▄
-██░░░░░░░██░░░██░██░██░░░░░██░░░██░░░██░░░██░░░██░░░░░░░██░░░██░░██░██░░░░░░░██░░░░░░░░██░██░░██░██░░██░░░██░░░██░██░░██░██░░░██░██░░░██
-█████░░░░██░░░██░██░██░░░░░██░░░██░░░██░░░██░░░██░░░░░░░██░░░██░░██░██░░░░░░░██░░░▄█████▀░██░░██░█████▀░░░██░░░██░██░░██░██░░░██░██░░░██
-██░░░░░░░██░░░██░██░██░░░░░██░░░██░░░██░░░██░░░██░░░░░░░██░░░██████░██░░░░░░░██░░░██░░░░░░██████░██░░██░░░██░░░██░██████░██░░░██░██░░░██
-██░░░░░██████░██░██░██░░░██████░██░░░██░██████░▀█████░██████░██░░██░██████░██████░███████░██░░██░██░░██░░░██████▀░██░░██░██████▀░▀█████▀
-░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-
-
-
-
-
-*/
-
-
-
-
-
-/*
-█████▄░▄█████▄░██░░░░░▄████▄░█████▄░░░██████▄░▄████▄░██████▄░▄█████▄
-██░░██░██░░░██░██░░░░░██░░██░██░░██░░░██░░░██░██░░██░██░░░██░██░░░██
-█████▀░██░░░██░██░░░░░██░░██░█████▀░░░██░░░██░██░░██░██░░░██░██░░░██
-██░░██░██░░░██░██░░░░░██████░██░░██░░░██░░░██░██████░██░░░██░██░░░██
-██░░██░▀█████▀░██████░██░░██░██░░██░░░██████▀░██░░██░██████▀░▀█████▀
-░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-*/
-
-
-//Só rodar o dado quando disponível 
-    public void rolar_dado ()
-    {   
-    SoundManager.diceAudioSource.Play();
-    botaodado.interactable = false;
-
-    //Já Criei animacao do dado. Assinala um número de 1 a 6 de Randno para o dado.
-
-
-        selecionar_num_dado_animacao = randNo.Next(1,7);
-
-        switch(selecionar_num_dado_animacao)
-        {
-            case 1:
-            animacao_dado_1.SetActive(true);  
-            animacao_dado_2.SetActive(false);
-            animacao_dado_3.SetActive(false); 
-            animacao_dado_4.SetActive(false);
-            animacao_dado_5.SetActive(false);
-            animacao_dado_6.SetActive(false);
-            break;
-            case 2:
-            animacao_dado_1.SetActive(false);  
-            animacao_dado_2.SetActive(true);
-            animacao_dado_3.SetActive(false); 
-            animacao_dado_4.SetActive(false);
-            animacao_dado_5.SetActive(false);
-            animacao_dado_6.SetActive(false);
-            break;
-            case 3:
-            animacao_dado_1.SetActive(false);  
-            animacao_dado_2.SetActive(false);
-            animacao_dado_3.SetActive(true); 
-            animacao_dado_4.SetActive(false);
-            animacao_dado_5.SetActive(false);
-            animacao_dado_6.SetActive(false);
-            break;
-            case 4:
-            animacao_dado_1.SetActive(false);  
-            animacao_dado_2.SetActive(false);
-            animacao_dado_3.SetActive(false); 
-            animacao_dado_4.SetActive(true);
-            animacao_dado_5.SetActive(false);
-            animacao_dado_6.SetActive(false);
-            break;
-            case 5:
-            animacao_dado_1.SetActive(false);  
-            animacao_dado_2.SetActive(false);
-            animacao_dado_3.SetActive(false); 
-            animacao_dado_4.SetActive(false);
-            animacao_dado_5.SetActive(true);
-            animacao_dado_6.SetActive(false);
-            break;
-            case 6:
-            animacao_dado_1.SetActive(false);  
-            animacao_dado_2.SetActive(false);
-            animacao_dado_3.SetActive(false); 
-            animacao_dado_4.SetActive(false);
-            animacao_dado_5.SetActive(false);
-            animacao_dado_6.SetActive(true);
-            break;
-
-        }
-      StartCoroutine("jogadoresnaoinicializados");
-    }
-
-/*
-
-
-
-█████░▄█████▄░▄██████░▄████▄░██████▄░▄█████▄░█████▄░▄█████░▄██████░░░██████▄░▄████▄░▄█████▄░░░██████░██████▄░██████░▄█████░██████░▄████▄░██░░░░░██████░███████░▄████▄░██████▄░▄█████▄░▄██████
-░░░██░██░░░██░██░░░░░░██░░██░██░░░██░██░░░██░██░░██░██░░░░░██░░░░░░░░██░░░██░██░░██░██░░░██░░░░░██░░░██░░░██░░░██░░░██░░░░░░░██░░░██░░██░██░░░░░░░██░░░░░░░░██░██░░██░██░░░██░██░░░██░██░░░░░
-░░░██░██░░░██░██░░███░██░░██░██░░░██░██░░░██░█████▀░█████░░▀█████▄░░░██░░░██░██░░██░██░░░██░░░░░██░░░██░░░██░░░██░░░██░░░░░░░██░░░██░░██░██░░░░░░░██░░░▄█████▀░██░░██░██░░░██░██░░░██░▀█████▄
-▄▄░██░██░░░██░██░░░██░██████░██░░░██░██░░░██░██░░██░██░░░░░░░░░░██░░░██░░░██░██████░██░░░██░░░░░██░░░██░░░██░░░██░░░██░░░░░░░██░░░██████░██░░░░░░░██░░░██░░░░░░██████░██░░░██░██░░░██░░░░░░██
-█████░▀█████▀░▀█████▀░██░░██░██████▀░▀█████▀░██░░██░▀█████░██████▀░░░██░░░██░██░░██░▀█████▀░░░██████░██░░░██░██████░▀█████░██████░██░░██░██████░██████░███████░██░░██░██████▀░▀█████▀░██████▀
-░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-
-
-
-
-
-*/
-//Entra no escopo da animação do dado, é para esperar a inicialização dos jogadores;
-    IEnumerator jogadoresnaoinicializados ()
-    {
-        yield return new WaitForSeconds(1f);
-
-        switch (turno_jogador)
-        {
-            case "amarelo":
-
-            //determina quando podemos mexer na peca amarelo 1, sendo no caso ter um valor de movimento maior do que voce tirou no dado, que a peça não esteja num local que não conhecemos (menor que 0) e que ele não tenha completado sua jornada chegando na 
-            //casa final.
-
-            if ((bloco_movimento_amarelo.Count - local_peca_amarelo_1)>= selecionar_num_dado_animacao && local_peca_amarelo_1 > 0 && (bloco_movimento_amarelo.Count > local_peca_amarelo_1))
-            {
-                borda_peca_amarelo_1.SetActive(true);
-                botao_jogador_amarelo_1.interactable = true;
-            }
-
-            else{
-                borda_peca_amarelo_1.SetActive(false);
-                botao_jogador_amarelo_1.interactable = false;
-
-            }
-
-             if ((bloco_movimento_amarelo.Count - local_peca_amarelo_2)>= selecionar_num_dado_animacao && local_peca_amarelo_2 > 0 && (bloco_movimento_amarelo.Count > local_peca_amarelo_2))
-            {
-                borda_peca_amarelo_2.SetActive(true);
-                botao_jogador_amarelo_2.interactable = true;
-            }
-
-            else{
-              borda_peca_amarelo_2.SetActive(false);
-              botao_jogador_amarelo_2.interactable = false;
-
-            }
-
-             if ((bloco_movimento_amarelo.Count - local_peca_amarelo_3)>= selecionar_num_dado_animacao && local_peca_amarelo_3 > 0 && (bloco_movimento_amarelo.Count > local_peca_amarelo_3))
-            {
-                borda_peca_amarelo_3.SetActive(true);
-                botao_jogador_amarelo_3.interactable = true;
-            }
-
-            else{
-                borda_peca_amarelo_3.SetActive(false);
-                botao_jogador_amarelo_3.interactable = false;
-            }
-
-             if ((bloco_movimento_amarelo.Count - local_peca_amarelo_4)>= selecionar_num_dado_animacao && local_peca_amarelo_4 > 0 && (bloco_movimento_amarelo.Count > local_peca_amarelo_4))
-            {
-                borda_peca_amarelo_4.SetActive(true);
-                botao_jogador_amarelo_4.interactable = true;
-            }
-            else
-             {
-                borda_peca_amarelo_4.SetActive(false);
-                botao_jogador_amarelo_4.interactable = false;
-            }
-
-            // tirando 6 e movendo a peça da casa 0.
-            
-            if (selecionar_num_dado_animacao == 6 && local_peca_amarelo_1 == 0)
-            {
-                borda_peca_amarelo_1.SetActive(true);
-                botao_jogador_amarelo_1.interactable = true;
-
-            }
-
-              if (selecionar_num_dado_animacao == 6 && local_peca_amarelo_2 == 0)
-            {
-                borda_peca_amarelo_2.SetActive(true);
-                botao_jogador_amarelo_2.interactable = true;
-
-            }
-
-              if (selecionar_num_dado_animacao == 6 && local_peca_amarelo_3 == 0)
-            {
-                borda_peca_amarelo_3.SetActive(true);
-                botao_jogador_amarelo_3.interactable = true;
-
-            }
-
-              if (selecionar_num_dado_animacao == 6 && local_peca_amarelo_4 == 0)
-            {
-                borda_peca_amarelo_4.SetActive(true);
-                botao_jogador_amarelo_4.interactable = true;
-
-            }
-
-            if (!borda_peca_amarelo_1.activeInHierarchy && !borda_peca_amarelo_2.activeInHierarchy && !borda_peca_amarelo_3.activeInHierarchy && borda_peca_amarelo_4.activeInHierarchy)
-            {
-                botao_jogador_amarelo_1.interactable = false;
-                botao_jogador_amarelo_2.interactable = false;
-                botao_jogador_amarelo_3.interactable = false;
-                botao_jogador_amarelo_4.interactable = false;
-                
-        
-                switch (MainMenuManager.howManyPlayers)
-                {
-                case 2:
-                turno_jogador = "verde";
-                inicializardado();
-                break;
-                 
-                case 3:
-                 turno_jogador = "verde";
-                inicializardado();
-                break;
-
-                case 4:
-                turno_jogador = "verde";
-                inicializardado();
-                break;
-
-                }
-                
-     
-            }
-            break;
-            case "verde":
-
-             if ((bloco_movimento_verde.Count - local_peca_verde_1)>= selecionar_num_dado_animacao && local_peca_verde_1 > 0 && (bloco_movimento_verde.Count > local_peca_verde_1))
-            {
-                borda_peca_verde_1.SetActive(true);
-                botao_jogador_verde_1.interactable = true;
-            }
-            else
-
-            {
-                borda_peca_verde_1.SetActive(false);
-                botao_jogador_verde_1.interactable = false;
-            }
-
-             if ((bloco_movimento_verde.Count - local_peca_verde_2)>= selecionar_num_dado_animacao && local_peca_verde_2 > 0 && (bloco_movimento_verde.Count > local_peca_verde_2))
-            {
-                borda_peca_verde_2.SetActive(true);
-                botao_jogador_verde_2.interactable = true;
-            }
-
-            {
-                borda_peca_verde_2.SetActive(false);
-                botao_jogador_verde_2.interactable = false;
-            }
-
-             if ((bloco_movimento_verde.Count - local_peca_verde_3)>= selecionar_num_dado_animacao && local_peca_verde_3 > 0 && (bloco_movimento_verde.Count > local_peca_verde_3))
-            {
-                borda_peca_verde_3.SetActive(true);
-                botao_jogador_verde_3.interactable = true;
-            }
-            else
-            {
-                borda_peca_verde_3.SetActive(false);
-                botao_jogador_verde_3.interactable = false;
-            }
-
-             if ((bloco_movimento_verde.Count - local_peca_verde_4)>= selecionar_num_dado_animacao && local_peca_verde_4 > 0 && (bloco_movimento_verde.Count > local_peca_verde_4))
-            {
-                borda_peca_verde_4.SetActive(true);
-                botao_jogador_verde_4.interactable = true;
-            }
-            else
-            {
-                borda_peca_verde_4.SetActive(false);
-                botao_jogador_verde_4.interactable = false;
-            }
-
-
-
-
-
-
-
-
-
-           if (selecionar_num_dado_animacao == 6 && local_peca_verde_1 == 0)
-            {
-                borda_peca_verde_1.SetActive(true);
-                botao_jogador_verde_1.interactable = true;
-
-            }
-
-              if (selecionar_num_dado_animacao == 6 && local_peca_verde_2 == 0)
-            {
-                borda_peca_verde_2.SetActive(true);
-                botao_jogador_verde_2.interactable = true;
-
-            }
-
-              if (selecionar_num_dado_animacao == 6 && local_peca_verde_3 == 0)
-            {
-                borda_peca_verde_3.SetActive(true);
-                botao_jogador_verde_3.interactable = true;
-
-            }
-
-              if (selecionar_num_dado_animacao == 6 && local_peca_verde_4 == 0)
-            {
-                borda_peca_verde_4.SetActive(true);
-                botao_jogador_verde_4.interactable = true;
-
-            }
-
-
-            if (!borda_peca_verde_1.activeInHierarchy && !borda_peca_verde_2.activeInHierarchy && !borda_peca_verde_3.activeInHierarchy && borda_peca_verde_4.activeInHierarchy)
-            {
-                //botao_jogador_verde_1.interactable = false;
-                //botao_jogador_verde_2.interactable = false;
-                //botao_jogador_verde_3.interactable = false;
-                //botao_jogador_verde_4.interactable = false;
-    
-             switch (MainMenuManager.howManyPlayers)
-                {
-                case 2:
-                turno_jogador = "amarelo";
-                inicializardado();
-                break;
-
-                case 3:
-                turno_jogador = "vermelho";
-                inicializardado();
-                break;
-                
-                case 4:
-                turno_jogador = "vermelho";
-                inicializardado();
-                break;
-
-                }
-            }
-            break;
-
-            case "vermelho":
-
-
-
-
-            if ((bloco_movimento_vermelho.Count - local_peca_vermelho_1)>= selecionar_num_dado_animacao && local_peca_vermelho_1 > 0 && (bloco_movimento_vermelho.Count > local_peca_vermelho_1))
-            {
-                borda_peca_vermelho_1.SetActive(true);
-                botao_jogador_vermelho_1.interactable = true;
-            }
-
-            else
-
-            {
-                borda_peca_vermelho_1.SetActive(false);
-                botao_jogador_vermelho_1.interactable = false;
-            }
-
-             if ((bloco_movimento_vermelho.Count - local_peca_vermelho_2)>= selecionar_num_dado_animacao && local_peca_vermelho_2 > 0 && (bloco_movimento_vermelho.Count > local_peca_vermelho_2))
-            {
-                borda_peca_vermelho_2.SetActive(true);
-                botao_jogador_vermelho_2.interactable = true;
-            }
-            
-            else
-             {
-                borda_peca_vermelho_2.SetActive(false);
-                botao_jogador_vermelho_2.interactable = false;
-            }
-
-             if ((bloco_movimento_vermelho.Count - local_peca_vermelho_3)>= selecionar_num_dado_animacao && local_peca_vermelho_3 > 0 && (bloco_movimento_vermelho.Count > local_peca_vermelho_3))
-            {
-                borda_peca_vermelho_3.SetActive(true);
-                botao_jogador_vermelho_3.interactable = true;
-            }
-
-            else
-
-            {
-                borda_peca_vermelho_3.SetActive(false);
-                botao_jogador_vermelho_3.interactable = false;
-            }
-
-             if ((bloco_movimento_vermelho.Count - local_peca_vermelho_4)>= selecionar_num_dado_animacao && local_peca_vermelho_4 > 0 && (bloco_movimento_vermelho.Count > local_peca_vermelho_4))
-            {
-                borda_peca_vermelho_4.SetActive(true);
-                botao_jogador_vermelho_4.interactable = true;
-            }
-            else
-            {
-                borda_peca_vermelho_4.SetActive(false);
-                botao_jogador_vermelho_4.interactable = false;
-            }
-
-
-
-              if (selecionar_num_dado_animacao == 6 && local_peca_vermelho_1 == 0)
-            {
-                borda_peca_vermelho_1.SetActive(true);
-                botao_jogador_vermelho_1.interactable = true;
-
-            }
-
-          else
-            {
-                borda_peca_vermelho_1.SetActive(false);
-                botao_jogador_vermelho_1.interactable = false;
-
-            }
-
-              if (selecionar_num_dado_animacao == 6 && local_peca_vermelho_2 == 0)
-            {
-                borda_peca_vermelho_2.SetActive(true);
-                botao_jogador_vermelho_2.interactable = true;
-
-            }
-          else
-            {
-                borda_peca_vermelho_2.SetActive(false);
-                botao_jogador_vermelho_2.interactable = false;
-
-            }
-
-              if (selecionar_num_dado_animacao == 6 && local_peca_vermelho_3 == 0)
-            {
-                borda_peca_vermelho_3.SetActive(true);
-                botao_jogador_vermelho_3.interactable = true;
-
-            }
-
-             {
-                borda_peca_vermelho_3.SetActive(false);
-                botao_jogador_vermelho_3.interactable = false;
-
-            }
-
-              if (selecionar_num_dado_animacao == 6 && local_peca_vermelho_4 == 0)
-            {
-                borda_peca_vermelho_4.SetActive(true);
-                botao_jogador_vermelho_4.interactable = true;
-            }
-
-
-            else
-            {
-                borda_peca_vermelho_4.SetActive(false);
-                botao_jogador_vermelho_4.interactable = false;
-            }
-             if (!borda_peca_vermelho_1.activeInHierarchy && !borda_peca_vermelho_2.activeInHierarchy && !borda_peca_vermelho_3.activeInHierarchy && borda_peca_vermelho_4.activeInHierarchy)
-            {
-                //botao_jogador_vermelho_1.interactable = false;
-                //botao_jogador_vermelho_2.interactable = false;
-                //botao_jogador_vermelho_3.interactable = false;
-                //botao_jogador_vermelho_4.interactable = false;
-                
-             switch (MainMenuManager.howManyPlayers)
-                {
-                case 2:
-                break;
-                case 3:
-                turno_jogador = "amarelo";
-                inicializardado();
-                break;
-                
-                case 4:
-                turno_jogador = "azul";
-                inicializardado();
-                break;
-
-                }
-            }
-            break;
-
-             case "azul":
-
-            if ((bloco_movimento_azul.Count - local_peca_azul_1)>= selecionar_num_dado_animacao && local_peca_azul_1 > 0 && (bloco_movimento_azul.Count > local_peca_azul_1))
-            {
-                borda_peca_azul_1.SetActive(true);
-                botao_jogador_azul_1.interactable = true;
-            }
-
-            else
-
-            {
-                borda_peca_azul_1.SetActive(false);
-                botao_jogador_azul_1.interactable = false;
-            }
-
-             if ((bloco_movimento_azul.Count - local_peca_azul_2)>= selecionar_num_dado_animacao && local_peca_azul_2 > 0 && (bloco_movimento_azul.Count > local_peca_azul_2))
-            {
-                borda_peca_azul_2.SetActive(true);
-                botao_jogador_azul_2.interactable = true;
-            }
-
-            else
-
-
-             {
-                borda_peca_azul_2.SetActive(false);
-                botao_jogador_azul_2.interactable = false;
-            }
-
-             if ((bloco_movimento_azul.Count - local_peca_azul_3)>= selecionar_num_dado_animacao && local_peca_azul_3 > 0 && (bloco_movimento_azul.Count > local_peca_azul_3))
-            {
-                borda_peca_azul_3.SetActive(true);
-                botao_jogador_azul_3.interactable = true;
-            }
-
-            else
-
-            {
-                borda_peca_azul_3.SetActive(false);
-                botao_jogador_azul_3.interactable = false;
-            }
-
-             if ((bloco_movimento_azul.Count - local_peca_azul_4)>= selecionar_num_dado_animacao && local_peca_azul_4 > 0 && (bloco_movimento_azul.Count > local_peca_azul_4))
-            {
-                borda_peca_azul_4.SetActive(true);
-                botao_jogador_azul_4.interactable = true;
-            }
-
-            else
-
-            {
-                borda_peca_azul_4.SetActive(false);
-                botao_jogador_azul_4.interactable = false;
-            }
-            
-
-
-
-
-
-
-            
-            
-            if (selecionar_num_dado_animacao == 6 && local_peca_azul_1 == 0)
-            {
-                borda_peca_azul_1.SetActive(true);
-                botao_jogador_azul_1.interactable = true;
-
-            }
-
-              if (selecionar_num_dado_animacao == 6 && local_peca_azul_2 == 0)
-            {
-                borda_peca_azul_2.SetActive(true);
-                botao_jogador_azul_2.interactable = true;
-
-            }
-
-              if (selecionar_num_dado_animacao == 6 && local_peca_azul_3 == 0)
-            {
-                borda_peca_azul_3.SetActive(true);
-                botao_jogador_azul_3.interactable = true;
-
-            }
-
-              if (selecionar_num_dado_animacao == 6 && local_peca_azul_4 == 0)
-            {
-                borda_peca_azul_4.SetActive(true);
-                botao_jogador_azul_4.interactable = true;
-
-
-            }
-            if (!borda_peca_azul_1.activeInHierarchy && !borda_peca_azul_2.activeInHierarchy && !borda_peca_azul_3.activeInHierarchy && borda_peca_azul_4.activeInHierarchy)
-            {
-                //botao_jogador_azul_1.interactable = false;
-                //botao_jogador_azul_2.interactable = false;
-                //botao_jogador_azul_3.interactable = false;
-                //botao_jogador_azul_4.interactable = false;
-                
-             switch (MainMenuManager.howManyPlayers)
-                {
-                case 2:
-                break;
-
-                case 3:
-                break;
-                
-                case 4:
-                turno_jogador = "amarelo";
-                inicializardado();
-                break;
-
-                }
-            }
-            break;
-        }
-
-    }
-
-
-
-/*
-
-█   █  ███  █   █ █████ █   █ █████ █   █ █████  ███  
-██ ██ █   █ █   █   █   ██ ██ █     ██  █   █   █   █ 
-█ █ █ █   █  █ █    █   █ █ █ ████  █ █ █   █   █   █ 
-█   █ █   █  █ █    █   █   █ █     █  ██   █   █   █ 
-█   █  ███    █   █████ █   █ █████ █   █   █    ███  
-
-
-███  █████  ████  ███       
-█   █ █     █     █   █ 
-████  ████  █     █████ 
-█     █     █     █   █ 
-█     █████  ████ █   █ 
-
- ███  █   █  ███  ████  █████ █      ███  
-█   █ ██ ██ █   █ █   █ █     █     █   █ 
-█████ █ █ █ █████ ████  ████  █     █   █ 
-█   █ █   █ █   █ █   █ █     █     █   █ 
-█   █ █   █ █   █ █   █ █████ █████  ███  
-
-*/
-
-
-
-public void jogador_amarelo_1_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_amarelo_1.SetActive(false);
-    borda_peca_amarelo_2.SetActive(false);
-    borda_peca_amarelo_3.SetActive(false);
-    borda_peca_amarelo_4.SetActive(false);
-
-    botao_jogador_amarelo_1.interactable = false;
-    botao_jogador_amarelo_2.interactable = false;
-    botao_jogador_amarelo_3.interactable = false;
-    botao_jogador_amarelo_4.interactable = false;
-
-    if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_1) > selecionar_num_dado_animacao)
-    {
-
-         if (local_peca_amarelo_1 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_amarelo_1 = new Vector3[selecionar_num_dado_animacao];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_amarelo_1[i] = bloco_movimento_amarelo[local_peca_amarelo_1 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_amarelo_1+= selecionar_num_dado_animacao;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_num_dado_animacao == 6)
-          {
-            turno_jogador = "amarelo";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                turno_jogador = "verde";
-                break;
-
-                case 3:
-                turno_jogador = "verde";
-                break;
-
-                case 4:
-                turno_jogador = "verde";
-                break;
-            }
-          }
-
-          if(caminho_jogador_amarelo_1.Length > 1)
-          {
-            iTween.MoveTo(jogador_amarelo_1, iTween.Hash("path", caminho_jogador_amarelo_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_amarelo_1, iTween.Hash("position", caminho_jogador_amarelo_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_amarelo_1";
-        }
-        else{
-
-
-
-        if (selecionar_num_dado_animacao == 6 && local_peca_amarelo_1 == 0  )
-        {
-            Vector3[] caminho_jogador_amarelo_1 = new Vector3[1];
-            caminho_jogador_amarelo_1[0] = bloco_movimento_amarelo[local_peca_amarelo_1].transform.position;
-            local_peca_amarelo_1 +=1;
-            turno_jogador = "amarelo";
-            nome_jogador_atual = "jogador_amarelo_1";
-            iTween.MoveTo(jogador_amarelo_1, iTween.Hash("position", caminho_jogador_amarelo_1[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-        }
-    }
-    else{
-
-  if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_1)  == selecionar_num_dado_animacao)
-  
-  {
-    Vector3[] caminho_jogador_amarelo_1 = new Vector3[selecionar_num_dado_animacao];
-    for(int i = 0; i < selecionar_num_dado_animacao; i++)
-       {
-        caminho_jogador_amarelo_1[i] = bloco_movimento_amarelo[local_peca_amarelo_1 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_amarelo_1+= selecionar_num_dado_animacao;
-       if(caminho_jogador_amarelo_1.Length > 1)
-      {
-        iTween.MoveTo(jogador_amarelo_1, iTween.Hash("path", caminho_jogador_amarelo_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_amarelo_1, iTween.Hash("position", caminho_jogador_amarelo_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "amarelo";
-       totalamarelocasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_amarelo_1.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_amarelo.Count - local_peca_amarelo_1).ToString() + "Steps to enter into the house");
-    if((local_peca_amarelo_2 + local_peca_amarelo_3 + local_peca_amarelo_4) == 0 && selecionar_num_dado_animacao !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-                case 2:
-                turno_jogador = "verde";
-                break;
-
-                case 3:
-                turno_jogador = "verde";
-                break;
-
-                case 4:
-                turno_jogador = "verde";
-                break;
-
-    }
-    }
-    
-  inicializardado();
-
-
-
- 
-  
-  
-  
-}
-    
-}        
-
-}
-
-public void jogador_amarelo_2_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_amarelo_1.SetActive(false);
-    borda_peca_amarelo_2.SetActive(false);
-    borda_peca_amarelo_3.SetActive(false);
-    borda_peca_amarelo_4.SetActive(false);
-
-    botao_jogador_amarelo_1.interactable = false;
-    botao_jogador_amarelo_2.interactable = false;
-    botao_jogador_amarelo_3.interactable = false;
-    botao_jogador_amarelo_4.interactable = false;
-
-    if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_2) > selecionar_num_dado_animacao)
-    {
-
-         if (local_peca_amarelo_2 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_amarelo_2 = new Vector3[selecionar_num_dado_animacao];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_amarelo_2[i] = bloco_movimento_amarelo[local_peca_amarelo_2 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_amarelo_2+= selecionar_num_dado_animacao;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_num_dado_animacao == 6)
-          {
-            turno_jogador = "amarelo";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                turno_jogador = "verde";
-                break;
-
-                case 3:
-                turno_jogador = "verde";
-                break;
-
-                case 4:
-                turno_jogador = "verde";
-                break;
-            }
-          }
-
-          if(caminho_jogador_amarelo_2.Length > 1)
-          {
-            iTween.MoveTo(jogador_amarelo_2, iTween.Hash("path", caminho_jogador_amarelo_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_amarelo_2, iTween.Hash("position", caminho_jogador_amarelo_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_amarelo_2";
-        }
-        else{
-
-        
-        
-
-        if (selecionar_num_dado_animacao == 6 && local_peca_amarelo_2 == 0  )
-        {
-            Vector3[] caminho_jogador_amarelo_2 = new Vector3[1];
-            caminho_jogador_amarelo_2[0] = bloco_movimento_amarelo[local_peca_amarelo_2].transform.position;
-            local_peca_amarelo_2 +=1;
-            turno_jogador = "amarelo";
-            nome_jogador_atual = "jogador_amarelo_2";
-            iTween.MoveTo(jogador_amarelo_2, iTween.Hash("position", caminho_jogador_amarelo_2[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-
-
-  else{
-
-  if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_2)  == selecionar_num_dado_animacao)
-  
-  {
-    Vector3[] caminho_jogador_amarelo_2 = new Vector3[selecionar_num_dado_animacao];
-    for(int i = 0; i < selecionar_num_dado_animacao; i++)
-       {
-        caminho_jogador_amarelo_2[i] = bloco_movimento_amarelo[local_peca_amarelo_2 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_amarelo_2+= selecionar_num_dado_animacao;
-       if(caminho_jogador_amarelo_2.Length > 1)
-      {
-        iTween.MoveTo(jogador_amarelo_2, iTween.Hash("path", caminho_jogador_amarelo_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_amarelo_2, iTween.Hash("position", caminho_jogador_amarelo_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "amarelo";
-       totalamarelocasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_amarelo_2.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_amarelo.Count - local_peca_amarelo_2).ToString() + "Steps to enter into the house");
-    if((local_peca_amarelo_1 + local_peca_amarelo_3 + local_peca_amarelo_4) == 0 && selecionar_num_dado_animacao !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-                case 2:
-                turno_jogador = "verde";
-                break;
-
-                case 3:
-                turno_jogador = "verde";
-                break;
-
-                case 4:
-                turno_jogador = "verde";
-                break;
-
-    }
-    }
-  inicializardado();
-
-
-
-  
-  
-  
-  
-}
-
-}
-        
-
-}
-
-public void jogador_amarelo_3_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_amarelo_1.SetActive(false);
-    borda_peca_amarelo_2.SetActive(false);
-    borda_peca_amarelo_3.SetActive(false);
-    borda_peca_amarelo_4.SetActive(false);
-
-    botao_jogador_amarelo_1.interactable = false;
-    botao_jogador_amarelo_2.interactable = false;
-    botao_jogador_amarelo_3.interactable = false;
-    botao_jogador_amarelo_4.interactable = false;
-
-    if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_3) > selecionar_num_dado_animacao)
-    {
-
-
-         if (local_peca_amarelo_3 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_amarelo_3 = new Vector3[selecionar_num_dado_animacao];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_amarelo_3[i] = bloco_movimento_amarelo[local_peca_amarelo_3 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_amarelo_3+= selecionar_num_dado_animacao;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_num_dado_animacao == 6)
-          {
-            turno_jogador = "amarelo";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-               case 2:
-                turno_jogador = "verde";
-                break;
-
-                case 3:
-                turno_jogador = "verde";
-                break;
-
-                case 4:
-                turno_jogador = "verde";
-                break;
-            }
-          }
-
-          if(caminho_jogador_amarelo_3.Length > 1)
-          {
-            iTween.MoveTo(jogador_amarelo_3, iTween.Hash("path", caminho_jogador_amarelo_3, "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_amarelo_3, iTween.Hash("position", caminho_jogador_amarelo_3[0], "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_amarelo_3";
-        }
-        else{
-
-
-
-
-
-
-        if (selecionar_num_dado_animacao == 6 && local_peca_amarelo_3 == 0  )
-        {
-            Vector3[] caminho_jogador_amarelo_3 = new Vector3[1];
-            caminho_jogador_amarelo_3[0] = bloco_movimento_amarelo[local_peca_amarelo_3].transform.position;
-            local_peca_amarelo_3 +=1;
-            turno_jogador = "amarelo";
-            nome_jogador_atual = "jogador_amarelo_3";
-            iTween.MoveTo(jogador_amarelo_3, iTween.Hash("position", caminho_jogador_amarelo_3[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-
-
-    else{
-
-  if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_3)  == selecionar_num_dado_animacao)
-  
-  {
-    Vector3[] caminho_jogador_amarelo_3 = new Vector3[selecionar_num_dado_animacao];
-    for(int i = 0; i < selecionar_num_dado_animacao; i++)
-       {
-        caminho_jogador_amarelo_3[i] = bloco_movimento_amarelo[local_peca_amarelo_3 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_amarelo_3+= selecionar_num_dado_animacao;
-       if(caminho_jogador_amarelo_3.Length > 1)
-      {
-        iTween.MoveTo(jogador_amarelo_3, iTween.Hash("path", caminho_jogador_amarelo_3, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_amarelo_3, iTween.Hash("position", caminho_jogador_amarelo_3[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "amarelo";
-       totalamarelocasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_amarelo_3.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_amarelo.Count - local_peca_amarelo_3).ToString() + "Steps to enter into the house");
-    if((local_peca_amarelo_1 + local_peca_amarelo_2 + local_peca_amarelo_4) == 0 && selecionar_num_dado_animacao !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-                case 2:
-                turno_jogador = "verde";
-                break;
-
-                case 3:
-                turno_jogador = "verde";
-                break;
-
-                case 4:
-                turno_jogador = "verde";
-                break;
-
-    }
-    }
-    
-  inicializardado();
-
-
-
- 
-  
-  
-  
-}
-
-}
-        
-
-}
-
-public void jogador_amarelo_4_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_amarelo_1.SetActive(false);
-    borda_peca_amarelo_2.SetActive(false);
-    borda_peca_amarelo_3.SetActive(false);
-    borda_peca_amarelo_4.SetActive(false);
-
-    botao_jogador_amarelo_1.interactable = false;
-    botao_jogador_amarelo_2.interactable = false;
-    botao_jogador_amarelo_3.interactable = false;
-    botao_jogador_amarelo_4.interactable = false;
-
-    if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_4) > selecionar_num_dado_animacao)
-    {
-
-
-        if (local_peca_amarelo_4 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector4[] caminho_jogador_amarelo_4 = new Vector4[selecionar_num_dado_animacao];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_amarelo_4[i] = bloco_movimento_amarelo[local_peca_amarelo_4 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_amarelo_4+= selecionar_num_dado_animacao;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_num_dado_animacao == 6)
-          {
-            turno_jogador = "amarelo";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-              case 2:
-                turno_jogador = "verde";
-                break;
-
-                case 3:
-                turno_jogador = "verde";
-                break;
-
-                case 4:
-                turno_jogador = "verde";
-                break;
-            }
-          }
-
-          if(caminho_jogador_amarelo_4.Length > 1)
-          {
-            iTween.MoveTo(jogador_amarelo_4, iTween.Hash("path", caminho_jogador_amarelo_4, "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_amarelo_4, iTween.Hash("position", caminho_jogador_amarelo_4[0], "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_amarelo_4";
-        }
-        else{
-
-
-
-        if (selecionar_num_dado_animacao == 6 && local_peca_amarelo_4 == 0  )
-        {
-            Vector3[] caminho_jogador_amarelo_4 = new Vector3[1];
-            caminho_jogador_amarelo_4[0] = bloco_movimento_amarelo[local_peca_amarelo_4].transform.position;
-            local_peca_amarelo_4 +=1;
-            turno_jogador = "amarelo";
-            nome_jogador_atual = "jogador_amarelo_4";
-            iTween.MoveTo(jogador_amarelo_4, iTween.Hash("position", caminho_jogador_amarelo_4[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-
-
-    else{
-
-  if(turno_jogador == "amarelo" && (bloco_movimento_amarelo.Count - local_peca_amarelo_4)  == selecionar_num_dado_animacao)
-  
-  {
-    Vector3[] caminho_jogador_amarelo_4 = new Vector3[selecionar_num_dado_animacao];
-    for(int i = 0; i < selecionar_num_dado_animacao; i++)
-       {
-        caminho_jogador_amarelo_4[i] = bloco_movimento_amarelo[local_peca_amarelo_4 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_amarelo_4+= selecionar_num_dado_animacao;
-       if(caminho_jogador_amarelo_4.Length > 1)
-      {
-        iTween.MoveTo(jogador_amarelo_4, iTween.Hash("path", caminho_jogador_amarelo_4, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_amarelo_4, iTween.Hash("position", caminho_jogador_amarelo_4[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "amarelo";
-       totalamarelocasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_amarelo_4.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_amarelo.Count - local_peca_amarelo_4).ToString() + "Steps to enter into the house");
-    if((local_peca_amarelo_1 + local_peca_amarelo_2 + local_peca_amarelo_3) == 0 && selecionar_num_dado_animacao !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-                case 2:
-                turno_jogador = "verde";
-                break;
-
-                case 3:
-                turno_jogador = "verde";
-                break;
-
-                case 4:
-                turno_jogador = "verde";
-                break;
-
-    }
-    }
-  inicializardado();
-
-
-
-  
-  
-  
-  
-}
-
-}
-        
-
-}
-/*
-
-█   █  ███  █   █ █████ █   █ █████ █   █ █████  ███  
-██ ██ █   █ █   █   █   ██ ██ █     ██  █   █   █   █ 
-█ █ █ █   █  █ █    █   █ █ █ ████  █ █ █   █   █   █ 
-█   █ █   █  █ █    █   █   █ █     █  ██   █   █   █ 
-█   █  ███    █   █████ █   █ █████ █   █   █    ███  
-
-
-███  █████  ████  ███       
-█   █ █     █     █   █ 
-████  ████  █     █████ 
-█     █     █     █   █ 
-█     █████  ████ █   █ 
-
-█   █ █████ ████  ████  █████ 
-█   █ █     █   █ █   █ █     
- █ █  ████  ████  █   █ ████  
- █ █  █     █   █ █   █ █     
-  █   █████ █   █ ████  █████ 
-
-*/
-public void jogador_verde_1_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_verde_1.SetActive(false);
-    borda_peca_verde_2.SetActive(false);
-    borda_peca_verde_3.SetActive(false);
-    borda_peca_verde_4.SetActive(false);
-
-    botao_jogador_verde_1.interactable = false;
-    botao_jogador_verde_2.interactable = false;
-    botao_jogador_verde_3.interactable = false;
-    botao_jogador_verde_4.interactable = false;
-
-    if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_1) > selecionar_num_dado_animacao)
-    {
-        if (local_peca_verde_1 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_verde_1 = new Vector3[selecionar_num_dado_animacao];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_verde_1[i] = bloco_movimento_verde[local_peca_verde_1 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_verde_1+= selecionar_num_dado_animacao;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_num_dado_animacao == 6)
-          {
-            turno_jogador = "verde";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                turno_jogador = "amarelo";
-                break;
-
-                case 3:
-                turno_jogador = "vermelho";
-                break;
-
-                case 4:
-                turno_jogador = "vermelho";
-                break;
-            }
-          }
-
-          if(caminho_jogador_verde_1.Length > 1)
-          {
-            iTween.MoveTo(jogador_verde_1, iTween.Hash("path", caminho_jogador_verde_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_verde_1, iTween.Hash("position", caminho_jogador_verde_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_verde_1";
-        }
-        else{
-
-
-        if (selecionar_num_dado_animacao == 6 && local_peca_verde_1 == 0  )
-        {
-            Vector3[] caminho_jogador_verde_1 = new Vector3[1];
-            caminho_jogador_verde_1[0] = bloco_movimento_verde[local_peca_verde_1].transform.position;
-            local_peca_verde_1 +=1;
-            turno_jogador = "verde";
-            nome_jogador_atual = "jogador_verde_1";
-            iTween.MoveTo(jogador_verde_1, iTween.Hash("position", caminho_jogador_verde_1[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-    }
-  }
-
-  else{
-
-  if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_1)  == selecionar_num_dado_animacao)
-  
-  {
-    Vector3[] caminho_jogador_verde_1 = new Vector3[selecionar_num_dado_animacao];
-    for(int i = 0; i < selecionar_num_dado_animacao; i++)
-       {
-        caminho_jogador_verde_1[i] = bloco_movimento_verde[local_peca_verde_1 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_verde_1+= selecionar_num_dado_animacao;
-       if(caminho_jogador_verde_1.Length > 1)
-      {
-        iTween.MoveTo(jogador_verde_1, iTween.Hash("path", caminho_jogador_verde_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_verde_1, iTween.Hash("position", caminho_jogador_verde_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "verde";
-       totalverdecasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_verde_1.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_verde.Count - local_peca_verde_1).ToString() + "Steps to enter into the house");
-    if((local_peca_verde_2 + local_peca_verde_3 + local_peca_verde_4) == 0 && selecionar_num_dado_animacao !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-           case 2:
-                turno_jogador = "amarelo";
-                break;
-
-                case 3:
-                turno_jogador = "vermelho";
-                break;
-
-                case 4:
-                turno_jogador = "vermelho";
-                break;
-
-    }
-    }
-  inicializardado();
-
-
-
-  
-  
-  
-}
-
-}
-
-
-
-        
-
-}
-
-
-///Movimentos das pecas verdes
-
-public void jogador_verde_2_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_verde_1.SetActive(false);
-    borda_peca_verde_2.SetActive(false);
-    borda_peca_verde_3.SetActive(false);
-    borda_peca_verde_4.SetActive(false);
-
-    botao_jogador_verde_1.interactable = false;
-    botao_jogador_verde_2.interactable = false;
-    botao_jogador_verde_3.interactable = false;
-    botao_jogador_verde_4.interactable = false;
-
-    if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_2) > selecionar_num_dado_animacao)
-    {
-
-         if (local_peca_verde_2 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_verde_2 = new Vector3[selecionar_num_dado_animacao];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_verde_2[i] = bloco_movimento_verde[local_peca_verde_2 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_verde_2+= selecionar_num_dado_animacao;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_num_dado_animacao == 6)
-          {
-            turno_jogador = "verde";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                turno_jogador = "amarelo";
-                break;
-
-                case 3:
-                turno_jogador = "vermelho";
-                break;
-
-                case 4:
-                turno_jogador = "vermelho";
-                break;
-            }
-          }
-
-          if(caminho_jogador_verde_2.Length > 1)
-          {
-            iTween.MoveTo(jogador_verde_2, iTween.Hash("path", caminho_jogador_verde_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_verde_2, iTween.Hash("position", caminho_jogador_verde_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_verde_2";
-        }
-        else{
-
-        
-
-
-
-
-
-
-        if (selecionar_num_dado_animacao == 6 && local_peca_verde_2 == 0  )
-        {
-            Vector3[] caminho_jogador_verde_2 = new Vector3[1];
-            caminho_jogador_verde_2[0] = bloco_movimento_verde[local_peca_verde_2].transform.position;
-            local_peca_verde_2 +=1;
-            turno_jogador = "verde";
-            nome_jogador_atual = "jogador_verde_2";
-            iTween.MoveTo(jogador_verde_2, iTween.Hash("position", caminho_jogador_verde_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-  
-  else{
-
-  if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_2)  == selecionar_num_dado_animacao)
-  
-  {
-    Vector3[] caminho_jogador_verde_2 = new Vector3[selecionar_num_dado_animacao];
-    for(int i = 0; i < selecionar_num_dado_animacao; i++)
-       {
-        caminho_jogador_verde_2[i] = bloco_movimento_verde[local_peca_verde_2 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_verde_2+= selecionar_num_dado_animacao;
-       if(caminho_jogador_verde_2.Length > 1)
-      {
-        iTween.MoveTo(jogador_verde_2, iTween.Hash("path", caminho_jogador_verde_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_verde_2, iTween.Hash("position", caminho_jogador_verde_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "verde";
-       totalverdecasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_verde_2.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_verde.Count - local_peca_verde_2).ToString() + "Steps to enter into the house");
-    if((local_peca_verde_1 + local_peca_verde_3 + local_peca_verde_4) == 0 && selecionar_num_dado_animacao !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-           case 2:
-                turno_jogador = "amarelo";
-                break;
-
-                case 3:
-                turno_jogador = "vermelho";
-                break;
-
-                case 4:
-                turno_jogador = "vermelho";
-                break;
-
-    }
-    }
-    
-  inicializardado();
-
-
-
-  
-  
-  
-  
-}
-
-}
-    
-
-}
-
-public void jogador_verde_3_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_verde_1.SetActive(false);
-    borda_peca_verde_2.SetActive(false);
-    borda_peca_verde_3.SetActive(false);
-    borda_peca_verde_4.SetActive(false);
-
-    botao_jogador_verde_1.interactable = false;
-    botao_jogador_verde_2.interactable = false;
-    botao_jogador_verde_3.interactable = false;
-    botao_jogador_verde_4.interactable = false;
-
-    if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_3) > selecionar_num_dado_animacao)
-    {
-
-
-
-        if (local_peca_verde_3 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_verde_3 = new Vector3[selecionar_num_dado_animacao];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_verde_3[i] = bloco_movimento_verde[local_peca_verde_3 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_verde_3+= selecionar_num_dado_animacao;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_num_dado_animacao == 6)
-          {
-            turno_jogador = "verde";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                turno_jogador = "amarelo";
-                break;
-
-                case 3:
-                turno_jogador = "vermelho";
-                break;
-
-                case 4:
-                turno_jogador = "vermelho";
-                break;
-            }
-          }
-
-          if(caminho_jogador_verde_3.Length > 1)
-          {
-            iTween.MoveTo(jogador_verde_3, iTween.Hash("path", caminho_jogador_verde_3, "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_verde_3, iTween.Hash("position", caminho_jogador_verde_3[0], "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_verde_3";
-        }
-        else{
-
-        
-
-
-
-        if (selecionar_num_dado_animacao == 6 && local_peca_verde_3 == 0  )
-        {
-            Vector3[] caminho_jogador_verde_3 = new Vector3[1];
-            caminho_jogador_verde_3[0] = bloco_movimento_verde[local_peca_verde_3].transform.position;
-            local_peca_verde_3 +=1;
-            turno_jogador = "verde";
-            nome_jogador_atual = "jogador_verde_3";
-            iTween.MoveTo(jogador_verde_3, iTween.Hash("position", caminho_jogador_verde_3[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-  else{
-
-  if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_3)  == selecionar_num_dado_animacao)
-  
-  {
-    Vector3[] caminho_jogador_verde_3 = new Vector3[selecionar_num_dado_animacao];
-    for(int i = 0; i < selecionar_num_dado_animacao; i++)
-       {
-        caminho_jogador_verde_3[i] = bloco_movimento_verde[local_peca_verde_3 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_verde_3+= selecionar_num_dado_animacao;
-       if(caminho_jogador_verde_3.Length > 1)
-      {
-        iTween.MoveTo(jogador_verde_3, iTween.Hash("path", caminho_jogador_verde_3, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_verde_3, iTween.Hash("position", caminho_jogador_verde_3[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "verde";
-       totalverdecasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_verde_3.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_verde.Count - local_peca_verde_3).ToString() + "Steps to enter into the house");
-    if((local_peca_verde_1 + local_peca_verde_2 + local_peca_verde_4) == 0 && selecionar_num_dado_animacao !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-           case 2:
-                turno_jogador = "amarelo";
-                break;
-
-                case 3:
-                turno_jogador = "vermelho";
-                break;
-
-                case 4:
-                turno_jogador = "vermelho";
-                break;
-
-    }
-    }
-    
-  inicializardado();
-
-
-
-  
-  
-  
-  
-}
-
-}
-
-        
-
-}
-
-public void jogador_verde_4_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_verde_1.SetActive(false);
-    borda_peca_verde_2.SetActive(false);
-    borda_peca_verde_3.SetActive(false);
-    borda_peca_verde_4.SetActive(false);
-
-    botao_jogador_verde_1.interactable = false;
-    botao_jogador_verde_2.interactable = false;
-    botao_jogador_verde_3.interactable = false;
-    botao_jogador_verde_4.interactable = false;
-
-    if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_4) > selecionar_num_dado_animacao)
-    {
-        if (local_peca_verde_4 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector4[] caminho_jogador_verde_4 = new Vector4[selecionar_num_dado_animacao];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_verde_4[i] = bloco_movimento_verde[local_peca_verde_4 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_verde_4+= selecionar_num_dado_animacao;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_num_dado_animacao == 6)
-          {
-            turno_jogador = "verde";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                turno_jogador = "amarelo";
-                break;
-
-                case 3:
-                turno_jogador = "vermelho";
-                break;
-
-                case 4:
-                turno_jogador = "vermelho";
-                break;
-            }
-          }
-
-          if(caminho_jogador_verde_4.Length > 1)
-          {
-            iTween.MoveTo(jogador_verde_4, iTween.Hash("path", caminho_jogador_verde_4, "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_verde_4, iTween.Hash("position", caminho_jogador_verde_4[0], "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_verde_4";
-        }
-        else{
-
-        
-        
-
-
-        if (selecionar_num_dado_animacao == 6 && local_peca_verde_4 == 0  )
-        {
-            Vector3[] caminho_jogador_verde_4 = new Vector3[1];
-            caminho_jogador_verde_4[0] = bloco_movimento_verde[local_peca_verde_4].transform.position;
-            local_peca_verde_4 +=1;
-            turno_jogador = "verde";
-            nome_jogador_atual = "jogador_verde_4";
-            iTween.MoveTo(jogador_verde_4, iTween.Hash("position", caminho_jogador_verde_4[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-
-  else{
-
-  if(turno_jogador == "verde" && (bloco_movimento_verde.Count - local_peca_verde_4)  == selecionar_num_dado_animacao)
-  
-  {
-    Vector3[] caminho_jogador_verde_4 = new Vector3[selecionar_num_dado_animacao];
-    for(int i = 0; i < selecionar_num_dado_animacao; i++)
-       {
-        caminho_jogador_verde_4[i] = bloco_movimento_verde[local_peca_verde_4 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_verde_4+= selecionar_num_dado_animacao;
-       if(caminho_jogador_verde_4.Length > 1)
-      {
-        iTween.MoveTo(jogador_verde_4, iTween.Hash("path", caminho_jogador_verde_4, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_verde_4, iTween.Hash("position", caminho_jogador_verde_4[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "verde";
-       totalverdecasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_verde_4.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_verde.Count - local_peca_verde_4).ToString() + "Steps to enter into the house");
-    if((local_peca_verde_1 + local_peca_verde_2 + local_peca_verde_3) == 0 && selecionar_num_dado_animacao !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-                case 2:
-                turno_jogador = "amarelo";
-                break;
-
-                case 3:
-                turno_jogador = "vermelho";
-                break;
-
-                case 4:
-                turno_jogador = "vermelho";
-                break;
-
-    }
-    }
-  inicializardado();
-
-
-
-  
-  
-  
-  
-}
-
-}
-
-
-}
-
-/*
-
-
-█   █  ███  █   █ █████ █   █ █████ █   █ █████  ███  
-██ ██ █   █ █   █   █   ██ ██ █     ██  █   █   █   █ 
-█ █ █ █   █  █ █    █   █ █ █ ████  █ █ █   █   █   █ 
-█   █ █   █  █ █    █   █   █ █     █  ██   █   █   █ 
-█   █  ███    █   █████ █   █ █████ █   █   █    ███  
-
-
-████  █████  ████  ███  
-█   █ █     █     █   █ 
-████  ████  █     █████ 
-█     █     █     █   █ 
-█     █████  ████ █   █ 
-█     █████  ████ █   █   
-
-
-
-█   █ █████ ████  █   █ █████ █     █   █  ███  
-█   █ █     █   █ ██ ██ █     █     █   █ █   █ 
- █ █  ████  ████  █ █ █ ████  █     █████ █████ 
- █ █  █     █   █ █   █ █     █     █   █ █   █ 
-  █   █████ █   █ █   █ █████ █████ █   █ █   █ 
-
-
-*/
-
-public void jogador_vermelho_1_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_vermelho_1.SetActive(false);
-    borda_peca_vermelho_2.SetActive(false);
-    borda_peca_vermelho_3.SetActive(false);
-    borda_peca_vermelho_4.SetActive(false);
-
-    botao_jogador_vermelho_1.interactable = false;
-    botao_jogador_vermelho_2.interactable = false;
-    botao_jogador_vermelho_3.interactable = false;
-    botao_jogador_vermelho_4.interactable = false;
-
-    if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_1) > selecionar_num_dado_animacao)
-    {
-        
-        //Mover a peca
-        if (local_peca_vermelho_1 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_vermelho_1 = new Vector3[selecionar_num_dado_animacao];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_vermelho_1[i] = bloco_movimento_vermelho[local_peca_vermelho_1 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_vermelho_1+= selecionar_num_dado_animacao;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_num_dado_animacao == 6)
-          {
-            turno_jogador = "vermelho";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                break;
-                case 3:
-                turno_jogador = "amarelo";
-                break;
-
-                case 4:
-                turno_jogador = "azul";
-                break;
-            }
-          }
-
-          if(caminho_jogador_vermelho_1.Length > 1)
-          {
-            iTween.MoveTo(jogador_vermelho_1, iTween.Hash("path", caminho_jogador_vermelho_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_vermelho_1, iTween.Hash("position", caminho_jogador_vermelho_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_vermelho_1";
-        }
-        else
-        {
-
-      
-        //Mover a peca do inicio
-        if (selecionar_num_dado_animacao == 6 && local_peca_vermelho_1 == 0  )
-
-        {
-            Vector3[] caminho_jogador_vermelho_1 = new Vector3[1];
-            caminho_jogador_vermelho_1[0] = bloco_movimento_vermelho[local_peca_vermelho_1].transform.position;
-            local_peca_vermelho_1 +=1;
-            turno_jogador = "vermelho";
-            nome_jogador_atual = "jogador_vermelho_1";
-            iTween.MoveTo(jogador_vermelho_1, iTween.Hash("position", caminho_jogador_vermelho_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-        
-    }
-    else{
-
-      if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_1)  == selecionar_num_dado_animacao)
-      
-      {
-        Vector3[] caminho_jogador_vermelho_1 = new Vector3[selecionar_num_dado_animacao];
-        for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_vermelho_1[i] = bloco_movimento_vermelho[local_peca_vermelho_1 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_vermelho_1+= selecionar_num_dado_animacao;
-           if(caminho_jogador_vermelho_1.Length > 1)
-          {
-            iTween.MoveTo(jogador_vermelho_1, iTween.Hash("path", caminho_jogador_vermelho_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_vermelho_1, iTween.Hash("position", caminho_jogador_vermelho_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-           turno_jogador = "vermelho";
-           totalvermelhocasa +=1;
-           Debug.Log("Boa, chegou em casa meu veio!");
-           botao_jogador_vermelho_1.enabled=false;
-      }
-
-      else{
-        Debug.Log("You need" + (bloco_movimento_vermelho.Count - local_peca_vermelho_1).ToString() + "Steps to enter into the house");
-        if((local_peca_vermelho_2 + local_peca_vermelho_3 + local_peca_vermelho_4) == 0 && selecionar_num_dado_animacao !=6)
-        {
-
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                break;
-                case 3:
-                turno_jogador = "amarelo";
-                break;
-
-                case 4:
-                turno_jogador = "azul";
-                break;
-            }
-
-        }
-        
-      inicializardado();
-
-
-
-      }
-      
-      
-      
-   }
-
-}
-
-
-
-public void jogador_vermelho_2_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_vermelho_1.SetActive(false);
-    borda_peca_vermelho_2.SetActive(false);
-    borda_peca_vermelho_3.SetActive(false);
-    borda_peca_vermelho_4.SetActive(false);
-
-    botao_jogador_vermelho_1.interactable = false;
-    botao_jogador_vermelho_2.interactable = false;
-    botao_jogador_vermelho_3.interactable = false;
-    botao_jogador_vermelho_4.interactable = false;
-
-    if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_2) > selecionar_num_dado_animacao)
-    {
-        if (local_peca_vermelho_2 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_vermelho_2 = new Vector3[selecionar_num_dado_animacao];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_vermelho_2[i] = bloco_movimento_vermelho[local_peca_vermelho_2 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_vermelho_2+= selecionar_num_dado_animacao;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_num_dado_animacao == 6)
-          {
-            turno_jogador = "vermelho";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                break;
-                case 3:
-                turno_jogador = "amarelo";
-                break;
-
-                case 4:
-                turno_jogador = "azul";
-                break;
-            }
-          }
-
-          if(caminho_jogador_vermelho_2.Length > 1)
-          {
-            iTween.MoveTo(jogador_vermelho_2, iTween.Hash("path", caminho_jogador_vermelho_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_vermelho_2, iTween.Hash("position", caminho_jogador_vermelho_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_vermelho_2";
-        }
-        else{
-
-
-        if (selecionar_num_dado_animacao == 6 && local_peca_vermelho_2 == 0 )
-        {
-            Vector3[] caminho_jogador_vermelho_2 = new Vector3[1];
-            caminho_jogador_vermelho_2[0] = bloco_movimento_vermelho[local_peca_vermelho_2].transform.position;
-            local_peca_vermelho_2 +=1;
-            turno_jogador = "vermelho";
-            nome_jogador_atual = "jogador_vermelho_2";
-            iTween.MoveTo(jogador_vermelho_2, iTween.Hash("position", caminho_jogador_vermelho_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-
-        }
-    }
-
-    else{
-
-       if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_2)  == selecionar_num_dado_animacao)
-      
-      {
-        Vector3[] caminho_jogador_vermelho_2 = new Vector3[selecionar_num_dado_animacao];
-        for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_vermelho_2[i] = bloco_movimento_vermelho[local_peca_vermelho_2 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_vermelho_2+= selecionar_num_dado_animacao;
-           if(caminho_jogador_vermelho_2.Length > 1)
-          {
-            iTween.MoveTo(jogador_vermelho_2, iTween.Hash("path", caminho_jogador_vermelho_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_vermelho_2, iTween.Hash("position", caminho_jogador_vermelho_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-           turno_jogador = "vermelho";
-           totalvermelhocasa +=1;
-           Debug.Log("Boa, chegou em casa meu veio!");
-           botao_jogador_vermelho_2.enabled=false;
-      }
-
-      else{
-        Debug.Log("You need" + (bloco_movimento_vermelho.Count - local_peca_vermelho_2).ToString() + "Steps to enter into the house");
-        if((local_peca_vermelho_1 + local_peca_vermelho_3 + local_peca_vermelho_4) == 0 && selecionar_num_dado_animacao !=6)
-        {
-
-            switch (MainMenuManager.howManyPlayers)
-            {   
-                case 2:
-                break;
-                case 3:
-                turno_jogador = "amarelo";
-                break;
-
-                case 4:
-                turno_jogador = "azul";
-                break;
-            }
-
-        }
-        
-      inicializardado();
-
-
-
-      }
-
-    }
-        
-
-}
-
-
-public void jogador_vermelho_3_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_vermelho_1.SetActive(false);
-    borda_peca_vermelho_2.SetActive(false);
-    borda_peca_vermelho_3.SetActive(false);
-    borda_peca_vermelho_4.SetActive(false);
-
-    botao_jogador_vermelho_1.interactable = false;
-    botao_jogador_vermelho_2.interactable = false;
-    botao_jogador_vermelho_3.interactable = false;
-    botao_jogador_vermelho_4.interactable = false;
-
-    if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_3) > selecionar_num_dado_animacao)
-    {
-
-        if (local_peca_vermelho_3 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_vermelho_3 = new Vector3[selecionar_num_dado_animacao];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_vermelho_3[i] = bloco_movimento_vermelho[local_peca_vermelho_3 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_vermelho_3+= selecionar_num_dado_animacao;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_num_dado_animacao == 6)
-          {
-            turno_jogador = "vermelho";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                break;
-                case 3:
-                turno_jogador = "amarelo";
-                break;
-
-                case 4:
-                turno_jogador = "azul";
-                break;
-            }
-          }
-
-          if(caminho_jogador_vermelho_3.Length > 1)
-          {
-            iTween.MoveTo(jogador_vermelho_3, iTween.Hash("path", caminho_jogador_vermelho_3, "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_vermelho_3, iTween.Hash("position", caminho_jogador_vermelho_3[0], "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_vermelho_3";
-        }
-        else{
-
-
-        if (selecionar_num_dado_animacao == 6 && local_peca_vermelho_3 == 0  )
-        {
-            Vector3[] caminho_jogador_vermelho_3 = new Vector3[1];
-            caminho_jogador_vermelho_3[0] = bloco_movimento_vermelho[local_peca_vermelho_3].transform.position;
-            local_peca_vermelho_3 +=1;
-            turno_jogador = "vermelho";
-            nome_jogador_atual = "jogador_vermelho_3";
-            iTween.MoveTo(jogador_vermelho_3, iTween.Hash("position", caminho_jogador_vermelho_3[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-    else{
-
-       if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_3)  == selecionar_num_dado_animacao)
-      
-      {
-        Vector3[] caminho_jogador_vermelho_3 = new Vector3[selecionar_num_dado_animacao];
-        for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_vermelho_3[i] = bloco_movimento_vermelho[local_peca_vermelho_3 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_vermelho_3+= selecionar_num_dado_animacao;
-           if(caminho_jogador_vermelho_3.Length > 1)
-          {
-            iTween.MoveTo(jogador_vermelho_3, iTween.Hash("path", caminho_jogador_vermelho_3, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_vermelho_3, iTween.Hash("position", caminho_jogador_vermelho_3[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-           turno_jogador = "vermelho";
-           totalvermelhocasa +=1;
-           Debug.Log("Boa, chegou em casa meu veio!");
-           botao_jogador_vermelho_3.enabled=false;
-      }
-
-      else{
-        Debug.Log("You need" + (bloco_movimento_vermelho.Count - local_peca_vermelho_3).ToString() + "Steps to enter into the house");
-        if((local_peca_vermelho_1 + local_peca_vermelho_2 + local_peca_vermelho_4) == 0 && selecionar_num_dado_animacao !=6)
-        {
-
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                break;
-                case 3:
-                turno_jogador = "amarelo";
-                break;
-
-                case 4:
-                turno_jogador = "azul";
-                break;
-            }
-
-        }
-        
-      inicializardado();
-
-
-
-      }
-
-
-    }
-
-
-}
-
-
-
-public void jogador_vermelho_4_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_vermelho_1.SetActive(false);
-    borda_peca_vermelho_2.SetActive(false);
-    borda_peca_vermelho_3.SetActive(false);
-    borda_peca_vermelho_4.SetActive(false);
-
-    botao_jogador_vermelho_1.interactable = false;
-    botao_jogador_vermelho_2.interactable = false;
-    botao_jogador_vermelho_3.interactable = false;
-    botao_jogador_vermelho_4.interactable = false;
-
-    if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_4) > selecionar_num_dado_animacao)
-    {
-        if (local_peca_vermelho_4 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector4[] caminho_jogador_vermelho_4 = new Vector4[selecionar_num_dado_animacao];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_vermelho_4[i] = bloco_movimento_vermelho[local_peca_vermelho_4 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_vermelho_4+= selecionar_num_dado_animacao;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_num_dado_animacao == 6)
-          {
-            turno_jogador = "vermelho";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                break;
-                case 3:
-                turno_jogador = "amarelo";
-                break;
-
-                case 4:
-                turno_jogador = "azul";
-                break;
-            }
-          }
-
-          if(caminho_jogador_vermelho_4.Length > 1)
-          {
-            iTween.MoveTo(jogador_vermelho_4, iTween.Hash("path", caminho_jogador_vermelho_4, "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_vermelho_4, iTween.Hash("position", caminho_jogador_vermelho_4[0], "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_vermelho_4";          
-        }
-        else{
-        
-        if (selecionar_num_dado_animacao == 6 && local_peca_vermelho_4 == 0  )
-        {
-            Vector3[] caminho_jogador_vermelho_4 = new Vector3[1];
-            caminho_jogador_vermelho_4[0] = bloco_movimento_vermelho[local_peca_vermelho_4].transform.position;
-            local_peca_vermelho_4 +=1;
-            turno_jogador = "vermelho";
-            nome_jogador_atual = "jogador_vermelho_4";
-            iTween.MoveTo(jogador_vermelho_4, iTween.Hash("position", caminho_jogador_vermelho_4[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-        }
-    }
-    else{
-
-       if(turno_jogador == "vermelho" && (bloco_movimento_vermelho.Count - local_peca_vermelho_4)  == selecionar_num_dado_animacao)
-      
-      {
-        Vector3[] caminho_jogador_vermelho_4 = new Vector3[selecionar_num_dado_animacao];
-        for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_vermelho_4[i] = bloco_movimento_vermelho[local_peca_vermelho_4 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_vermelho_4+= selecionar_num_dado_animacao;
-           if(caminho_jogador_vermelho_4.Length > 1)
-          {
-            iTween.MoveTo(jogador_vermelho_4, iTween.Hash("path", caminho_jogador_vermelho_4, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_vermelho_4, iTween.Hash("position", caminho_jogador_vermelho_4[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-           turno_jogador = "vermelho";
-           totalvermelhocasa +=1;
-           Debug.Log("Boa, chegou em casa meu veio!");
-           botao_jogador_vermelho_4.enabled=false;
-      }
-
-      else{
-        Debug.Log("You need" + (bloco_movimento_vermelho.Count - local_peca_vermelho_4).ToString() + "Steps to enter into the house");
-        if((local_peca_vermelho_1 + local_peca_vermelho_2 + local_peca_vermelho_3) == 0 && selecionar_num_dado_animacao !=6)
-        {
-
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                break;
-                case 3:
-                turno_jogador = "amarelo";
-                break;
-
-                case 4:
-                turno_jogador = "azul";
-                break;
-            }
-
-        }
-        
-      inicializardado();
-
-
-
-      }
-
-    }
-        
-
-}
-/*
-
-█   █  ███  █   █ █████ █   █ █████ █   █ █████  ███  
-██ ██ █   █ █   █   █   ██ ██ █     ██  █   █   █   █ 
-█ █ █ █   █  █ █    █   █ █ █ ████  █ █ █   █   █   █ 
-█   █ █   █  █ █    █   █   █ █     █  ██   █   █   █ 
-█   █  ███    █   █████ █   █ █████ █   █   █    ███  
-
-
-███  █████  ████  ███       
-█   █ █     █     █   █ 
-████  ████  █     █████ 
-█     █     █     █   █ 
-█     █████  ████ █   █ 
-
- ███  █████ █   █ █     
-█   █    █  █   █ █     
-█████   █   █   █ █     
-█   █  █    █   █ █     
-█   █ █████ █████ █████ 
-*/
-
-public void jogador_azul_1_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_azul_1.SetActive(false);
-    borda_peca_azul_2.SetActive(false);
-    borda_peca_azul_3.SetActive(false);
-    borda_peca_azul_4.SetActive(false);
-
-    botao_jogador_azul_1.interactable = false;
-    botao_jogador_azul_2.interactable = false;
-    botao_jogador_azul_3.interactable = false;
-    botao_jogador_azul_4.interactable = false;
-
-    if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_1) > selecionar_num_dado_animacao)
-    {
-
-
-        if (local_peca_azul_1 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_azul_1 = new Vector3[selecionar_num_dado_animacao];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_azul_1[i] = bloco_movimento_azul[local_peca_azul_1 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_azul_1+= selecionar_num_dado_animacao;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_num_dado_animacao == 6)
-          {
-            turno_jogador = "azul";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                break;
-                case 3:
-                break;
-                case 4:
-                turno_jogador = "amarelo";
-                break;
-            }
-          }
-
-          if(caminho_jogador_azul_1.Length > 1)
-          {
-            iTween.MoveTo(jogador_azul_1, iTween.Hash("path", caminho_jogador_azul_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_azul_1, iTween.Hash("position", caminho_jogador_azul_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_azul_1";
-        }
-        else{
-
-
-        if (selecionar_num_dado_animacao == 6 && local_peca_azul_1 == 0  )
-        {
-            Vector3[] caminho_jogador_azul_1 = new Vector3[1];
-            caminho_jogador_azul_1[0] = bloco_movimento_azul[local_peca_azul_1].transform.position;
-            local_peca_azul_1 +=1;
-            turno_jogador = "azul";
-            nome_jogador_atual = "jogador_azul_1";
-            iTween.MoveTo(jogador_azul_1, iTween.Hash("position", caminho_jogador_azul_1[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-        }
-    }
-
-    else{
-
-  if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_1)  == selecionar_num_dado_animacao)
-  
-  {
-    Vector3[] caminho_jogador_azul_1 = new Vector3[selecionar_num_dado_animacao];
-    for(int i = 0; i < selecionar_num_dado_animacao; i++)
-       {
-        caminho_jogador_azul_1[i] = bloco_movimento_azul[local_peca_azul_1 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_azul_1+= selecionar_num_dado_animacao;
-       if(caminho_jogador_azul_1.Length > 1)
-      {
-        iTween.MoveTo(jogador_azul_1, iTween.Hash("path", caminho_jogador_azul_1, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_azul_1, iTween.Hash("position", caminho_jogador_azul_1[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "azul";
-       totalazulcasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_azul_1.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_azul.Count - local_peca_azul_1).ToString() + "Steps to enter into the house");
-    if((local_peca_azul_2 + local_peca_azul_3 + local_peca_azul_4) == 0 && selecionar_num_dado_animacao !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-                case 2:
-                break;
-                case 3:
-                break;
-                case 4:
-                turno_jogador = "amarelo";
-                break;
-
-    }
-    }
-    
-  inicializardado();
-
-
-
-  
-  
-  
-  
-}
-
-}
-        
-
-}
-
-
-
-public void jogador_azul_2_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_azul_1.SetActive(false);
-    borda_peca_azul_2.SetActive(false);
-    borda_peca_azul_3.SetActive(false);
-    borda_peca_azul_4.SetActive(false);
-
-    botao_jogador_azul_1.interactable = false;
-    botao_jogador_azul_2.interactable = false;
-    botao_jogador_azul_3.interactable = false;
-    botao_jogador_azul_4.interactable = false;
-
-    if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_2) > selecionar_num_dado_animacao)
-    {
-
-        if (local_peca_azul_2 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_azul_2 = new Vector3[selecionar_num_dado_animacao];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_azul_2[i] = bloco_movimento_azul[local_peca_azul_2 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_azul_2+= selecionar_num_dado_animacao;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_num_dado_animacao == 6)
-          {
-            turno_jogador = "azul";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                break;
-                case 3:
-                break;
-                case 4:
-                turno_jogador = "amarelo";
-                break;
-            }
-          }
-
-          if(caminho_jogador_azul_2.Length > 1)
-          {
-            iTween.MoveTo(jogador_azul_2, iTween.Hash("path", caminho_jogador_azul_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_azul_2, iTween.Hash("position", caminho_jogador_azul_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_azul_2";
-        }
-        else{
-
-
-        if (selecionar_num_dado_animacao == 6 && local_peca_azul_2 == 0  )
-        {
-            Vector3[] caminho_jogador_azul_2 = new Vector3[1];
-            caminho_jogador_azul_2[0] = bloco_movimento_azul[local_peca_azul_2].transform.position;
-            local_peca_azul_2 +=1;
-            turno_jogador = "azul";
-            nome_jogador_atual = "jogador_azul_2";
-            iTween.MoveTo(jogador_azul_2, iTween.Hash("position", caminho_jogador_azul_2[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-    else{
-
-  if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_2)  == selecionar_num_dado_animacao)
-  
-  {
-    Vector3[] caminho_jogador_azul_2 = new Vector3[selecionar_num_dado_animacao];
-    for(int i = 0; i < selecionar_num_dado_animacao; i++)
-       {
-        caminho_jogador_azul_2[i] = bloco_movimento_azul[local_peca_azul_2 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_azul_2+= selecionar_num_dado_animacao;
-       if(caminho_jogador_azul_2.Length > 1)
-      {
-        iTween.MoveTo(jogador_azul_2, iTween.Hash("path", caminho_jogador_azul_2, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_azul_2, iTween.Hash("position", caminho_jogador_azul_2[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "azul";
-       totalazulcasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_azul_2.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_azul.Count - local_peca_azul_2).ToString() + "Steps to enter into the house");
-    if((local_peca_azul_1 + local_peca_azul_3 + local_peca_azul_4) == 0 && selecionar_num_dado_animacao !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-                case 2:
-                break;
-                case 3:
-                break;
-                case 4:
-                turno_jogador = "amarelo";
-                break;
-
-    }
-    }
-  inicializardado();
-
-
-
-  
-  
-  
-  
-}
-
-}
-        
-
-}
-
-public void jogador_azul_3_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_azul_1.SetActive(false);
-    borda_peca_azul_2.SetActive(false);
-    borda_peca_azul_3.SetActive(false);
-    borda_peca_azul_4.SetActive(false);
-
-    botao_jogador_azul_1.interactable = false;
-    botao_jogador_azul_2.interactable = false;
-    botao_jogador_azul_3.interactable = false;
-    botao_jogador_azul_4.interactable = false;
-
-    if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_3) > selecionar_num_dado_animacao)
-    {
-
-
-        
-        if (local_peca_azul_3 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector3[] caminho_jogador_azul_3 = new Vector3[selecionar_num_dado_animacao];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_azul_3[i] = bloco_movimento_azul[local_peca_azul_3 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_azul_3+= selecionar_num_dado_animacao;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_num_dado_animacao == 6)
-          {
-            turno_jogador = "azul";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                break;
-                case 3:
-                break;
-                case 4:
-                turno_jogador = "amarelo";
-                break;
-            }
-          }
-
-          if(caminho_jogador_azul_3.Length > 1)
-          {
-            iTween.MoveTo(jogador_azul_3, iTween.Hash("path", caminho_jogador_azul_3, "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_azul_3, iTween.Hash("position", caminho_jogador_azul_3[0], "speed", 135, "time", 3.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_azul_3";
-        }
-        else{
-
-        
-
-
-
-
-
-        if (selecionar_num_dado_animacao == 6 && local_peca_azul_3 == 0  )
-        {
-            Vector3[] caminho_jogador_azul_3 = new Vector3[1];
-            caminho_jogador_azul_3[0] = bloco_movimento_azul[local_peca_azul_3].transform.position;
-            local_peca_azul_3 +=1;
-            turno_jogador = "azul";
-            nome_jogador_atual = "jogador_azul_3";
-            iTween.MoveTo(jogador_azul_3, iTween.Hash("position", caminho_jogador_azul_3[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-
-  else{
-
-  if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_3)  == selecionar_num_dado_animacao)
-  
-  {
-    Vector3[] caminho_jogador_azul_3 = new Vector3[selecionar_num_dado_animacao];
-    for(int i = 0; i < selecionar_num_dado_animacao; i++)
-       {
-        caminho_jogador_azul_3[i] = bloco_movimento_azul[local_peca_azul_3 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_azul_3+= selecionar_num_dado_animacao;
-       if(caminho_jogador_azul_3.Length > 1)
-      {
-        iTween.MoveTo(jogador_azul_3, iTween.Hash("path", caminho_jogador_azul_3, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_azul_3, iTween.Hash("position", caminho_jogador_azul_3[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "azul";
-       totalazulcasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_azul_3.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_azul.Count - local_peca_azul_3).ToString() + "Steps to enter into the house");
-    if((local_peca_azul_1 + local_peca_azul_2 + local_peca_azul_4) == 0 && selecionar_num_dado_animacao !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-                case 2:
-                break;
-                case 3:
-                break;
-                case 4:
-                turno_jogador = "amarelo";
-                break;
-
-    }
-    }
-  inicializardado();
-
-
-
-  
-  
-  
-  
-}
-
-}
-        
-
-}
-
-public void jogador_azul_4_movimento(){
-
-    SoundManager.playerAudioSource.Play();
-
-    borda_peca_azul_1.SetActive(false);
-    borda_peca_azul_2.SetActive(false);
-    borda_peca_azul_3.SetActive(false);
-    borda_peca_azul_4.SetActive(false);
-
-    botao_jogador_azul_1.interactable = false;
-    botao_jogador_azul_2.interactable = false;
-    botao_jogador_azul_3.interactable = false;
-    botao_jogador_azul_4.interactable = false;
-
-    if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_4) > selecionar_num_dado_animacao)
-    {
-
-        if (local_peca_azul_4 > 0 )
-        {
-            //armazena no vetor o valor que tirei no dado.
-           Vector4[] caminho_jogador_azul_4 = new Vector4[selecionar_num_dado_animacao];
-
-            //para cada valor do dado, mostra o movimento da peca
-           for(int i = 0; i < selecionar_num_dado_animacao; i++)
-           {
-            caminho_jogador_azul_4[i] = bloco_movimento_azul[local_peca_azul_4 + i].transform.position;
-           }
-
-           //armazena o valor do dado para os próximos movimentos (onde está a peça)
-           local_peca_azul_4+= selecionar_num_dado_animacao;
-
-          //se tirar valor de 6 no dado e a peça já estiver em jogo
-          if (selecionar_num_dado_animacao == 6)
-          {
-            turno_jogador = "azul";
-          }
-
-          else
-          {
-            switch (MainMenuManager.howManyPlayers)
-            {
-                case 2:
-                break;
-                case 3:
-                break;
-                case 4:
-                turno_jogador = "amarelo";
-                break;
-            }
-          }
-
-          if(caminho_jogador_azul_4.Length > 1)
-          {
-            iTween.MoveTo(jogador_azul_4, iTween.Hash("path", caminho_jogador_azul_4, "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          else
-          {
-            iTween.MoveTo(jogador_azul_4, iTween.Hash("position", caminho_jogador_azul_4[0], "speed", 145, "time", 4.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-          }
-          nome_jogador_atual = "jogador_azul_4";
-        }
-        else{
-        
-
-
-        if (selecionar_num_dado_animacao == 6 && local_peca_azul_4 == 0  )
-        {
-            Vector3[] caminho_jogador_azul_4 = new Vector3[1];
-            caminho_jogador_azul_4[0] = bloco_movimento_azul[local_peca_azul_4].transform.position;
-            local_peca_azul_4 +=1;
-            turno_jogador = "azul";
-            nome_jogador_atual = "jogador_azul_4";
-            iTween.MoveTo(jogador_azul_4, iTween.Hash("position", caminho_jogador_azul_4[0], "speed", 115, "time", 1.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-        }
-      }
-    }
-
-  else{
-
-  if(turno_jogador == "azul" && (bloco_movimento_azul.Count - local_peca_azul_4)  == selecionar_num_dado_animacao)
-  
-  {
-    Vector3[] caminho_jogador_azul_4 = new Vector3[selecionar_num_dado_animacao];
-    for(int i = 0; i < selecionar_num_dado_animacao; i++)
-       {
-        caminho_jogador_azul_4[i] = bloco_movimento_azul[local_peca_azul_4 + i].transform.position;
-       }
-
-       //armazena o valor do dado para os próximos movimentos (onde está a peça)
-       local_peca_azul_4+= selecionar_num_dado_animacao;
-       if(caminho_jogador_azul_4.Length > 1)
-      {
-        iTween.MoveTo(jogador_azul_4, iTween.Hash("path", caminho_jogador_azul_4, "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-      else
-      {
-        iTween.MoveTo(jogador_azul_4, iTween.Hash("position", caminho_jogador_azul_4[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "oncomplete", "inicializardado", "oncompletetarget", this.gameObject));
-      }
-       turno_jogador = "azul";
-       totalazulcasa +=1;
-       Debug.Log("Boa, chegou em casa meu veio!");
-       botao_jogador_azul_4.enabled=false;
-  }
-
-  else{
-    Debug.Log("You need" + (bloco_movimento_azul.Count - local_peca_azul_4).ToString() + "Steps to enter into the house");
-    if((local_peca_azul_1 + local_peca_azul_2 + local_peca_azul_3) == 0 && selecionar_num_dado_animacao !=6)
-    {
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-                case 2:
-                break;
-                case 3:
-                break;
-                case 4:
-                turno_jogador = "amarelo";
-                break;
-
-    }
-    }
-    
-  inicializardado();
-
-
-
-  
-  
-  
-  
-}
-
-}
-
-}        
-
-
-
-void Start(){
-    //Posicao Inicial do Jogo no primeiro Frame_.
-        //Sincronizar o jogo com a tela
-        QualitySettings.vSyncCount = 1;
-        //Estamos travando a 30 Frame_s por segundo
-        Application.targetFrameRate = 30;
-
-        //Valor do dado
-        randNo = new System.Random();
-
-
-        //Dependendo do valor de randNo, ira ativar a animação do dado para exibir ao jogador quanto ele tirou
-        animacao_dado_1.SetActive(false);
-        animacao_dado_2.SetActive(false);
-        animacao_dado_3.SetActive(false);
-        animacao_dado_4.SetActive(false);
-        animacao_dado_5.SetActive(false);
-        animacao_dado_6.SetActive(false);
-        
-        //Posicao inicial das pecas
-
-        posicao_peca_vermelho_1 = jogador_vermelho_1.transform.position;
-        posicao_peca_vermelho_2 = jogador_vermelho_2.transform.position;
-        posicao_peca_vermelho_3 = jogador_vermelho_3.transform.position;
-        posicao_peca_vermelho_4= jogador_vermelho_4.transform.position;
-
-        posicao_peca_verde_1= jogador_verde_1.transform.position;
-        posicao_peca_verde_2= jogador_verde_2.transform.position;
-        posicao_peca_verde_3= jogador_verde_3.transform.position;
-        posicao_peca_verde_4= jogador_verde_4.transform.position;
-
-        posicao_peca_amarelo_1 = jogador_amarelo_1.transform.position;
-        posicao_peca_amarelo_2 = jogador_amarelo_2.transform.position;
-        posicao_peca_amarelo_3 = jogador_amarelo_3.transform.position;
-        posicao_peca_amarelo_4 = jogador_amarelo_4.transform.position;
-
-        posicao_peca_azul_1= jogador_azul_1.transform.position;
-        posicao_peca_azul_2= jogador_azul_2.transform.position;
-        posicao_peca_azul_3= jogador_azul_3.transform.position;
-        posicao_peca_azul_4= jogador_azul_4.transform.position;
-
-
-        //Desativar as bordas das peças. Caso a gente queira tirar isso depois é de boa. É só para colocar alguma animação:
-
-        borda_peca_vermelho_1.SetActive(false);
-        borda_peca_vermelho_2.SetActive(false);
-        borda_peca_vermelho_3.SetActive(false);
-        borda_peca_vermelho_4.SetActive(false);
-
-        borda_peca_verde_1.SetActive(false);
-        borda_peca_verde_2.SetActive(false);
-        borda_peca_verde_3.SetActive(false);
-        borda_peca_verde_4.SetActive(false);
-
-        borda_peca_amarelo_1.SetActive(false);
-        borda_peca_amarelo_2.SetActive(false);
-        borda_peca_amarelo_3.SetActive(false);
-        borda_peca_amarelo_4.SetActive(false);
-
-        borda_peca_azul_1.SetActive(false);
-        borda_peca_azul_2.SetActive(false);
-        borda_peca_azul_3.SetActive(false);
-        borda_peca_azul_4.SetActive(false);
-
-
-       //Ainda não fiz o menu do jogo, mas tem um Case que dá para usar para quantos jogadores escolhemos
-        //Se quiser criar uma forma de escolher quais cores escolher para jogar, temos que implementar outra camada nesta lógica
-
-
-        /* CONSIDERANDO 2 JOGADORES COMO SÓ AMARELO E VERMELHO
-           3 JOGADORES SEM O VERDE   */
-
-        switch (MainMenuManager.howManyPlayers)
-        {
-            case 2:
-                turno_jogador = "amarelo";
-                
-                frame_amarelo.SetActive(true);
-                frame_vermelho.SetActive(false);
-                frame_azul.SetActive(false);
-                frame_verde.SetActive(false);
-
-                jogador_vermelho_1.SetActive(false);
-                jogador_vermelho_2.SetActive(false);
-                jogador_vermelho_3.SetActive(false);
-                jogador_vermelho_4.SetActive(false);
-            
-                jogador_azul_1.SetActive(false);
-                jogador_azul_2.SetActive(false);
-                jogador_azul_3.SetActive(false);
-                jogador_azul_4.SetActive(false);
-
-                rodar_dado.position = dado_amarelo_rolagem.position;
-
-
-                break;
-            case 3:
-                turno_jogador = "amarelo";
-                
-                frame_amarelo.SetActive(true);
-                frame_vermelho.SetActive(false);
-                frame_azul.SetActive(false);
-                frame_verde.SetActive(false);
-
-                jogador_azul_1.SetActive(false);
-                jogador_azul_2.SetActive(false);
-                jogador_azul_3.SetActive(false);
-                jogador_azul_4.SetActive(false);
-
-                rodar_dado.position = dado_amarelo_rolagem.position;
-
-                break;
-            case 4:
-                turno_jogador = "amarelo";
-                
-                frame_amarelo.SetActive(true);
-                frame_vermelho.SetActive(false);
-                frame_azul.SetActive(false);
-                frame_verde.SetActive(false);
-
-                rodar_dado.position = dado_amarelo_rolagem.position;
-
-                break;
-
-
-        }
-
-     
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
-//Posicao Alterada a cada Frame_. 30 fps, 30 Frame_s por segundo. Nós podemos alterar esse comportamento.
-void Update(){        
-
-        
-}
-
+	public void noGameCompleted()
+	{
+		SoundManagerScript.buttonAudioSource.Play ();
+		SceneManager.LoadScene ("Main Menu");
+	}
+
+	public void yesMethod()
+	{
+		SoundManagerScript.buttonAudioSource.Play ();
+		SceneManager.LoadScene ("Main Menu");
+	}
+
+	public void noMethod()
+	{
+		SoundManagerScript.buttonAudioSource.Play ();
+		confirmScreen.SetActive (false);
+	}
+
+	public void ExitMethod()
+	{
+		SoundManagerScript.buttonAudioSource.Play ();
+		confirmScreen.SetActive (true);
+	}
+	// -============== GAME COMPLETED ROUTINE ==========================================================
+	IEnumerator GameCompletedRoutine()
+	{
+		yield return new WaitForSeconds (1.5f);
+		gameCompletedScreen.SetActive (true);
+	}
+
+	// =================== ROLL DICE RESULT ============================================================
+
+	// DICE Initialization after players have finished their turn---------------
+	void InitializeDice()
+	{
+		DiceRollButton.interactable = true;
+
+		dice1_Roll_Animation.SetActive (false);
+		dice2_Roll_Animation.SetActive (false);
+		dice3_Roll_Animation.SetActive (false);
+		dice4_Roll_Animation.SetActive (false);
+		dice5_Roll_Animation.SetActive (false);
+		dice6_Roll_Animation.SetActive (false);	
+
+		//================= CHECKING PLAYERS WHO WINS SURING GAMEPLAY===================================
+
+		switch (MainMenuScript.howManyPlayers) 
+		{
+			case 2:
+				if (totalRedInHouse > 3) 
+				{
+					SoundManagerScript.winAudioSource.Play ();
+					redScreen.SetActive (true);					
+					StartCoroutine ("GameCompletedRoutine");
+					playerTurn = "NONE";
+				}
+
+				if (totalGreenInHouse > 3) 
+				{
+					SoundManagerScript.winAudioSource.Play ();
+					greenScreen.SetActive (true);
+					StartCoroutine ("GameCompletedRoutine");
+					playerTurn = "NONE";
+				}
+				break;
+
+			case 3:
+				// If any 1 of 3 player wins==============================================
+			if (totalRedInHouse > 3 && totalBlueInHouse < 4 && totalYellowInHouse < 4 && playerTurn == "RED") 
+				{
+					if (!redScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+
+					redScreen.SetActive (true);
+					Debug.Log ("Red Player WON");
+					playerTurn = "BLUE";
+				}
+
+			if (totalBlueInHouse > 3 && totalRedInHouse < 4 && totalYellowInHouse < 4 && playerTurn == "BLUE") 
+				{
+					if (!blueScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					blueScreen.SetActive (true);
+					Debug.Log ("Blue Player WON");
+					playerTurn = "YELLOW";
+				}
+
+			if (totalYellowInHouse > 3 && totalRedInHouse < 4 && totalBlueInHouse < 4 && playerTurn == "YELLOW") 
+				{
+					if (!redScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					yellowScreen.SetActive (true);
+					Debug.Log ("Yellow Player WON");
+					playerTurn = "RED";				
+				}
+				// If any 2 of 3 player wins============================================== 
+				if (totalRedInHouse > 3 && totalBlueInHouse > 3 && totalYellowInHouse < 4) 
+				{
+					if (!redScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					if (!blueScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					redScreen.SetActive (true);
+					blueScreen.SetActive (true);
+					StartCoroutine ("GameCompletedRoutine");
+					Debug.Log ("GAME ENDED");	
+					playerTurn = "NONE";
+				}
+
+				if (totalBlueInHouse > 3 && totalYellowInHouse > 3 && totalRedInHouse < 4) 
+				{
+					if (!blueScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					if (!yellowScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					yellowScreen.SetActive (true);
+					blueScreen.SetActive (true);
+					StartCoroutine ("GameCompletedRoutine");
+					Debug.Log ("GAME ENDED");	
+					playerTurn = "NONE";
+				}
+
+				if (totalYellowInHouse > 3 && totalRedInHouse > 3 && totalBlueInHouse < 4) 
+				{
+					if (!yellowScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					if (!redScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					redScreen.SetActive (true);
+					yellowScreen.SetActive (true);
+					StartCoroutine ("GameCompletedRoutine");
+					Debug.Log ("GAME ENDED");	
+					playerTurn = "NONE";
+				}
+				
+				break;
+
+			case 4:
+				// If any 1 of 4 player wins=======================================================================
+			if (totalRedInHouse > 3 && totalBlueInHouse < 4 && totalGreenInHouse < 4 && totalYellowInHouse < 4 && playerTurn == "RED") 
+				{
+					if (!redScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+
+					redScreen.SetActive (true);					
+					Debug.Log ("Red Player WON");
+					playerTurn = "BLUE";
+				}
+
+			if (totalBlueInHouse > 3 && totalRedInHouse < 4 && totalGreenInHouse < 4 && totalYellowInHouse < 4 && playerTurn == "BLUE") 
+				{
+					if (!blueScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					blueScreen.SetActive (true);
+					Debug.Log ("Blue Player WON");
+					playerTurn = "GREEN";
+				}
+
+			if (totalGreenInHouse > 3 && totalRedInHouse < 4 && totalBlueInHouse < 4 && totalYellowInHouse < 4 && playerTurn == "GREEN") 
+				{
+					if (!greenScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					greenScreen.SetActive (true);					
+					Debug.Log ("Green Player WON");
+					playerTurn = "YELLOW";
+				}
+
+			if (totalYellowInHouse > 3 && totalRedInHouse < 4 && totalBlueInHouse < 4 && totalGreenInHouse < 4 && playerTurn == "YELLOW") 
+				{
+					if (!yellowScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					yellowScreen.SetActive (true);					
+					Debug.Log ("Yellow Player WON");
+					playerTurn = "RED";				
+				}
+				// If any 2 of 4 player wins=======================================================================
+			if (totalRedInHouse > 3 && totalBlueInHouse > 3 && totalGreenInHouse < 4 && totalYellowInHouse < 4 && (playerTurn == "RED" || playerTurn == "BLUE")) 
+				{	
+					if (!redScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					if (!blueScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					redScreen.SetActive (true);
+					blueScreen.SetActive (true);
+					Debug.Log ("RED & BLUE - ALREADY WON");
+					playerTurn = "GREEN";
+				}
+
+			if (totalBlueInHouse > 3 && totalGreenInHouse > 3 && totalRedInHouse < 4 && totalYellowInHouse < 4 && (playerTurn == "BLUE" || playerTurn == "GREEN")) 
+				{		
+					if (!blueScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					if (!greenScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}	
+					blueScreen.SetActive (true);
+					greenScreen.SetActive (true);
+					Debug.Log ("GREEN & BLUE - ALREADY WON");
+					playerTurn = "YELLOW";
+				}
+
+			if (totalGreenInHouse > 3 && totalYellowInHouse > 3 && totalBlueInHouse < 4 && totalRedInHouse < 4 && (playerTurn == "GREEN" || playerTurn == "YELLOW")) 
+				{		
+					if (!greenScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					if (!yellowScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					greenScreen.SetActive (true);
+					yellowScreen.SetActive (true);
+					Debug.Log ("GREEN & YELLOW - ALREADY WON");
+					playerTurn = "RED";
+				}
+
+			if (totalYellowInHouse > 3 && totalRedInHouse > 3 && totalBlueInHouse < 4 && totalGreenInHouse < 4 && (playerTurn == "YELLOW" || playerTurn == "RED")) 
+				{		
+					if (!redScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					if (!yellowScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					redScreen.SetActive (true);
+					yellowScreen.SetActive (true);
+					Debug.Log ("YELLOW & RED - ALREADY WON");	
+					playerTurn = "BLUE";				
+				}
+
+				//	Diagonally----Red Vs Green ... Yellow Vs Blue winning
+			if (totalYellowInHouse > 3 && totalBlueInHouse > 3 && totalRedInHouse < 4 && totalGreenInHouse < 4&& (playerTurn == "YELLOW" || playerTurn == "BLUE")) 
+				{
+					if (!yellowScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					if (!blueScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					yellowScreen.SetActive (true);
+					blueScreen.SetActive (true);
+					Debug.Log ("BLUE & YELLOW - ALREADY WON");					
+					
+					if (playerTurn == "BLUE") 
+					{
+						playerTurn = "GREEN";
+					} 
+					else 
+					{
+						if (playerTurn == "YELLOW") 
+						{
+							playerTurn = "RED";
+						} 
+					}
+				}
+			if (totalRedInHouse > 3 && totalGreenInHouse > 3 && totalYellowInHouse < 4 && totalBlueInHouse < 4&& (playerTurn == "RED" || playerTurn == "GREEN")) 
+				{
+					if (!redScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					if (!greenScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					redScreen.SetActive (true);
+					greenScreen.SetActive (true);
+					Debug.Log ("RED & GREEN - ALREADY WON");					
+					
+					if (playerTurn == "RED") 
+					{
+						playerTurn = "BLUE";
+					} 
+					else 
+					{
+						if (playerTurn == "GREEN") 
+						{
+							playerTurn = "YELLOW";
+						} 
+					}
+				}
+				if (totalRedInHouse > 3 && totalGreenInHouse > 3 && totalBlueInHouse > 3 && totalYellowInHouse < 4) 
+				{
+					if (!redScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					if (!greenScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					if (!blueScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					redScreen.SetActive (true);
+					greenScreen.SetActive (true);
+					blueScreen.SetActive (true);
+					StartCoroutine ("GameCompletedRoutine");
+					playerTurn = "NONE";
+				}
+
+				if (totalRedInHouse > 3 && totalGreenInHouse > 3 && totalYellowInHouse > 3 && totalBlueInHouse < 4) 
+				{
+					if (!redScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					if (!greenScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					if (!yellowScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					redScreen.SetActive (true);
+					greenScreen.SetActive (true);
+					yellowScreen.SetActive (true);
+					StartCoroutine ("GameCompletedRoutine");
+					playerTurn = "NONE";
+				}
+
+				if (totalBlueInHouse > 3 && totalGreenInHouse > 3 && totalYellowInHouse > 3 && totalRedInHouse < 4) 
+				{
+					if (!blueScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					if (!greenScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					if (!yellowScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					blueScreen.SetActive (true);
+					greenScreen.SetActive (true);
+					yellowScreen.SetActive (true);
+					StartCoroutine ("GameCompletedRoutine");
+					playerTurn = "NONE";
+				}
+
+				if (totalBlueInHouse > 3 && totalRedInHouse > 3 && totalYellowInHouse > 3 && totalGreenInHouse < 4) 
+				{
+					if (!blueScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					if (!redScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					if (!yellowScreen.activeInHierarchy) {
+						SoundManagerScript.winAudioSource.Play ();
+					}
+					blueScreen.SetActive (true);
+					redScreen.SetActive (true);
+					yellowScreen.SetActive (true);
+					StartCoroutine ("GameCompletedRoutine");
+					playerTurn = "NONE";
+				}
+				break;
+		}
+
+		//======== Getting currentPlayer VALUE=======
+		if (currentPlayerName.Contains ("RED PLAYER")) 
+		{
+			if (currentPlayerName == "RED PLAYER I") {
+				Debug.Log ("currentPlayerName = " + currentPlayerName);
+				currentPlayer = RedPlayerI_Script.redPlayerI_ColName;
+			}
+			if (currentPlayerName == "RED PLAYER II") {
+				Debug.Log ("currentPlayerName = " + currentPlayerName);
+				currentPlayer = RedPlayerII_Script.redPlayerII_ColName;
+			}
+			if (currentPlayerName == "RED PLAYER III") {
+				Debug.Log ("currentPlayerName = " + currentPlayerName);
+				currentPlayer = RedPlayerIII_Script.redPlayerIII_ColName;
+			}
+			if (currentPlayerName == "RED PLAYER IV") {
+				Debug.Log ("currentPlayerName = " + currentPlayerName);
+				currentPlayer = RedPlayerIV_Script.redPlayerIV_ColName;
+			}
+		}
+
+		if (currentPlayerName.Contains ("BLUE PLAYER")) 
+		{
+			if (currentPlayerName == "BLUE PLAYER I")
+				currentPlayer = BluePlayerI_Script.bluePlayerI_ColName;
+			if (currentPlayerName == "BLUE PLAYER II")
+				currentPlayer = BluePlayerII_Script.bluePlayerII_ColName;
+			if (currentPlayerName == "BLUE PLAYER III")
+				currentPlayer = BluePlayerIII_Script.bluePlayerIII_ColName;
+			if (currentPlayerName == "BLUE PLAYER IV")
+				currentPlayer = BluePlayerIV_Script.bluePlayerIV_ColName;
+		}
+
+		if (currentPlayerName.Contains ("GREEN PLAYER")) 
+		{
+			if (currentPlayerName == "GREEN PLAYER I") {
+				Debug.Log ("currentPlayerName = " + currentPlayerName);
+				currentPlayer = GreenPlayerI_Script.greenPlayerI_ColName;
+			}
+			if (currentPlayerName == "GREEN PLAYER II") {
+				Debug.Log ("currentPlayerName = " + currentPlayerName);
+				currentPlayer = GreenPlayerII_Script.greenPlayerII_ColName;
+			}
+			if (currentPlayerName == "GREEN PLAYER III") {
+				Debug.Log ("currentPlayerName = " + currentPlayerName);
+				currentPlayer = GreenPlayerIII_Script.greenPlayerIII_ColName;
+			}
+			if (currentPlayerName == "GREEN PLAYER IV") {
+				Debug.Log ("currentPlayerName = " + currentPlayerName);
+				currentPlayer = GreenPlayerIV_Script.greenPlayerIV_ColName;
+			}
+		}
+
+		if (currentPlayerName.Contains ("YELLOW PLAYER")) 
+		{
+			if (currentPlayerName == "YELLOW PLAYER I")
+				currentPlayer = YellowPlayerI_Script.yellowPlayerI_ColName;
+			if (currentPlayerName == "YELLOW PLAYER II")
+				currentPlayer = YellowPlayerII_Script.yellowPlayerII_ColName;
+			if (currentPlayerName == "YELLOW PLAYER III")
+				currentPlayer = YellowPlayerIII_Script.yellowPlayerIII_ColName;
+			if (currentPlayerName == "YELLOW PLAYER IV")
+				currentPlayer = YellowPlayerIV_Script.yellowPlayerIV_ColName;
+		}
+
+		//================== Player vs Opponent=========================================================
+		if (currentPlayerName != "none") {
+			switch (MainMenuScript.howManyPlayers) {
+			case 2:
+				if (currentPlayerName.Contains ("RED PLAYER")) {
+					if (currentPlayer == GreenPlayerI_Script.greenPlayerI_ColName && (currentPlayer != "Star" && GreenPlayerI_Script.greenPlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerI.transform.position = greenPlayerI_Pos;
+						GreenPlayerI_Script.greenPlayerI_ColName = "none";
+						greenPlayerI_Steps = 0;
+						playerTurn = "RED";
+					}
+					if (currentPlayer == GreenPlayerII_Script.greenPlayerII_ColName && (currentPlayer != "Star" && GreenPlayerII_Script.greenPlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerII.transform.position = greenPlayerII_Pos;
+						GreenPlayerII_Script.greenPlayerII_ColName = "none";
+						greenPlayerII_Steps = 0;
+						playerTurn = "RED";
+					}
+					if (currentPlayer == GreenPlayerIII_Script.greenPlayerIII_ColName && (currentPlayer != "Star" && GreenPlayerIII_Script.greenPlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerIII.transform.position = greenPlayerIII_Pos;
+						GreenPlayerIII_Script.greenPlayerIII_ColName = "none";
+						greenPlayerIII_Steps = 0;
+						playerTurn = "RED";
+					}
+					if (currentPlayer == GreenPlayerIV_Script.greenPlayerIV_ColName && (currentPlayer != "Star" && GreenPlayerIV_Script.greenPlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerIV.transform.position = greenPlayerIV_Pos;
+						GreenPlayerIV_Script.greenPlayerIV_ColName = "none";
+						greenPlayerIV_Steps = 0;
+						playerTurn = "RED";
+					}
+				} 
+				if (currentPlayerName.Contains ("GREEN PLAYER")) {
+					if (currentPlayer == RedPlayerI_Script.redPlayerI_ColName && (currentPlayer != "Star" && RedPlayerI_Script.redPlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerI.transform.position = redPlayerI_Pos;
+						RedPlayerI_Script.redPlayerI_ColName = "none";
+						redPlayerI_Steps = 0;
+						playerTurn = "GREEN";
+					}
+					if (currentPlayer == RedPlayerII_Script.redPlayerII_ColName && (currentPlayer != "Star" && RedPlayerII_Script.redPlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerII.transform.position = redPlayerII_Pos;
+						RedPlayerII_Script.redPlayerII_ColName = "none";
+						redPlayerII_Steps = 0;
+						playerTurn = "GREEN";
+					}
+					if (currentPlayer == RedPlayerIII_Script.redPlayerIII_ColName && (currentPlayer != "Star" && RedPlayerIII_Script.redPlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerIII.transform.position = redPlayerIII_Pos;
+						RedPlayerIII_Script.redPlayerIII_ColName = "none";
+						redPlayerIII_Steps = 0;
+						playerTurn = "GREEN";
+					}
+					if (currentPlayer == RedPlayerIV_Script.redPlayerIV_ColName && (currentPlayer != "Star" && RedPlayerIV_Script.redPlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerIV.transform.position = redPlayerIV_Pos;
+						RedPlayerIV_Script.redPlayerIV_ColName = "none";
+						redPlayerIV_Steps = 0;
+						playerTurn = "GREEN";
+					}
+				}
+				break;
+
+			case 3:
+				if (currentPlayerName.Contains ("RED PLAYER")) {
+					if (currentPlayer == YellowPlayerI_Script.yellowPlayerI_ColName && (currentPlayer != "Star" && YellowPlayerI_Script.yellowPlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerI.transform.position = yellowPlayerI_Pos;
+						YellowPlayerI_Script.yellowPlayerI_ColName = "none";
+						yellowPlayerI_Steps = 0;
+						playerTurn = "RED";
+					}
+					if (currentPlayer == YellowPlayerII_Script.yellowPlayerII_ColName && (currentPlayer != "Star" && YellowPlayerII_Script.yellowPlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerII.transform.position = yellowPlayerII_Pos;
+						YellowPlayerII_Script.yellowPlayerII_ColName = "none";
+						yellowPlayerII_Steps = 0;
+						playerTurn = "RED";
+					}
+					if (currentPlayer == YellowPlayerIII_Script.yellowPlayerIII_ColName && (currentPlayer != "Star" && YellowPlayerIII_Script.yellowPlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerIII.transform.position = yellowPlayerIII_Pos;
+						YellowPlayerIII_Script.yellowPlayerIII_ColName = "none";
+						yellowPlayerIII_Steps = 0;
+						playerTurn = "RED";
+					}
+					if (currentPlayer == YellowPlayerIV_Script.yellowPlayerIV_ColName && (currentPlayer != "Star" && YellowPlayerIV_Script.yellowPlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerIV.transform.position = yellowPlayerIV_Pos;
+						YellowPlayerIV_Script.yellowPlayerIV_ColName = "none";
+						yellowPlayerIV_Steps = 0;
+						playerTurn = "RED";
+					}
+
+					if (currentPlayer == BluePlayerI_Script.bluePlayerI_ColName && (currentPlayer != "Star" && BluePlayerI_Script.bluePlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerI.transform.position = bluePlayerI_Pos;
+						BluePlayerI_Script.bluePlayerI_ColName = "none";
+						bluePlayerI_Steps = 0;
+						playerTurn = "RED";
+					}
+					if (currentPlayer == BluePlayerII_Script.bluePlayerII_ColName && (currentPlayer != "Star" && BluePlayerII_Script.bluePlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerII.transform.position = bluePlayerII_Pos;
+						BluePlayerII_Script.bluePlayerII_ColName = "none";
+						bluePlayerII_Steps = 0;
+						playerTurn = "RED";
+					}
+					if (currentPlayer == BluePlayerIII_Script.bluePlayerIII_ColName && (currentPlayer != "Star" && BluePlayerIII_Script.bluePlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerIII.transform.position = bluePlayerIII_Pos;
+						BluePlayerIII_Script.bluePlayerIII_ColName = "none";
+						bluePlayerIII_Steps = 0;
+						playerTurn = "RED";
+					}
+					if (currentPlayer == BluePlayerIV_Script.bluePlayerIV_ColName && (currentPlayer != "Star" && BluePlayerIV_Script.bluePlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerIV.transform.position = bluePlayerIV_Pos;
+						BluePlayerIV_Script.bluePlayerIV_ColName = "none";
+						bluePlayerIV_Steps = 0;
+						playerTurn = "RED";
+					}
+				}
+
+				if (currentPlayerName.Contains ("YELLOW PLAYER")) {
+					if (currentPlayer == RedPlayerI_Script.redPlayerI_ColName && (currentPlayer != "Star" && RedPlayerI_Script.redPlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerI.transform.position = redPlayerI_Pos;
+						RedPlayerI_Script.redPlayerI_ColName = "none";
+						redPlayerI_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+					if (currentPlayer == RedPlayerII_Script.redPlayerII_ColName && (currentPlayer != "Star" && RedPlayerII_Script.redPlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerII.transform.position = redPlayerII_Pos;
+						RedPlayerII_Script.redPlayerII_ColName = "none";
+						redPlayerII_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+					if (currentPlayer == RedPlayerIII_Script.redPlayerIII_ColName && (currentPlayer != "Star" && RedPlayerIII_Script.redPlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerIII.transform.position = redPlayerIII_Pos;
+						RedPlayerIII_Script.redPlayerIII_ColName = "none";
+						redPlayerIII_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+					if (currentPlayer == RedPlayerIV_Script.redPlayerIV_ColName && (currentPlayer != "Star" && RedPlayerIV_Script.redPlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerIV.transform.position = redPlayerIV_Pos;
+						RedPlayerIV_Script.redPlayerIV_ColName = "none";
+						redPlayerIV_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+
+					if (currentPlayer == BluePlayerI_Script.bluePlayerI_ColName && (currentPlayer != "Star" && BluePlayerI_Script.bluePlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerI.transform.position = bluePlayerI_Pos;
+						BluePlayerI_Script.bluePlayerI_ColName = "none";
+						bluePlayerI_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+					if (currentPlayer == BluePlayerII_Script.bluePlayerII_ColName && (currentPlayer != "Star" && BluePlayerII_Script.bluePlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerII.transform.position = bluePlayerII_Pos;
+						BluePlayerII_Script.bluePlayerII_ColName = "none";
+						bluePlayerII_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+					if (currentPlayer == BluePlayerIII_Script.bluePlayerIII_ColName && (currentPlayer != "Star" && BluePlayerIII_Script.bluePlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerIII.transform.position = bluePlayerIII_Pos;
+						BluePlayerIII_Script.bluePlayerIII_ColName = "none";
+						bluePlayerIII_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+					if (currentPlayer == BluePlayerIV_Script.bluePlayerIV_ColName && (currentPlayer != "Star" && BluePlayerIV_Script.bluePlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerIV.transform.position = bluePlayerIV_Pos;
+						BluePlayerIV_Script.bluePlayerIV_ColName = "none";
+						bluePlayerIV_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+				}
+
+				if (currentPlayerName.Contains ("BLUE PLAYER")) {
+					if (currentPlayer == RedPlayerI_Script.redPlayerI_ColName && (currentPlayer != "Star" && RedPlayerI_Script.redPlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerI.transform.position = redPlayerI_Pos;
+						RedPlayerI_Script.redPlayerI_ColName = "none";
+						redPlayerI_Steps = 0;
+						playerTurn = "BLUE";
+					}
+					if (currentPlayer == RedPlayerII_Script.redPlayerII_ColName && (currentPlayer != "Star" && RedPlayerII_Script.redPlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerII.transform.position = redPlayerII_Pos;
+						RedPlayerII_Script.redPlayerII_ColName = "none";
+						redPlayerII_Steps = 0;
+						playerTurn = "BLUE";
+					}
+					if (currentPlayer == RedPlayerIII_Script.redPlayerIII_ColName && (currentPlayer != "Star" && RedPlayerIII_Script.redPlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerIII.transform.position = redPlayerIII_Pos;
+						RedPlayerIII_Script.redPlayerIII_ColName = "none";
+						redPlayerIII_Steps = 0;
+						playerTurn = "BLUE";
+					}
+					if (currentPlayer == RedPlayerIV_Script.redPlayerIV_ColName && (currentPlayer != "Star" && RedPlayerIV_Script.redPlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerIV.transform.position = redPlayerIV_Pos;
+						RedPlayerIV_Script.redPlayerIV_ColName = "none";
+						redPlayerIV_Steps = 0;
+						playerTurn = "BLUE";
+					}
+
+					if (currentPlayer == YellowPlayerI_Script.yellowPlayerI_ColName && (currentPlayer != "Star" && YellowPlayerI_Script.yellowPlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerI.transform.position = yellowPlayerI_Pos;
+						YellowPlayerI_Script.yellowPlayerI_ColName = "none";
+						yellowPlayerI_Steps = 0;
+						playerTurn = "BLUE";
+					}
+					if (currentPlayer == YellowPlayerII_Script.yellowPlayerII_ColName && (currentPlayer != "Star" && YellowPlayerII_Script.yellowPlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerII.transform.position = yellowPlayerII_Pos;
+						YellowPlayerII_Script.yellowPlayerII_ColName = "none";
+						yellowPlayerII_Steps = 0;
+						playerTurn = "BLUE";
+					}
+					if (currentPlayer == YellowPlayerIII_Script.yellowPlayerIII_ColName && (currentPlayer != "Star" && YellowPlayerIII_Script.yellowPlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerIII.transform.position = yellowPlayerIII_Pos;
+						YellowPlayerIII_Script.yellowPlayerIII_ColName = "none";
+						yellowPlayerIII_Steps = 0;
+						playerTurn = "BLUE";
+					}
+					if (currentPlayer == YellowPlayerIV_Script.yellowPlayerIV_ColName && (currentPlayer != "Star" && YellowPlayerIV_Script.yellowPlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerIV.transform.position = yellowPlayerIV_Pos;
+						YellowPlayerIV_Script.yellowPlayerIV_ColName = "none";
+						yellowPlayerIV_Steps = 0;
+						playerTurn = "BLUE";
+					}
+				}
+				break;
+
+			case 4:
+				if (currentPlayerName.Contains ("RED PLAYER")) {
+					if (currentPlayer == GreenPlayerI_Script.greenPlayerI_ColName && (currentPlayer != "Star" && GreenPlayerI_Script.greenPlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerI.transform.position = greenPlayerI_Pos;
+						GreenPlayerI_Script.greenPlayerI_ColName = "none";
+						greenPlayerI_Steps = 0;
+						playerTurn = "RED";
+					}
+					if (currentPlayer == GreenPlayerII_Script.greenPlayerII_ColName && (currentPlayer != "Star" && GreenPlayerII_Script.greenPlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerII.transform.position = greenPlayerII_Pos;
+						GreenPlayerII_Script.greenPlayerII_ColName = "none";
+						greenPlayerII_Steps = 0;
+						playerTurn = "RED";
+					}
+					if (currentPlayer == GreenPlayerIII_Script.greenPlayerIII_ColName && (currentPlayer != "Star" && GreenPlayerIII_Script.greenPlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerIII.transform.position = greenPlayerIII_Pos;
+						GreenPlayerIII_Script.greenPlayerIII_ColName = "none";
+						greenPlayerIII_Steps = 0;
+						playerTurn = "RED";
+					}
+					if (currentPlayer == GreenPlayerIV_Script.greenPlayerIV_ColName && (currentPlayer != "Star" && GreenPlayerIV_Script.greenPlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerIV.transform.position = greenPlayerIV_Pos;
+						GreenPlayerIV_Script.greenPlayerIV_ColName = "none";
+						greenPlayerIV_Steps = 0;
+						playerTurn = "RED";
+					}
+
+					if (currentPlayer == BluePlayerI_Script.bluePlayerI_ColName && (currentPlayer != "Star" && BluePlayerI_Script.bluePlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerI.transform.position = bluePlayerI_Pos;
+						BluePlayerI_Script.bluePlayerI_ColName = "none";
+						bluePlayerI_Steps = 0;
+						playerTurn = "RED";
+					}
+					if (currentPlayer == BluePlayerII_Script.bluePlayerII_ColName && (currentPlayer != "Star" && BluePlayerII_Script.bluePlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerII.transform.position = bluePlayerII_Pos;
+						BluePlayerII_Script.bluePlayerII_ColName = "none";
+						bluePlayerII_Steps = 0;
+						playerTurn = "RED";
+					}
+					if (currentPlayer == BluePlayerIII_Script.bluePlayerIII_ColName && (currentPlayer != "Star" && BluePlayerIII_Script.bluePlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerIII.transform.position = bluePlayerIII_Pos;
+						BluePlayerIII_Script.bluePlayerIII_ColName = "none";
+						bluePlayerIII_Steps = 0;
+						playerTurn = "RED";
+					}
+					if (currentPlayer == BluePlayerIV_Script.bluePlayerIV_ColName && (currentPlayer != "Star" && BluePlayerIV_Script.bluePlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerIV.transform.position = bluePlayerIV_Pos;
+						BluePlayerIV_Script.bluePlayerIV_ColName = "none";
+						bluePlayerIV_Steps = 0;
+						playerTurn = "RED";
+					}
+
+					if (currentPlayer == YellowPlayerI_Script.yellowPlayerI_ColName && (currentPlayer != "Star" && YellowPlayerI_Script.yellowPlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerI.transform.position = yellowPlayerI_Pos;
+						YellowPlayerI_Script.yellowPlayerI_ColName = "none";
+						yellowPlayerI_Steps = 0;
+						playerTurn = "RED";
+					}
+					if (currentPlayer == YellowPlayerII_Script.yellowPlayerII_ColName && (currentPlayer != "Star" && YellowPlayerII_Script.yellowPlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerII.transform.position = yellowPlayerII_Pos;
+						YellowPlayerII_Script.yellowPlayerII_ColName = "none";
+						yellowPlayerII_Steps = 0;
+						playerTurn = "RED";
+					}
+					if (currentPlayer == YellowPlayerIII_Script.yellowPlayerIII_ColName && (currentPlayer != "Star" && YellowPlayerIII_Script.yellowPlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerIII.transform.position = yellowPlayerIII_Pos;
+						YellowPlayerIII_Script.yellowPlayerIII_ColName = "none";
+						yellowPlayerIII_Steps = 0;
+						playerTurn = "RED";
+					}
+					if (currentPlayer == YellowPlayerIV_Script.yellowPlayerIV_ColName && (currentPlayer != "Star" && YellowPlayerIV_Script.yellowPlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerIV.transform.position = yellowPlayerIV_Pos;
+						YellowPlayerIV_Script.yellowPlayerIV_ColName = "none";
+						yellowPlayerIV_Steps = 0;
+						playerTurn = "RED";
+					}
+				}
+
+				if (currentPlayerName.Contains ("GREEN PLAYER")) {
+					if (currentPlayer == RedPlayerI_Script.redPlayerI_ColName && (currentPlayer != "Star" && RedPlayerI_Script.redPlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerI.transform.position = redPlayerI_Pos;
+						RedPlayerI_Script.redPlayerI_ColName = "none";
+						redPlayerI_Steps = 0;
+						playerTurn = "GREEN";
+					}
+					if (currentPlayer == RedPlayerII_Script.redPlayerII_ColName && (currentPlayer != "Star" && RedPlayerII_Script.redPlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerII.transform.position = redPlayerII_Pos;
+						RedPlayerII_Script.redPlayerII_ColName = "none";
+						redPlayerII_Steps = 0;
+						playerTurn = "GREEN";
+					}
+					if (currentPlayer == RedPlayerIII_Script.redPlayerIII_ColName && (currentPlayer != "Star" && RedPlayerIII_Script.redPlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerIII.transform.position = redPlayerIII_Pos;
+						RedPlayerIII_Script.redPlayerIII_ColName = "none";
+						redPlayerIII_Steps = 0;
+						playerTurn = "GREEN";
+					}
+					if (currentPlayer == RedPlayerIV_Script.redPlayerIV_ColName && (currentPlayer != "Star" && RedPlayerIV_Script.redPlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerIV.transform.position = redPlayerIV_Pos;
+						RedPlayerIV_Script.redPlayerIV_ColName = "none";
+						redPlayerIV_Steps = 0;
+						playerTurn = "GREEN";
+					}
+
+					if (currentPlayer == BluePlayerI_Script.bluePlayerI_ColName && (currentPlayer != "Star" && BluePlayerI_Script.bluePlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerI.transform.position = bluePlayerI_Pos;
+						BluePlayerI_Script.bluePlayerI_ColName = "none";
+						bluePlayerI_Steps = 0;
+						playerTurn = "GREEN";
+					}
+					if (currentPlayer == BluePlayerII_Script.bluePlayerII_ColName && (currentPlayer != "Star" && BluePlayerII_Script.bluePlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerII.transform.position = bluePlayerII_Pos;
+						BluePlayerII_Script.bluePlayerII_ColName = "none";
+						bluePlayerII_Steps = 0;
+						playerTurn = "GREEN";
+					}
+					if (currentPlayer == BluePlayerIII_Script.bluePlayerIII_ColName && (currentPlayer != "Star" && BluePlayerIII_Script.bluePlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerIII.transform.position = bluePlayerIII_Pos;
+						BluePlayerIII_Script.bluePlayerIII_ColName = "none";
+						bluePlayerIII_Steps = 0;
+						playerTurn = "GREEN";
+					}
+					if (currentPlayer == BluePlayerIV_Script.bluePlayerIV_ColName && (currentPlayer != "Star" && BluePlayerIV_Script.bluePlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerIV.transform.position = bluePlayerIV_Pos;
+						BluePlayerIV_Script.bluePlayerIV_ColName = "none";
+						bluePlayerIV_Steps = 0;
+						playerTurn = "GREEN";
+					}
+
+					if (currentPlayer == YellowPlayerI_Script.yellowPlayerI_ColName && (currentPlayer != "Star" && YellowPlayerI_Script.yellowPlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerI.transform.position = yellowPlayerI_Pos;
+						YellowPlayerI_Script.yellowPlayerI_ColName = "none";
+						yellowPlayerI_Steps = 0;
+						playerTurn = "GREEN";
+					}
+					if (currentPlayer == YellowPlayerII_Script.yellowPlayerII_ColName && (currentPlayer != "Star" && YellowPlayerII_Script.yellowPlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerII.transform.position = yellowPlayerII_Pos;
+						YellowPlayerII_Script.yellowPlayerII_ColName = "none";
+						yellowPlayerII_Steps = 0;
+						playerTurn = "GREEN";
+					}
+					if (currentPlayer == YellowPlayerIII_Script.yellowPlayerIII_ColName && (currentPlayer != "Star" && YellowPlayerIII_Script.yellowPlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerIII.transform.position = yellowPlayerIII_Pos;
+						YellowPlayerIII_Script.yellowPlayerIII_ColName = "none";
+						yellowPlayerIII_Steps = 0;
+						playerTurn = "GREEN";
+					}
+					if (currentPlayer == YellowPlayerIV_Script.yellowPlayerIV_ColName && (currentPlayer != "Star" && YellowPlayerIV_Script.yellowPlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerIV.transform.position = yellowPlayerIV_Pos;
+						YellowPlayerIV_Script.yellowPlayerIV_ColName = "none";
+						yellowPlayerIV_Steps = 0;
+						playerTurn = "GREEN";
+					}
+				}
+
+				if (currentPlayerName.Contains ("BLUE PLAYER")) {
+					if (currentPlayer == RedPlayerI_Script.redPlayerI_ColName && (currentPlayer != "Star" && RedPlayerI_Script.redPlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerI.transform.position = redPlayerI_Pos;
+						RedPlayerI_Script.redPlayerI_ColName = "none";
+						redPlayerI_Steps = 0;
+						playerTurn = "BLUE";
+					}
+					if (currentPlayer == RedPlayerII_Script.redPlayerII_ColName && (currentPlayer != "Star" && RedPlayerII_Script.redPlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerII.transform.position = redPlayerII_Pos;
+						RedPlayerII_Script.redPlayerII_ColName = "none";
+						redPlayerII_Steps = 0;
+						playerTurn = "BLUE";
+					}
+					if (currentPlayer == RedPlayerIII_Script.redPlayerIII_ColName && (currentPlayer != "Star" && RedPlayerIII_Script.redPlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerIII.transform.position = redPlayerIII_Pos;
+						RedPlayerIII_Script.redPlayerIII_ColName = "none";
+						redPlayerIII_Steps = 0;
+						playerTurn = "BLUE";
+					}
+					if (currentPlayer == RedPlayerIV_Script.redPlayerIV_ColName && (currentPlayer != "Star" && RedPlayerIV_Script.redPlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerIV.transform.position = redPlayerIV_Pos;
+						RedPlayerIV_Script.redPlayerIV_ColName = "none";
+						redPlayerIV_Steps = 0;
+						playerTurn = "BLUE";
+					}
+
+					if (currentPlayer == GreenPlayerI_Script.greenPlayerI_ColName && (currentPlayer != "Star" && GreenPlayerI_Script.greenPlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerI.transform.position = greenPlayerI_Pos;
+						GreenPlayerI_Script.greenPlayerI_ColName = "none";
+						greenPlayerI_Steps = 0;
+						playerTurn = "BLUE";
+					}
+					if (currentPlayer == GreenPlayerII_Script.greenPlayerII_ColName && (currentPlayer != "Star" && GreenPlayerII_Script.greenPlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerII.transform.position = greenPlayerII_Pos;
+						GreenPlayerII_Script.greenPlayerII_ColName = "none";
+						greenPlayerII_Steps = 0;
+						playerTurn = "BLUE";
+					}
+					if (currentPlayer == GreenPlayerIII_Script.greenPlayerIII_ColName && (currentPlayer != "Star" && GreenPlayerIII_Script.greenPlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerIII.transform.position = greenPlayerIII_Pos;
+						GreenPlayerIII_Script.greenPlayerIII_ColName = "none";
+						greenPlayerIII_Steps = 0;
+						playerTurn = "BLUE";
+					}
+					if (currentPlayer == GreenPlayerIV_Script.greenPlayerIV_ColName && (currentPlayer != "Star" && GreenPlayerIV_Script.greenPlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerIV.transform.position = greenPlayerIV_Pos;
+						GreenPlayerIV_Script.greenPlayerIV_ColName = "none";
+						greenPlayerIV_Steps = 0;
+						playerTurn = "BLUE";
+					}
+
+					if (currentPlayer == YellowPlayerI_Script.yellowPlayerI_ColName && (currentPlayer != "Star" && YellowPlayerI_Script.yellowPlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerI.transform.position = yellowPlayerI_Pos;
+						YellowPlayerI_Script.yellowPlayerI_ColName = "none";
+						yellowPlayerI_Steps = 0;
+						playerTurn = "BLUE";
+					}
+					if (currentPlayer == YellowPlayerII_Script.yellowPlayerII_ColName && (currentPlayer != "Star" && YellowPlayerII_Script.yellowPlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerII.transform.position = yellowPlayerII_Pos;
+						YellowPlayerII_Script.yellowPlayerII_ColName = "none";
+						yellowPlayerII_Steps = 0;
+						playerTurn = "BLUE";
+					}
+					if (currentPlayer == YellowPlayerIII_Script.yellowPlayerIII_ColName && (currentPlayer != "Star" && YellowPlayerIII_Script.yellowPlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerIII.transform.position = yellowPlayerIII_Pos;
+						YellowPlayerIII_Script.yellowPlayerIII_ColName = "none";
+						yellowPlayerIII_Steps = 0;
+						playerTurn = "BLUE";
+					}
+					if (currentPlayer == YellowPlayerIV_Script.yellowPlayerIV_ColName && (currentPlayer != "Star" && YellowPlayerIV_Script.yellowPlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						yellowPlayerIV.transform.position = yellowPlayerIV_Pos;
+						YellowPlayerIV_Script.yellowPlayerIV_ColName = "none";
+						yellowPlayerIV_Steps = 0;
+						playerTurn = "BLUE";
+					}
+				}
+
+				if (currentPlayerName.Contains ("YELLOW PLAYER")) {
+					if (currentPlayer == RedPlayerI_Script.redPlayerI_ColName && (currentPlayer != "Star" && RedPlayerI_Script.redPlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerI.transform.position = redPlayerI_Pos;
+						RedPlayerI_Script.redPlayerI_ColName = "none";
+						redPlayerI_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+					if (currentPlayer == RedPlayerII_Script.redPlayerII_ColName && (currentPlayer != "Star" && RedPlayerII_Script.redPlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerII.transform.position = redPlayerII_Pos;
+						RedPlayerII_Script.redPlayerII_ColName = "none";
+						redPlayerII_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+					if (currentPlayer == RedPlayerIII_Script.redPlayerIII_ColName && (currentPlayer != "Star" && RedPlayerIII_Script.redPlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerIII.transform.position = redPlayerIII_Pos;
+						RedPlayerIII_Script.redPlayerIII_ColName = "none";
+						redPlayerIII_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+					if (currentPlayer == RedPlayerIV_Script.redPlayerIV_ColName && (currentPlayer != "Star" && RedPlayerIV_Script.redPlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerIV.transform.position = redPlayerIV_Pos;
+						RedPlayerIV_Script.redPlayerIV_ColName = "none";
+						redPlayerIV_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+
+					if (currentPlayer == GreenPlayerI_Script.greenPlayerI_ColName && (currentPlayer != "Star" && GreenPlayerI_Script.greenPlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerI.transform.position = greenPlayerI_Pos;
+						GreenPlayerI_Script.greenPlayerI_ColName = "none";
+						greenPlayerI_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+					if (currentPlayer == GreenPlayerII_Script.greenPlayerII_ColName && (currentPlayer != "Star" && GreenPlayerII_Script.greenPlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerII.transform.position = greenPlayerII_Pos;
+						GreenPlayerII_Script.greenPlayerII_ColName = "none";
+						greenPlayerII_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+					if (currentPlayer == GreenPlayerIII_Script.greenPlayerIII_ColName && (currentPlayer != "Star" && GreenPlayerIII_Script.greenPlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerIII.transform.position = greenPlayerIII_Pos;
+						GreenPlayerIII_Script.greenPlayerIII_ColName = "none";
+						greenPlayerIII_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+					if (currentPlayer == GreenPlayerIV_Script.greenPlayerIV_ColName && (currentPlayer != "Star" && GreenPlayerIV_Script.greenPlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerIV.transform.position = greenPlayerIV_Pos;
+						GreenPlayerIV_Script.greenPlayerIV_ColName = "none";
+						greenPlayerIV_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+
+					if (currentPlayer == BluePlayerI_Script.bluePlayerI_ColName && (currentPlayer != "Star" && BluePlayerI_Script.bluePlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerI.transform.position = bluePlayerI_Pos;
+						BluePlayerI_Script.bluePlayerI_ColName = "none";
+						bluePlayerI_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+					if (currentPlayer == BluePlayerII_Script.bluePlayerII_ColName && (currentPlayer != "Star" && BluePlayerII_Script.bluePlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerII.transform.position = bluePlayerII_Pos;
+						BluePlayerII_Script.bluePlayerII_ColName = "none";
+						bluePlayerII_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+					if (currentPlayer == BluePlayerIII_Script.bluePlayerIII_ColName && (currentPlayer != "Star" && BluePlayerIII_Script.bluePlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerIII.transform.position = bluePlayerIII_Pos;
+						BluePlayerIII_Script.bluePlayerIII_ColName = "none";
+						bluePlayerIII_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+					if (currentPlayer == BluePlayerIV_Script.bluePlayerIV_ColName && (currentPlayer != "Star" && BluePlayerIV_Script.bluePlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						bluePlayerIV.transform.position = bluePlayerIV_Pos;
+						BluePlayerIV_Script.bluePlayerIV_ColName = "none";
+						bluePlayerIV_Steps = 0;
+						playerTurn = "YELLOW";
+					}
+				}
+				break;				
+			}
+		}//===================================================================================
+
+		switch (MainMenuScript.howManyPlayers) 
+		{
+			case 2:
+				if (playerTurn == "RED") 
+				{
+					diceRoll.position = redDiceRollPos.position;
+
+					frameRed.SetActive (true);
+					frameGreen.SetActive (false);
+					frameBlue.SetActive (false);
+					frameYellow.SetActive (false);					
+				}
+				if (playerTurn == "GREEN") 
+				{
+					diceRoll.position = greenDiceRollPos.position;
+
+					frameRed.SetActive (false);
+					frameGreen.SetActive (true);
+					frameBlue.SetActive (false);
+					frameYellow.SetActive (false);					
+				}	
+
+				GreenPlayerI_Button.interactable = false;
+				GreenPlayerII_Button.interactable = false;
+				GreenPlayerIII_Button.interactable = false;
+				GreenPlayerIV_Button.interactable = false;
+
+				RedPlayerI_Button.interactable = false;
+				RedPlayerII_Button.interactable = false;
+				RedPlayerIII_Button.interactable = false;
+				RedPlayerIV_Button.interactable = false;
+				//=============ANIMATED ROUND BORDER=======
+				redPlayerI_Border.SetActive (false);
+				redPlayerII_Border.SetActive (false);
+				redPlayerIII_Border.SetActive (false);
+				redPlayerIV_Border.SetActive (false);
+
+				greenPlayerI_Border.SetActive (false);
+				greenPlayerII_Border.SetActive (false);
+				greenPlayerIII_Border.SetActive (false);
+				greenPlayerIV_Border.SetActive (false);
+				//======================================
+				break;
+
+			case 3:
+				if (playerTurn == "RED") 
+				{
+					diceRoll.position = redDiceRollPos.position;
+
+					frameRed.SetActive (true);
+					frameGreen.SetActive (false);
+					frameBlue.SetActive (false);
+					frameYellow.SetActive (false);					
+				}
+				if (playerTurn == "YELLOW") 
+				{
+					diceRoll.position = yellowDiceRollPos.position;
+
+					frameRed.SetActive (false);
+					frameGreen.SetActive (false);
+					frameBlue.SetActive (false);
+					frameYellow.SetActive (true);					
+				}
+				if (playerTurn == "BLUE") 
+				{
+					diceRoll.position = blueDiceRollPos.position;
+
+					frameRed.SetActive (false);
+					frameGreen.SetActive (false);
+					frameBlue.SetActive (true);
+					frameYellow.SetActive (false);					
+				}		
+
+				RedPlayerI_Button.interactable = false;
+				RedPlayerII_Button.interactable = false;
+				RedPlayerIII_Button.interactable = false;
+				RedPlayerIV_Button.interactable = false;
+
+				YellowPlayerI_Button.interactable = false;
+				YellowPlayerII_Button.interactable = false;
+				YellowPlayerIII_Button.interactable = false;
+				YellowPlayerIV_Button.interactable = false;
+
+				BluePlayerI_Button.interactable = false;
+				BluePlayerII_Button.interactable = false;
+				BluePlayerIII_Button.interactable = false;
+				BluePlayerIV_Button.interactable = false;
+				//=============ANIMATED ROUND BORDER==================================================================
+				redPlayerI_Border.SetActive (false);
+				redPlayerII_Border.SetActive (false);
+				redPlayerIII_Border.SetActive (false);
+				redPlayerIV_Border.SetActive (false);
+
+				yellowPlayerI_Border.SetActive (false);
+				yellowPlayerII_Border.SetActive (false);
+				yellowPlayerIII_Border.SetActive (false);
+				yellowPlayerIV_Border.SetActive (false);
+
+				bluePlayerI_Border.SetActive (false);
+				bluePlayerII_Border.SetActive (false);
+				bluePlayerIII_Border.SetActive (false);
+				bluePlayerIV_Border.SetActive (false);					
+				//======================================
+				break;
+
+			case 4:
+				if (playerTurn == "RED") 
+				{
+					diceRoll.position = redDiceRollPos.position;
+
+					frameRed.SetActive (true);
+					frameGreen.SetActive (false);
+					frameBlue.SetActive (false);
+					frameYellow.SetActive (false);					
+				}
+				if (playerTurn == "GREEN") 
+				{
+					diceRoll.position = greenDiceRollPos.position;
+
+					frameRed.SetActive (false);
+					frameGreen.SetActive (true);
+					frameBlue.SetActive (false);
+					frameYellow.SetActive (false);					
+				}
+				if (playerTurn == "BLUE") 
+				{
+					diceRoll.position = blueDiceRollPos.position;
+
+					frameRed.SetActive (false);
+					frameGreen.SetActive (false);
+					frameBlue.SetActive (true);
+					frameYellow.SetActive (false);					
+				}
+				if (playerTurn == "YELLOW") 
+				{
+					diceRoll.position = yellowDiceRollPos.position;
+
+					frameRed.SetActive (false);
+					frameGreen.SetActive (false);
+					frameBlue.SetActive (false);
+					frameYellow.SetActive (true);					
+				}
+
+				RedPlayerI_Button.interactable = false;
+				RedPlayerII_Button.interactable = false;
+				RedPlayerIII_Button.interactable = false;
+				RedPlayerIV_Button.interactable = false;
+
+				GreenPlayerI_Button.interactable = false;
+				GreenPlayerII_Button.interactable = false;
+				GreenPlayerIII_Button.interactable = false;
+				GreenPlayerIV_Button.interactable = false;
+
+				BluePlayerI_Button.interactable = false;
+				BluePlayerII_Button.interactable = false;
+				BluePlayerIII_Button.interactable = false;
+				BluePlayerIV_Button.interactable = false;
+
+				YellowPlayerI_Button.interactable = false;
+				YellowPlayerII_Button.interactable = false;
+				YellowPlayerIII_Button.interactable = false;
+				YellowPlayerIV_Button.interactable = false;
+				//=============ANIMATED ROUND BORDER==================================================================					
+				redPlayerI_Border.SetActive (false);
+				redPlayerII_Border.SetActive (false);
+				redPlayerIII_Border.SetActive (false);
+				redPlayerIV_Border.SetActive (false);
+
+				yellowPlayerI_Border.SetActive (false);
+				yellowPlayerII_Border.SetActive (false);
+				yellowPlayerIII_Border.SetActive (false);
+				yellowPlayerIV_Border.SetActive (false);
+
+				bluePlayerI_Border.SetActive (false);
+				bluePlayerII_Border.SetActive (false);
+				bluePlayerIII_Border.SetActive (false);
+				bluePlayerIV_Border.SetActive (false);
+
+				greenPlayerI_Border.SetActive (false);
+				greenPlayerII_Border.SetActive (false);
+				greenPlayerIII_Border.SetActive (false);
+				greenPlayerIV_Border.SetActive (false);
+				//======================================
+				break;
+		}
+
+		selectDiceNumAnimation = 0;
+	}
+
+	// Click on Roll Button on Dice UI
+	public void DiceRoll()
+	{
+		SoundManagerScript.diceAudioSource.Play ();
+		DiceRollButton.interactable = false;
+
+		selectDiceNumAnimation = randomNo.Next (1,7);
+
+		switch (selectDiceNumAnimation) 
+		{
+			case 1:
+				dice1_Roll_Animation.SetActive (true);
+				dice2_Roll_Animation.SetActive (false);
+				dice3_Roll_Animation.SetActive (false);
+				dice4_Roll_Animation.SetActive (false);
+				dice5_Roll_Animation.SetActive (false);
+				dice6_Roll_Animation.SetActive (false);
+				break;
+
+			case 2:
+				dice1_Roll_Animation.SetActive (false);
+				dice2_Roll_Animation.SetActive (true);
+				dice3_Roll_Animation.SetActive (false);
+				dice4_Roll_Animation.SetActive (false);
+				dice5_Roll_Animation.SetActive (false);
+				dice6_Roll_Animation.SetActive (false);
+				break;
+
+			case 3:
+				dice1_Roll_Animation.SetActive (false);
+				dice2_Roll_Animation.SetActive (false);
+				dice3_Roll_Animation.SetActive (true);
+				dice4_Roll_Animation.SetActive (false);
+				dice5_Roll_Animation.SetActive (false);
+				dice6_Roll_Animation.SetActive (false);
+				break;
+
+			case 4:
+				dice1_Roll_Animation.SetActive (false);
+				dice2_Roll_Animation.SetActive (false);
+				dice3_Roll_Animation.SetActive (false);
+				dice4_Roll_Animation.SetActive (true);
+				dice5_Roll_Animation.SetActive (false);
+				dice6_Roll_Animation.SetActive (false);
+				break;
+
+			case 5:
+				dice1_Roll_Animation.SetActive (false);
+				dice2_Roll_Animation.SetActive (false);
+				dice3_Roll_Animation.SetActive (false);
+				dice4_Roll_Animation.SetActive (false);
+				dice5_Roll_Animation.SetActive (true);
+				dice6_Roll_Animation.SetActive (false);
+				break;
+
+			case 6:
+				dice1_Roll_Animation.SetActive (false);
+				dice2_Roll_Animation.SetActive (false);
+				dice3_Roll_Animation.SetActive (false);
+				dice4_Roll_Animation.SetActive (false);
+				dice5_Roll_Animation.SetActive (false);
+				dice6_Roll_Animation.SetActive (true);
+				break;
+		}
+
+		StartCoroutine ("PlayersNotInitialized");
+	}
+
+	IEnumerator PlayersNotInitialized()
+	{
+		yield return new WaitForSeconds (0.8f);
+		// Game Start Initial position of each player (Red, Green, Blue, Yellow)
+		switch(playerTurn)
+		{
+		case "RED": 	
+
+			//==================== CONDITION FOR BORDER GLOW ========================
+			if ((redMovementBlocks.Count - redPlayerI_Steps) >= selectDiceNumAnimation && redPlayerI_Steps > 0 && (redMovementBlocks.Count > redPlayerI_Steps)) {
+				redPlayerI_Border.SetActive (true);
+				RedPlayerI_Button.interactable = true;
+			} else {
+				redPlayerI_Border.SetActive (false);
+				RedPlayerI_Button.interactable = false;
+			}
+
+			if ((redMovementBlocks.Count - redPlayerII_Steps) >= selectDiceNumAnimation && redPlayerII_Steps > 0 && (redMovementBlocks.Count > redPlayerII_Steps)) {
+				redPlayerII_Border.SetActive (true);
+				RedPlayerII_Button.interactable = true;
+			} else {
+				redPlayerII_Border.SetActive (false);
+				RedPlayerII_Button.interactable = false;
+			}
+
+			if ((redMovementBlocks.Count - redPlayerIII_Steps) >= selectDiceNumAnimation && redPlayerIII_Steps > 0 && (redMovementBlocks.Count > redPlayerIII_Steps)) {
+				redPlayerIII_Border.SetActive (true);
+				RedPlayerIII_Button.interactable = true;
+			} else {
+				redPlayerIII_Border.SetActive (false);
+				RedPlayerIII_Button.interactable = false;
+			}
+
+			if ((redMovementBlocks.Count - redPlayerIV_Steps) >= selectDiceNumAnimation && redPlayerIV_Steps > 0 && (redMovementBlocks.Count > redPlayerIV_Steps)) {
+				redPlayerIV_Border.SetActive (true);
+				RedPlayerIV_Button.interactable = true;
+			} else {
+				redPlayerIV_Border.SetActive (false);
+				RedPlayerIV_Button.interactable = false;
+			}
+			//========================= PLAYERS BORDER GLOW WHEN OPENING ===========================================
+
+			if (selectDiceNumAnimation == 6 && redPlayerI_Steps == 0) {
+				redPlayerI_Border.SetActive (true);
+				RedPlayerI_Button.interactable = true;
+			}
+			if (selectDiceNumAnimation == 6 && redPlayerII_Steps == 0) {
+				redPlayerII_Border.SetActive (true);
+				RedPlayerII_Button.interactable = true;
+			}				
+			if (selectDiceNumAnimation == 6 && redPlayerIII_Steps == 0) {
+				redPlayerIII_Border.SetActive (true);
+				RedPlayerIII_Button.interactable = true;
+			}					
+			if (selectDiceNumAnimation == 6 && redPlayerIV_Steps == 0) {
+				redPlayerIV_Border.SetActive (true);
+				RedPlayerIV_Button.interactable = true;
+			}	
+			//====================== PLAYERS DON'T HAVE ANY MOVES ,SWITCH TO NEXT TURN===============================
+			if (!redPlayerI_Border.activeInHierarchy && !redPlayerII_Border.activeInHierarchy &&
+			   !redPlayerIII_Border.activeInHierarchy && !redPlayerIV_Border.activeInHierarchy) 
+			{
+				RedPlayerI_Button.interactable = false;
+				RedPlayerII_Button.interactable = false;
+				RedPlayerIII_Button.interactable = false;
+				RedPlayerIV_Button.interactable = false;
+
+				switch (MainMenuScript.howManyPlayers) {
+				case 2:
+					playerTurn = "GREEN";
+					InitializeDice ();
+					break;
+
+				case 3:
+					playerTurn = "BLUE";
+					InitializeDice ();
+					break;
+
+				case 4:
+					playerTurn = "BLUE";
+					InitializeDice ();
+					break;
+				}
+			}
+			break;
+
+		case "BLUE":			
+			
+			//==================== CONDITION FOR BORDER GLOW ========================
+			if ((blueMovementBlocks.Count - bluePlayerI_Steps) >= selectDiceNumAnimation && bluePlayerI_Steps > 0 && (blueMovementBlocks.Count > bluePlayerI_Steps)) 
+			{
+				bluePlayerI_Border.SetActive (true);
+				BluePlayerI_Button.interactable = true;
+			} 
+			else 
+			{
+				bluePlayerI_Border.SetActive (false);
+				BluePlayerI_Button.interactable = false;
+			}
+
+			if ((blueMovementBlocks.Count - bluePlayerII_Steps) >= selectDiceNumAnimation && bluePlayerII_Steps > 0 && (blueMovementBlocks.Count > bluePlayerII_Steps)) 
+			{
+				bluePlayerII_Border.SetActive (true);
+				BluePlayerII_Button.interactable = true;
+			} 
+			else 
+			{
+				bluePlayerII_Border.SetActive (false);
+				BluePlayerII_Button.interactable = false;
+			}
+
+			if ((blueMovementBlocks.Count - bluePlayerIII_Steps) >= selectDiceNumAnimation && bluePlayerIII_Steps > 0 && (blueMovementBlocks.Count > bluePlayerIII_Steps)) 
+			{
+				bluePlayerIII_Border.SetActive (true);
+				BluePlayerIII_Button.interactable = true;
+			} 
+			else 
+			{
+				bluePlayerIII_Border.SetActive (false);
+				BluePlayerIII_Button.interactable = false;
+			}
+
+			if ((blueMovementBlocks.Count - bluePlayerIV_Steps) >= selectDiceNumAnimation && bluePlayerIV_Steps > 0 && (blueMovementBlocks.Count > bluePlayerIV_Steps)) 
+			{
+				bluePlayerIV_Border.SetActive (true);
+				BluePlayerIV_Button.interactable = true;
+			} 
+			else 
+			{
+				bluePlayerIV_Border.SetActive (false);
+				BluePlayerIV_Button.interactable = false;
+			}
+			//=======================================================================================================
+			if (selectDiceNumAnimation == 6 && bluePlayerI_Steps == 0) 
+			{
+				bluePlayerI_Border.SetActive (true);
+				BluePlayerI_Button.interactable = true;
+			}
+			if (selectDiceNumAnimation == 6 && bluePlayerII_Steps == 0) 
+			{
+				bluePlayerII_Border.SetActive (true);
+				BluePlayerII_Button.interactable = true;
+			}				
+			if (selectDiceNumAnimation == 6 && bluePlayerIII_Steps == 0) 
+			{
+				bluePlayerIII_Border.SetActive (true);
+				BluePlayerIII_Button.interactable = true;
+			}					
+			if (selectDiceNumAnimation == 6 && bluePlayerIV_Steps == 0) 
+			{
+				bluePlayerIV_Border.SetActive (true);
+				BluePlayerIV_Button.interactable = true;
+			}
+
+			//====================== PLAYERS DON'T HAVE ANY MOVES ,SWITCH TO NEXT TURN===============================
+			if (!bluePlayerI_Border.activeInHierarchy && !bluePlayerII_Border.activeInHierarchy &&
+				!bluePlayerIII_Border.activeInHierarchy && !bluePlayerIV_Border.activeInHierarchy) 
+			{
+				BluePlayerI_Button.interactable = false;
+				BluePlayerII_Button.interactable = false;
+				BluePlayerIII_Button.interactable = false;
+				BluePlayerIV_Button.interactable = false;
+
+				switch (MainMenuScript.howManyPlayers) {
+				case 2:
+					//BLUE PLAYER NOT AVAILABLE
+					break;
+
+				case 3:
+					playerTurn = "YELLOW";
+					InitializeDice ();
+					break;
+
+				case 4:
+					playerTurn = "GREEN";
+					InitializeDice ();
+					break;
+				}
+			}
+			break;
+
+		case "GREEN":
+
+			//==================== CONDITION FOR BORDER GLOW ========================
+			if ((greenMovementBlocks.Count - greenPlayerI_Steps) >= selectDiceNumAnimation && greenPlayerI_Steps > 0 && (greenMovementBlocks.Count > greenPlayerI_Steps)) 
+			{
+				greenPlayerI_Border.SetActive (true);
+				GreenPlayerI_Button.interactable = true;
+			} 
+			else 
+			{
+				greenPlayerI_Border.SetActive (false);
+				GreenPlayerI_Button.interactable = false;
+			}
+
+			if ((greenMovementBlocks.Count - greenPlayerII_Steps) >= selectDiceNumAnimation && greenPlayerII_Steps > 0 && (greenMovementBlocks.Count > greenPlayerII_Steps)) 
+			{
+				greenPlayerII_Border.SetActive (true);
+				GreenPlayerII_Button.interactable = true;
+			} 
+			else 
+			{
+				greenPlayerII_Border.SetActive (false);
+				GreenPlayerII_Button.interactable = false;
+			}
+
+			if ((greenMovementBlocks.Count - greenPlayerIII_Steps) >= selectDiceNumAnimation && greenPlayerIII_Steps > 0 && (greenMovementBlocks.Count > greenPlayerIII_Steps)) 
+			{
+				greenPlayerIII_Border.SetActive (true);
+				GreenPlayerIII_Button.interactable = true;
+			} 
+			else 
+			{
+				greenPlayerIII_Border.SetActive (false);
+				GreenPlayerIII_Button.interactable = false;
+			}
+
+			if ((greenMovementBlocks.Count - greenPlayerIV_Steps) >= selectDiceNumAnimation && greenPlayerIV_Steps > 0 && (greenMovementBlocks.Count > greenPlayerIV_Steps)) 
+			{
+				greenPlayerIV_Border.SetActive (true);
+				GreenPlayerIV_Button.interactable = true;
+			} 
+			else 
+			{
+				greenPlayerIV_Border.SetActive (false);
+				GreenPlayerIV_Button.interactable = false;
+			}
+			//=======================================================================================================
+
+			if (selectDiceNumAnimation == 6 && greenPlayerI_Steps == 0) 
+			{
+				greenPlayerI_Border.SetActive (true);
+				GreenPlayerI_Button.interactable = true;
+			}
+			if (selectDiceNumAnimation == 6 && greenPlayerII_Steps == 0) 
+			{
+				greenPlayerII_Border.SetActive (true);
+				GreenPlayerII_Button.interactable = true;
+			}				
+			if (selectDiceNumAnimation == 6 && greenPlayerIII_Steps == 0) 
+			{
+				greenPlayerIII_Border.SetActive (true);
+				GreenPlayerIII_Button.interactable = true;
+			}					
+			if (selectDiceNumAnimation == 6 && greenPlayerIV_Steps == 0) 
+			{
+				greenPlayerIV_Border.SetActive (true);
+				GreenPlayerIV_Button.interactable = true;
+			}
+
+			//====================== PLAYERS DON'T HAVE ANY MOVES ,SWITCH TO NEXT TURN===============================
+			if (!greenPlayerI_Border.activeInHierarchy && !greenPlayerII_Border.activeInHierarchy &&
+				!greenPlayerIII_Border.activeInHierarchy && !greenPlayerIV_Border.activeInHierarchy) 
+			{
+				GreenPlayerI_Button.interactable = false;
+				GreenPlayerII_Button.interactable = false;
+				GreenPlayerIII_Button.interactable = false;
+				GreenPlayerIV_Button.interactable = false;
+
+				switch (MainMenuScript.howManyPlayers) {
+				case 2:
+					playerTurn = "RED";
+					InitializeDice ();
+					break;
+
+				case 3:
+					//GREEN PLAYER IS NOT AVAILABLE
+					break;
+
+				case 4:
+					playerTurn = "YELLOW";
+					InitializeDice ();
+					break;
+				}
+			}
+			break;
+
+		case "YELLOW":
+
+			//==================== CONDITION FOR BORDER GLOW ========================
+			if ((yellowMovementBlocks.Count - yellowPlayerI_Steps) >= selectDiceNumAnimation && yellowPlayerI_Steps > 0 && (yellowMovementBlocks.Count > yellowPlayerI_Steps)) 
+			{
+				yellowPlayerI_Border.SetActive (true);
+				YellowPlayerI_Button.interactable = true;
+			} 
+			else 
+			{
+				yellowPlayerI_Border.SetActive (false);
+				YellowPlayerI_Button.interactable = false;
+			}
+
+			if ((yellowMovementBlocks.Count - yellowPlayerII_Steps) >= selectDiceNumAnimation && yellowPlayerII_Steps > 0 && (yellowMovementBlocks.Count > yellowPlayerII_Steps)) 
+			{
+				yellowPlayerII_Border.SetActive (true);
+				YellowPlayerII_Button.interactable = true;
+			} 
+			else 
+			{
+				yellowPlayerII_Border.SetActive (false);
+				YellowPlayerII_Button.interactable = false;
+			}
+
+			if ((yellowMovementBlocks.Count - yellowPlayerIII_Steps) >= selectDiceNumAnimation && yellowPlayerIII_Steps > 0 && (yellowMovementBlocks.Count > yellowPlayerIII_Steps)) 
+			{
+				yellowPlayerIII_Border.SetActive (true);
+				YellowPlayerIII_Button.interactable = true;
+			} 
+			else 
+			{
+				yellowPlayerIII_Border.SetActive (false);
+				YellowPlayerIII_Button.interactable = false;
+			}
+
+			if ((yellowMovementBlocks.Count - yellowPlayerIV_Steps) >= selectDiceNumAnimation && yellowPlayerIV_Steps > 0 && (yellowMovementBlocks.Count > yellowPlayerIV_Steps)) 
+			{
+				yellowPlayerIV_Border.SetActive (true);
+				YellowPlayerIV_Button.interactable = true;
+			} 
+			else 
+			{
+				yellowPlayerIV_Border.SetActive (false);
+				YellowPlayerIV_Button.interactable = false;
+			}
+			//=======================================================================================================
+
+			if (selectDiceNumAnimation == 6 && yellowPlayerI_Steps == 0) 
+			{
+				yellowPlayerI_Border.SetActive (true);
+				YellowPlayerI_Button.interactable = true;
+			}
+			if (selectDiceNumAnimation == 6 && yellowPlayerII_Steps == 0) 
+			{
+				yellowPlayerII_Border.SetActive (true);
+				YellowPlayerII_Button.interactable = true;
+			}				
+			if (selectDiceNumAnimation == 6 && yellowPlayerIII_Steps == 0) 
+			{
+				yellowPlayerIII_Border.SetActive (true);
+				YellowPlayerIII_Button.interactable = true;
+			}					
+			if (selectDiceNumAnimation == 6 && yellowPlayerIV_Steps == 0) 
+			{
+				yellowPlayerIV_Border.SetActive (true);
+				YellowPlayerIV_Button.interactable = true;
+			}
+
+			//====================== PLAYERS DON'T HAVE ANY MOVES ,SWITCH TO NEXT TURN===============================
+			if (!yellowPlayerI_Border.activeInHierarchy && !yellowPlayerII_Border.activeInHierarchy &&
+				!yellowPlayerIII_Border.activeInHierarchy && !yellowPlayerIV_Border.activeInHierarchy) 
+			{
+				YellowPlayerI_Button.interactable = false;
+				YellowPlayerII_Button.interactable = false;
+				YellowPlayerIII_Button.interactable = false;
+				YellowPlayerIV_Button.interactable = false;
+
+				switch (MainMenuScript.howManyPlayers) {
+				case 2:
+					//yellow PLAYER NOT AVAILABLE
+					break;
+
+				case 3:
+					playerTurn = "RED";
+					InitializeDice ();
+					break;
+
+				case 4:
+					playerTurn = "RED";
+					InitializeDice ();
+					break;
+				}
+			}
+			break;
+		}
+	}
+
+	//=============================== RED PLAYERS MOVEMENT ===========================================================
+
+	public void redPlayerI_UI()
+	{
+		SoundManagerScript.playerAudioSource.Play ();
+		redPlayerI_Border.SetActive (false);
+		redPlayerII_Border.SetActive (false);
+		redPlayerIII_Border.SetActive (false);
+		redPlayerIV_Border.SetActive (false);
+
+		RedPlayerI_Button.interactable = false;
+		RedPlayerII_Button.interactable = false;
+		RedPlayerIII_Button.interactable = false;
+		RedPlayerIV_Button.interactable = false;
+
+		if (playerTurn == "RED" && (redMovementBlocks.Count - redPlayerI_Steps) > selectDiceNumAnimation) // 4 > 4
+		{
+			if (redPlayerI_Steps > 0) 
+			{
+				Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					redPlayer_Path [i] = redMovementBlocks [redPlayerI_Steps + i].transform.position;
+				}
+
+				redPlayerI_Steps += selectDiceNumAnimation;			
+
+				if (selectDiceNumAnimation == 6) 
+				{
+					playerTurn = "RED";
+				} 
+				else 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						playerTurn = "GREEN";
+						break;
+
+					case 3:
+						playerTurn = "BLUE";
+						break;
+					
+					case 4:
+						playerTurn = "BLUE";
+						break;
+					}
+				}
+
+				//currentPlayer = RedPlayerI_Script.redPlayerI_ColName;
+				currentPlayerName = "RED PLAYER I";
+
+				//if(redPlayerI_Steps + selectDiceNumAnimation == redMovementBlocks.Count)
+				if (redPlayer_Path.Length > 1) 
+				{
+					//redPlayerI.transform.DOPath (redPlayer_Path, 2.0f, PathType.Linear, PathMode.Full3D, 10, Color.red);
+					iTween.MoveTo (redPlayerI, iTween.Hash ("path", redPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (redPlayerI, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+			} 
+			else 
+			{
+				if (selectDiceNumAnimation == 6 && redPlayerI_Steps == 0) 
+				{
+					Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
+					redPlayer_Path [0] = redMovementBlocks [redPlayerI_Steps].transform.position;
+					redPlayerI_Steps += 1;
+					playerTurn = "RED";
+					//currentPlayer = RedPlayerI_Script.redPlayerI_ColName;
+					currentPlayerName = "RED PLAYER I";
+					iTween.MoveTo (redPlayerI, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+			}
+		}
+		else
+		{
+			// Condition when Player Coin is reached successfully in House....(Actual Number of required moves to get into the House)
+			if (playerTurn == "RED" && (redMovementBlocks.Count - redPlayerI_Steps) == selectDiceNumAnimation) 
+			{
+				Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					redPlayer_Path [i] = redMovementBlocks [redPlayerI_Steps + i].transform.position;
+				}
+
+				redPlayerI_Steps += selectDiceNumAnimation;
+
+				playerTurn = "RED";
+
+				//redPlayerI_Steps = 0;
+
+				if (redPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (redPlayerI, iTween.Hash ("path", redPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (redPlayerI, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+				totalRedInHouse += 1;
+				Debug.Log ("Cool !!");
+				RedPlayerI_Button.enabled = false;
+			}
+			else
+			{
+				Debug.Log ("You need "+  (redMovementBlocks.Count - redPlayerI_Steps).ToString() + " to enter into the house.");
+
+				if(redPlayerII_Steps + redPlayerIII_Steps + redPlayerIV_Steps == 0 && selectDiceNumAnimation != 6)
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+						case 2:
+							playerTurn = "GREEN";
+							break;
+
+						case 3:
+							playerTurn = "BLUE";
+							break;
+
+						case 4:
+							playerTurn = "BLUE";
+							break;
+					}
+					InitializeDice ();
+				}
+			}
+		}
+	}
+
+	public void redPlayerII_UI()
+	{
+		SoundManagerScript.playerAudioSource.Play ();
+		redPlayerI_Border.SetActive (false);
+		redPlayerII_Border.SetActive (false);
+		redPlayerIII_Border.SetActive (false);
+		redPlayerIV_Border.SetActive (false);
+
+		RedPlayerI_Button.interactable = false;
+		RedPlayerII_Button.interactable = false;
+		RedPlayerIII_Button.interactable = false;
+		RedPlayerIV_Button.interactable = false;
+
+		if (playerTurn == "RED" && (redMovementBlocks.Count - redPlayerII_Steps) > selectDiceNumAnimation) // 4 > 4
+		{
+			if (redPlayerII_Steps > 0) 
+			{
+				Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					redPlayer_Path [i] = redMovementBlocks [redPlayerII_Steps + i].transform.position;
+				}
+
+				redPlayerII_Steps += selectDiceNumAnimation;
+
+				if (selectDiceNumAnimation == 6) 
+				{
+					playerTurn = "RED";
+				} 
+				else 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						playerTurn = "GREEN";
+						break;
+
+					case 3:
+						playerTurn = "BLUE";
+						break;
+
+					case 4:
+						playerTurn = "BLUE";
+						break;
+					}
+				}
+
+				//currentPlayer = RedPlayerII_Script.redPlayerII_ColName;
+				currentPlayerName = "RED PLAYER II";
+
+				//if(redPlayerII_Steps + selectDiceNumAnimation == redMovementBlocks.Count)
+				if (redPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (redPlayerII, iTween.Hash ("path", redPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (redPlayerII, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+			} 
+			else 
+			{
+				if (selectDiceNumAnimation == 6 && redPlayerII_Steps == 0) 
+				{
+					Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
+					redPlayer_Path [0] = redMovementBlocks [redPlayerII_Steps].transform.position;
+					redPlayerII_Steps += 1;
+					playerTurn = "RED";
+					//currentPlayer = RedPlayerII_Script.redPlayerII_ColName;
+					currentPlayerName = "RED PLAYER II";
+					iTween.MoveTo (redPlayerII, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+			}
+		}
+		else
+		{
+			// Condition when Player Coin is reached successfully in House....(Actual Number of required moves to get into the House)
+			if (playerTurn == "RED" && (redMovementBlocks.Count - redPlayerII_Steps) == selectDiceNumAnimation) 
+			{
+				Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					redPlayer_Path [i] = redMovementBlocks [redPlayerII_Steps + i].transform.position;
+				}
+
+				redPlayerII_Steps += selectDiceNumAnimation;
+
+				playerTurn = "RED";
+
+				//redPlayerII_Steps = 0;
+
+				if (redPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (redPlayerII, iTween.Hash ("path", redPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (redPlayerII, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+
+				totalRedInHouse += 1;
+				Debug.Log ("Cool !!");
+				RedPlayerII_Button.enabled = false;
+			}
+			else
+			{
+				Debug.Log ("You need "+  (redMovementBlocks.Count - redPlayerII_Steps).ToString() + " to enter into the house.");
+
+				if(redPlayerI_Steps + redPlayerIII_Steps + redPlayerIV_Steps == 0 && selectDiceNumAnimation != 6)
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						playerTurn = "GREEN";
+						break;
+
+					case 3:
+						playerTurn = "BLUE";
+						break;
+
+					case 4:
+						playerTurn = "BLUE";
+						break;
+					}
+					InitializeDice ();
+				}
+			}
+		}
+	}
+
+	public void redPlayerIII_UI()
+	{
+		SoundManagerScript.playerAudioSource.Play ();
+		redPlayerI_Border.SetActive (false);
+		redPlayerII_Border.SetActive (false);
+		redPlayerIII_Border.SetActive (false);
+		redPlayerIV_Border.SetActive (false);
+
+		RedPlayerI_Button.interactable = false;
+		RedPlayerII_Button.interactable = false;
+		RedPlayerIII_Button.interactable = false;
+		RedPlayerIV_Button.interactable = false;
+
+		if (playerTurn == "RED" && (redMovementBlocks.Count - redPlayerIII_Steps) > selectDiceNumAnimation) // 4 > 4
+		{
+			if (redPlayerIII_Steps > 0) 
+			{
+				Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					redPlayer_Path [i] = redMovementBlocks [redPlayerIII_Steps + i].transform.position;
+				}
+
+				redPlayerIII_Steps += selectDiceNumAnimation;
+
+				if (selectDiceNumAnimation == 6) 
+				{
+					playerTurn = "RED";
+				} 
+				else 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						playerTurn = "GREEN";
+						break;
+
+					case 3:
+						playerTurn = "BLUE";
+						break;
+
+					case 4:
+						playerTurn = "BLUE";
+						break;
+					}
+				}
+
+				currentPlayerName = "RED PLAYER III";
+			
+				if (redPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (redPlayerIII, iTween.Hash ("path", redPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (redPlayerIII, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+			} 
+			else 
+			{
+				if (selectDiceNumAnimation == 6 && redPlayerIII_Steps == 0) {
+					Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
+					redPlayer_Path [0] = redMovementBlocks [redPlayerIII_Steps].transform.position;
+					redPlayerIII_Steps += 1;
+					playerTurn = "RED";
+					currentPlayerName = "RED PLAYER III";
+					iTween.MoveTo (redPlayerIII, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+			}
+		}
+		else
+		{
+			// Condition when Player Coin is reached successfully in House....(Actual Number of required moves to get into the House)
+			if (playerTurn == "RED" && (redMovementBlocks.Count - redPlayerIII_Steps) == selectDiceNumAnimation) 
+			{
+				Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					redPlayer_Path [i] = redMovementBlocks [redPlayerIII_Steps + i].transform.position;
+				}
+
+				redPlayerIII_Steps += selectDiceNumAnimation;
+
+				playerTurn = "RED";
+
+				//redPlayerIII_Steps = 0;
+
+				if (redPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (redPlayerIII, iTween.Hash ("path", redPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (redPlayerIII, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+
+				totalRedInHouse += 1;
+				Debug.Log ("Cool !!");
+				RedPlayerIII_Button.enabled = false;
+			}
+			else
+			{
+				Debug.Log ("You need "+  (redMovementBlocks.Count - redPlayerIII_Steps).ToString() + " to enter into the house.");
+
+				if(redPlayerI_Steps + redPlayerII_Steps + redPlayerIV_Steps == 0 && selectDiceNumAnimation != 6)
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						playerTurn = "GREEN";
+						break;
+
+					case 3:
+						playerTurn = "BLUE";
+						break;
+
+					case 4:
+						playerTurn = "BLUE";
+						break;
+					}
+					InitializeDice ();
+				}
+			}
+		}
+	}
+
+	public void redPlayerIV_UI()
+	{
+		SoundManagerScript.playerAudioSource.Play ();
+		redPlayerI_Border.SetActive (false);
+		redPlayerII_Border.SetActive (false);
+		redPlayerIII_Border.SetActive (false);
+		redPlayerIV_Border.SetActive (false);
+
+		RedPlayerI_Button.interactable = false;
+		RedPlayerII_Button.interactable = false;
+		RedPlayerIII_Button.interactable = false;
+		RedPlayerIV_Button.interactable = false;
+
+		if (playerTurn == "RED" && (redMovementBlocks.Count - redPlayerIV_Steps) > selectDiceNumAnimation) // 4 > 4
+		{
+			if (redPlayerIV_Steps > 0) 
+			{
+				Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					redPlayer_Path [i] = redMovementBlocks [redPlayerIV_Steps + i].transform.position;
+				}
+
+				redPlayerIV_Steps += selectDiceNumAnimation;
+
+				if (selectDiceNumAnimation == 6) 
+				{
+					playerTurn = "RED";
+				} 
+				else 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						playerTurn = "GREEN";
+						break;
+
+					case 3:
+						playerTurn = "BLUE";
+						break;
+
+					case 4:
+						playerTurn = "BLUE";
+						break;
+					}
+				}
+
+
+				currentPlayerName = "RED PLAYER IV";
+
+				if (redPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (redPlayerIV, iTween.Hash ("path", redPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (redPlayerIV, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+			} 
+			else 
+			{
+				if (selectDiceNumAnimation == 6 && redPlayerIV_Steps == 0) 
+				{
+					Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
+					redPlayer_Path [0] = redMovementBlocks [redPlayerIV_Steps].transform.position;
+					redPlayerIV_Steps += 1;
+					playerTurn = "RED";
+					currentPlayerName = "RED PLAYER IV";
+					iTween.MoveTo (redPlayerIV, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+			}
+		}
+		else
+		{
+			// Condition when Player Coin is reached successfully in House....(Actual Number of required moves to get into the House)
+			if (playerTurn == "RED" && (redMovementBlocks.Count - redPlayerIV_Steps) == selectDiceNumAnimation) 
+			{
+				Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					redPlayer_Path [i] = redMovementBlocks [redPlayerIV_Steps + i].transform.position;
+				}
+
+				redPlayerIV_Steps += selectDiceNumAnimation;
+
+				playerTurn = "RED";
+
+				//redPlayerIV_Steps = 0;
+
+				if (redPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (redPlayerIV, iTween.Hash ("path", redPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (redPlayerIV, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+
+				totalRedInHouse += 1;
+				Debug.Log ("Cool !!");
+				RedPlayerIV_Button.enabled = false;
+			}
+			else
+			{
+				Debug.Log ("You need "+  (redMovementBlocks.Count - redPlayerIV_Steps).ToString() + " to enter into the house.");
+
+				if(redPlayerI_Steps + redPlayerII_Steps + redPlayerIII_Steps == 0 && selectDiceNumAnimation != 6)
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						playerTurn = "GREEN";
+						break;
+
+					case 3:
+						playerTurn = "BLUE";
+						break;
+
+					case 4:
+						playerTurn = "BLUE";
+						break;
+					}
+					InitializeDice ();
+				}
+			}
+		}
+	}
+	//==================================== GREEN PLAYERS MOVEMENT =================================================================
+
+	public void greenPlayerI_UI()
+	{		
+		SoundManagerScript.playerAudioSource.Play ();
+		greenPlayerI_Border.SetActive (false);
+		greenPlayerII_Border.SetActive (false);
+		greenPlayerIII_Border.SetActive (false);
+		greenPlayerIV_Border.SetActive (false);
+
+		GreenPlayerI_Button.interactable = false;
+		GreenPlayerII_Button.interactable = false;
+		GreenPlayerIII_Button.interactable = false;
+		GreenPlayerIV_Button.interactable = false;
+
+		if (playerTurn == "GREEN" && (greenMovementBlocks.Count - greenPlayerI_Steps) > selectDiceNumAnimation) 
+		{ 
+			if (greenPlayerI_Steps > 0) 
+			{
+				Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					greenPlayer_Path [i] = greenMovementBlocks [greenPlayerI_Steps + i].transform.position;
+				}
+
+				greenPlayerI_Steps += selectDiceNumAnimation;
+
+				if (selectDiceNumAnimation == 6) 
+				{
+					playerTurn = "GREEN";
+				} 
+				else 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						playerTurn = "RED";
+						break;
+
+					case 3:
+						//player is not available
+						break;
+
+					case 4:
+						playerTurn = "YELLOW";
+						break;
+					}
+				}
+
+				currentPlayerName = "GREEN PLAYER I";
+
+				if (greenPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (greenPlayerI, iTween.Hash ("path", greenPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (greenPlayerI, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+
+				}
+			} 
+			else 
+			{
+				if (selectDiceNumAnimation == 6 && greenPlayerI_Steps == 0) 
+				{
+					Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
+					greenPlayer_Path [0] = greenMovementBlocks [greenPlayerI_Steps].transform.position;
+					greenPlayerI_Steps += 1;
+					playerTurn = "GREEN";
+					currentPlayerName = "GREEN PLAYER I";
+					iTween.MoveTo (greenPlayerI, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+			}
+		} 
+		else 
+		{
+				// Condition when Player Coin is reached successfully in House....(Actual Number of requigreen moves to get into the House)
+			if (playerTurn == "GREEN" && (greenMovementBlocks.Count - greenPlayerI_Steps) == selectDiceNumAnimation) 
+			{
+				Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					greenPlayer_Path [i] = greenMovementBlocks [greenPlayerI_Steps + i].transform.position;
+				}
+
+				greenPlayerI_Steps += selectDiceNumAnimation;
+
+				playerTurn = "GREEN";
+			
+				//greenPlayerI_Steps = 0;
+
+				if (greenPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (greenPlayerI, iTween.Hash ("path", greenPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (greenPlayerI, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+
+				totalGreenInHouse += 1;
+				Debug.Log ("Cool !!");
+				GreenPlayerI_Button.enabled = false;
+			} 
+			else 
+			{
+				Debug.Log ("You need " + (greenMovementBlocks.Count - greenPlayerI_Steps).ToString () + " to enter into the house.");
+
+				if (greenPlayerII_Steps + greenPlayerIII_Steps + greenPlayerIV_Steps == 0 && selectDiceNumAnimation != 6) 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+						case 2:
+							playerTurn = "RED";
+							break;
+
+						case 3:
+							//Player is not available
+							break;
+
+						case 4:
+							playerTurn = "YELLOW";
+							break;
+					}
+					InitializeDice ();
+				}
+			}
+		}
+	}
+
+	public void greenPlayerII_UI()
+	{
+		SoundManagerScript.playerAudioSource.Play ();
+		greenPlayerI_Border.SetActive (false);
+		greenPlayerII_Border.SetActive (false);
+		greenPlayerIII_Border.SetActive (false);
+		greenPlayerIV_Border.SetActive (false);
+
+		GreenPlayerI_Button.interactable = false;
+		GreenPlayerII_Button.interactable = false;
+		GreenPlayerIII_Button.interactable = false;
+		GreenPlayerIV_Button.interactable = false;
+
+		if (playerTurn == "GREEN" && (greenMovementBlocks.Count - greenPlayerII_Steps) > selectDiceNumAnimation) 
+		{ 
+			if (greenPlayerII_Steps > 0) 
+			{
+				Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					greenPlayer_Path [i] = greenMovementBlocks [greenPlayerII_Steps + i].transform.position;
+				}
+
+				greenPlayerII_Steps += selectDiceNumAnimation;
+
+				if (selectDiceNumAnimation == 6) 
+				{
+					playerTurn = "GREEN";
+				} 
+				else 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						playerTurn = "RED";
+						break;
+
+					case 3:
+						//player is not available
+						break;
+
+					case 4:
+						playerTurn = "YELLOW";
+						break;
+					}
+				}
+
+				currentPlayerName = "GREEN PLAYER II";
+
+				if (greenPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (greenPlayerII, iTween.Hash ("path", greenPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (greenPlayerII, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+
+				}
+			} 
+			else 
+			{
+				if (selectDiceNumAnimation == 6 && greenPlayerII_Steps == 0) 
+				{
+					Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
+					greenPlayer_Path [0] = greenMovementBlocks [greenPlayerII_Steps].transform.position;
+					greenPlayerII_Steps += 1;
+					playerTurn = "GREEN";
+					currentPlayerName = "GREEN PLAYER II";
+					iTween.MoveTo (greenPlayerII, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+			}
+		} 
+		else 
+		{
+			// Condition when Player Coin is reached successfully in House....(Actual Number of requigreen moves to get into the House)
+			if (playerTurn == "GREEN" && (greenMovementBlocks.Count - greenPlayerII_Steps) == selectDiceNumAnimation) 
+			{
+				Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					greenPlayer_Path [i] = greenMovementBlocks [greenPlayerII_Steps + i].transform.position;
+				}
+
+				greenPlayerII_Steps += selectDiceNumAnimation;
+
+				playerTurn = "GREEN";
+
+				//greenPlayerII_Steps = 0;
+
+				if (greenPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (greenPlayerII, iTween.Hash ("path", greenPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (greenPlayerII, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+
+				totalGreenInHouse += 1;
+				Debug.Log ("Cool !!");
+				GreenPlayerII_Button.enabled = false;
+			} 
+			else 
+			{
+				Debug.Log ("You need " + (greenMovementBlocks.Count - greenPlayerII_Steps).ToString () + " to enter into the house.");
+
+				if (greenPlayerI_Steps + greenPlayerIII_Steps + greenPlayerIV_Steps == 0 && selectDiceNumAnimation != 6) 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						playerTurn = "RED";
+						break;
+
+					case 3:
+						//Player is not available
+						break;
+
+					case 4:
+						playerTurn = "YELLOW";
+						break;
+					}
+					InitializeDice ();
+				}
+			}
+		}
+	}
+
+	public void greenPlayerIII_UI()
+	{
+		SoundManagerScript.playerAudioSource.Play ();
+		greenPlayerI_Border.SetActive (false);
+		greenPlayerII_Border.SetActive (false);
+		greenPlayerIII_Border.SetActive (false);
+		greenPlayerIV_Border.SetActive (false);
+
+		GreenPlayerI_Button.interactable = false;
+		GreenPlayerII_Button.interactable = false;
+		GreenPlayerIII_Button.interactable = false;
+		GreenPlayerIV_Button.interactable = false;
+
+		if (playerTurn == "GREEN" && (greenMovementBlocks.Count - greenPlayerIII_Steps) > selectDiceNumAnimation) 
+		{ 
+			if (greenPlayerIII_Steps > 0) 
+			{
+				Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					greenPlayer_Path [i] = greenMovementBlocks [greenPlayerIII_Steps + i].transform.position;
+				}
+
+				greenPlayerIII_Steps += selectDiceNumAnimation;
+
+				if (selectDiceNumAnimation == 6) 
+				{
+					playerTurn = "GREEN";
+				} 
+				else 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						playerTurn = "RED";
+						break;
+
+					case 3:
+						//player is not available
+						break;
+
+					case 4:
+						playerTurn = "YELLOW";
+						break;
+					}
+				}
+
+				currentPlayerName = "GREEN PLAYER III";
+
+				if (greenPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (greenPlayerIII, iTween.Hash ("path", greenPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (greenPlayerIII, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+
+				}
+			} 
+			else 
+			{
+				if (selectDiceNumAnimation == 6 && greenPlayerIII_Steps == 0) 
+				{
+					Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
+					greenPlayer_Path [0] = greenMovementBlocks [greenPlayerIII_Steps].transform.position;
+					greenPlayerIII_Steps += 1;
+					playerTurn = "GREEN";
+					currentPlayerName = "GREEN PLAYER III";
+					iTween.MoveTo (greenPlayerIII, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+			}
+		} 
+		else 
+		{
+			// Condition when Player Coin is reached successfully in House....(Actual Number of requigreen moves to get into the House)
+			if (playerTurn == "GREEN" && (greenMovementBlocks.Count - greenPlayerIII_Steps) == selectDiceNumAnimation) 
+			{
+				Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					greenPlayer_Path [i] = greenMovementBlocks [greenPlayerIII_Steps + i].transform.position;
+				}
+
+				greenPlayerIII_Steps += selectDiceNumAnimation;
+
+				playerTurn = "GREEN";
+
+				//greenPlayerIII_Steps = 0;
+
+				if (greenPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (greenPlayerIII, iTween.Hash ("path", greenPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (greenPlayerIII, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+
+				totalGreenInHouse += 1;
+				Debug.Log ("Cool !!");
+				GreenPlayerIII_Button.enabled = false;
+			} 
+			else 
+			{
+				Debug.Log ("You need " + (greenMovementBlocks.Count - greenPlayerIII_Steps).ToString () + " to enter into the house.");
+
+				if (greenPlayerI_Steps + greenPlayerII_Steps + greenPlayerIV_Steps == 0 && selectDiceNumAnimation != 6) 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						playerTurn = "RED";
+						break;
+
+					case 3:
+						//Player is not available
+						break;
+
+					case 4:
+						playerTurn = "YELLOW";
+						break;
+					}
+					InitializeDice ();
+				}
+			}
+		}
+	}
+
+	public void greenPlayerIV_UI()
+	{
+		SoundManagerScript.playerAudioSource.Play ();
+		greenPlayerI_Border.SetActive (false);
+		greenPlayerII_Border.SetActive (false);
+		greenPlayerIII_Border.SetActive (false);
+		greenPlayerIV_Border.SetActive (false);
+
+		GreenPlayerI_Button.interactable = false;
+		GreenPlayerII_Button.interactable = false;
+		GreenPlayerIII_Button.interactable = false;
+		GreenPlayerIV_Button.interactable = false;
+
+		if (playerTurn == "GREEN" && (greenMovementBlocks.Count - greenPlayerIV_Steps) > selectDiceNumAnimation) 
+		{ 
+			if (greenPlayerIV_Steps > 0) 
+			{
+				Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					greenPlayer_Path [i] = greenMovementBlocks [greenPlayerIV_Steps + i].transform.position;
+				}
+
+				greenPlayerIV_Steps += selectDiceNumAnimation;
+
+				if (selectDiceNumAnimation == 6) 
+				{
+					playerTurn = "GREEN";
+				} 
+				else 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						playerTurn = "RED";
+						break;
+
+					case 3:
+						//player is not available
+						break;
+
+					case 4:
+						playerTurn = "YELLOW";
+						break;
+					}
+				}
+
+				currentPlayerName = "GREEN PLAYER IV";
+
+				if (greenPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (greenPlayerIV, iTween.Hash ("path", greenPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (greenPlayerIV, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+
+				}
+			} 
+			else 
+			{
+				if (selectDiceNumAnimation == 6 && greenPlayerIV_Steps == 0) 
+				{
+					Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
+					greenPlayer_Path [0] = greenMovementBlocks [greenPlayerIV_Steps].transform.position;
+					greenPlayerIV_Steps += 1;
+					playerTurn = "GREEN";
+					currentPlayerName = "GREEN PLAYER IV";
+					iTween.MoveTo (greenPlayerIV, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+			}
+		} 
+		else 
+		{
+			// Condition when Player Coin is reached successfully in House....(Actual Number of requigreen moves to get into the House)
+			if (playerTurn == "GREEN" && (greenMovementBlocks.Count - greenPlayerIV_Steps) == selectDiceNumAnimation) 
+			{
+				Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					greenPlayer_Path [i] = greenMovementBlocks [greenPlayerIV_Steps + i].transform.position;
+				}
+
+				greenPlayerIV_Steps += selectDiceNumAnimation;
+
+				playerTurn = "GREEN";
+
+				//greenPlayerIV_Steps = 0;
+
+				if (greenPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (greenPlayerIV, iTween.Hash ("path", greenPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (greenPlayerIV, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+
+				totalGreenInHouse += 1;
+				Debug.Log ("Cool !!");
+				GreenPlayerIV_Button.enabled = false;
+			} 
+			else 
+			{
+				Debug.Log ("You need " + (greenMovementBlocks.Count - greenPlayerIV_Steps).ToString () + " to enter into the house.");
+
+				if (greenPlayerI_Steps + greenPlayerII_Steps + greenPlayerIII_Steps == 0 && selectDiceNumAnimation != 6) 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						playerTurn = "RED";
+						break;
+
+					case 3:
+						//Player is not available
+						break;
+
+					case 4:
+						playerTurn = "YELLOW";
+						break;
+					}
+					InitializeDice ();
+				}
+			}
+		}
+	}
+	//===================================== BLUE PLAYERS MOVEMENT =========================================================
+	public void bluePlayerI_UI()
+	{
+		SoundManagerScript.playerAudioSource.Play ();
+		bluePlayerI_Border.SetActive (false);
+		bluePlayerII_Border.SetActive (false);
+		bluePlayerIII_Border.SetActive (false);
+		bluePlayerIV_Border.SetActive (false);
+
+		BluePlayerI_Button.interactable = false;
+		BluePlayerII_Button.interactable = false;
+		BluePlayerIII_Button.interactable = false;
+		BluePlayerIV_Button.interactable = false;
+
+		if (playerTurn == "BLUE" && (blueMovementBlocks.Count - bluePlayerI_Steps) > selectDiceNumAnimation) 
+		{ 
+			if (bluePlayerI_Steps > 0) 
+			{
+				Vector3[] bluePlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					bluePlayer_Path [i] = blueMovementBlocks [bluePlayerI_Steps + i].transform.position;
+				}
+
+				bluePlayerI_Steps += selectDiceNumAnimation;
+
+				if (selectDiceNumAnimation == 6) 
+				{
+					playerTurn = "BLUE";
+				} 
+				else 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						//Player is not available
+						break;
+
+					case 3:
+						playerTurn = "YELLOW";
+						break;
+
+					case 4:
+						playerTurn = "GREEN";
+						break;
+					}
+				}
+
+				currentPlayerName = "BLUE PLAYER I";
+
+				if (bluePlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (bluePlayerI, iTween.Hash ("path", bluePlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (bluePlayerI, iTween.Hash ("position", bluePlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+
+				}
+			} 
+			else 
+			{
+				if (selectDiceNumAnimation == 6 && bluePlayerI_Steps == 0) 
+				{
+					Vector3[] bluePlayer_Path = new Vector3[selectDiceNumAnimation];
+					bluePlayer_Path [0] = blueMovementBlocks [bluePlayerI_Steps].transform.position;
+					bluePlayerI_Steps += 1;
+					playerTurn = "BLUE";
+					currentPlayerName = "BLUE PLAYER I";
+					iTween.MoveTo (bluePlayerI, iTween.Hash ("position", bluePlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+			}
+		} 
+		else 
+		{
+			// Condition when Player Coin is reached successfully in House....(Actual Number of requiblue moves to get into the House)
+			if (playerTurn == "BLUE" && (blueMovementBlocks.Count - bluePlayerI_Steps) == selectDiceNumAnimation) 
+			{
+				Vector3[] bluePlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					bluePlayer_Path [i] = blueMovementBlocks [bluePlayerI_Steps + i].transform.position;
+				}
+
+				bluePlayerI_Steps += selectDiceNumAnimation;
+
+				playerTurn = "BLUE";
+
+				//bluePlayerI_Steps = 0;
+
+				if (bluePlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (bluePlayerI, iTween.Hash ("path", bluePlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (bluePlayerI, iTween.Hash ("position", bluePlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+
+				totalBlueInHouse += 1;
+				Debug.Log ("Cool !!");
+				BluePlayerI_Button.enabled = false;
+			} 
+			else 
+			{
+				Debug.Log ("You need " + (blueMovementBlocks.Count - bluePlayerI_Steps).ToString () + " to enter into the house.");
+
+				if (bluePlayerII_Steps + bluePlayerIII_Steps + bluePlayerIV_Steps == 0 && selectDiceNumAnimation != 6) 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						// Player is not available...
+						break;
+
+					case 3:
+						playerTurn = "YELLOW";
+						break;
+
+					case 4:
+						playerTurn = "GREEN";
+						break;
+					}
+					InitializeDice ();
+				}
+			}
+		}
+	}
+
+	public void bluePlayerII_UI()
+	{
+		SoundManagerScript.playerAudioSource.Play ();
+		bluePlayerI_Border.SetActive (false);
+		bluePlayerII_Border.SetActive (false);
+		bluePlayerIII_Border.SetActive (false);
+		bluePlayerIV_Border.SetActive (false);
+
+		BluePlayerI_Button.interactable = false;
+		BluePlayerII_Button.interactable = false;
+		BluePlayerIII_Button.interactable = false;
+		BluePlayerIV_Button.interactable = false;
+
+		if (playerTurn == "BLUE" && (blueMovementBlocks.Count - bluePlayerII_Steps) > selectDiceNumAnimation) 
+		{ 
+			if (bluePlayerII_Steps > 0) 
+			{
+				Vector3[] bluePlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					bluePlayer_Path [i] = blueMovementBlocks [bluePlayerII_Steps + i].transform.position;
+				}
+
+				bluePlayerII_Steps += selectDiceNumAnimation;
+
+				if (selectDiceNumAnimation == 6) 
+				{
+					playerTurn = "BLUE";
+				} 
+				else 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						//Player is not available
+						break;
+
+					case 3:
+						playerTurn = "YELLOW";
+						break;
+
+					case 4:
+						playerTurn = "GREEN";
+						break;
+					}
+				}
+
+				currentPlayerName = "BLUE PLAYER II";
+
+				if (bluePlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (bluePlayerII, iTween.Hash ("path", bluePlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (bluePlayerII, iTween.Hash ("position", bluePlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+
+				}
+			} 
+			else 
+			{
+				if (selectDiceNumAnimation == 6 && bluePlayerII_Steps == 0) 
+				{
+					Vector3[] bluePlayer_Path = new Vector3[selectDiceNumAnimation];
+					bluePlayer_Path [0] = blueMovementBlocks [bluePlayerII_Steps].transform.position;
+					bluePlayerII_Steps += 1;
+					playerTurn = "BLUE";
+					currentPlayerName = "BLUE PLAYER II";
+					iTween.MoveTo (bluePlayerII, iTween.Hash ("position", bluePlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+
+				}
+			}
+		} 
+		else 
+		{
+			// Condition when Player Coin is reached successfully in House....(Actual Number of requiblue moves to get into the House)
+			if (playerTurn == "BLUE" && (blueMovementBlocks.Count - bluePlayerII_Steps) == selectDiceNumAnimation) 
+			{
+				Vector3[] bluePlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					bluePlayer_Path [i] = blueMovementBlocks [bluePlayerII_Steps + i].transform.position;
+				}
+
+				bluePlayerII_Steps += selectDiceNumAnimation;
+
+				playerTurn = "BLUE";
+
+				//bluePlayerII_Steps = 0;
+
+				if (bluePlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (bluePlayerII, iTween.Hash ("path", bluePlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (bluePlayerII, iTween.Hash ("position", bluePlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+
+				totalBlueInHouse += 1;
+				Debug.Log ("Cool !!");
+				BluePlayerII_Button.enabled = false;
+			} 
+			else 
+			{
+				Debug.Log ("You need " + (blueMovementBlocks.Count - bluePlayerII_Steps).ToString () + " to enter into the house.");
+
+				if (bluePlayerI_Steps + bluePlayerIII_Steps + bluePlayerIV_Steps == 0 && selectDiceNumAnimation != 6) 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						// Player is not available...
+						break;
+
+					case 3:
+						playerTurn = "YELLOW";
+						break;
+
+					case 4:
+						playerTurn = "GREEN";
+						break;
+					}
+					InitializeDice ();
+				}
+			}
+		}
+	}
+
+	public void bluePlayerIII_UI()
+	{
+		SoundManagerScript.playerAudioSource.Play ();
+		bluePlayerI_Border.SetActive (false);
+		bluePlayerII_Border.SetActive (false);
+		bluePlayerIII_Border.SetActive (false);
+		bluePlayerIV_Border.SetActive (false);
+
+		BluePlayerI_Button.interactable = false;
+		BluePlayerII_Button.interactable = false;
+		BluePlayerIII_Button.interactable = false;
+		BluePlayerIV_Button.interactable = false;
+
+		if (playerTurn == "BLUE" && (blueMovementBlocks.Count - bluePlayerIII_Steps) > selectDiceNumAnimation) 
+		{ 
+			if (bluePlayerIII_Steps > 0) 
+			{
+				Vector3[] bluePlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					bluePlayer_Path [i] = blueMovementBlocks [bluePlayerIII_Steps + i].transform.position;
+				}
+
+				bluePlayerIII_Steps += selectDiceNumAnimation;
+
+				if (selectDiceNumAnimation == 6) 
+				{
+					playerTurn = "BLUE";
+				} 
+				else 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						//Player is not available
+						break;
+
+					case 3:
+						playerTurn = "YELLOW";
+						break;
+
+					case 4:
+						playerTurn = "GREEN";
+						break;
+					}
+				}
+
+				currentPlayerName = "BLUE PLAYER III";
+
+				if (bluePlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (bluePlayerIII, iTween.Hash ("path", bluePlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (bluePlayerIII, iTween.Hash ("position", bluePlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+			} 
+			else 
+			{
+				if (selectDiceNumAnimation == 6 && bluePlayerIII_Steps == 0) 
+				{
+					Vector3[] bluePlayer_Path = new Vector3[selectDiceNumAnimation];
+					bluePlayer_Path [0] = blueMovementBlocks [bluePlayerIII_Steps].transform.position;
+					bluePlayerIII_Steps += 1;
+					playerTurn = "BLUE";
+					currentPlayerName = "BLUE PLAYER III";
+					iTween.MoveTo (bluePlayerIII, iTween.Hash ("position", bluePlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+
+				}
+			}
+		} 
+		else 
+		{
+			// Condition when Player Coin is reached successfully in House....(Actual Number of requiblue moves to get into the House)
+			if (playerTurn == "BLUE" && (blueMovementBlocks.Count - bluePlayerIII_Steps) == selectDiceNumAnimation) 
+			{
+				Vector3[] bluePlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					bluePlayer_Path [i] = blueMovementBlocks [bluePlayerIII_Steps + i].transform.position;
+				}
+
+				bluePlayerIII_Steps += selectDiceNumAnimation;
+
+				playerTurn = "BLUE";
+
+				//bluePlayerIII_Steps = 0;
+
+				if (bluePlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (bluePlayerIII, iTween.Hash ("path", bluePlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (bluePlayerIII, iTween.Hash ("position", bluePlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+
+				totalBlueInHouse += 1;
+				Debug.Log ("Cool !!");
+				BluePlayerIII_Button.enabled = false;
+			} 
+			else 
+			{
+				Debug.Log ("You need " + (blueMovementBlocks.Count - bluePlayerIII_Steps).ToString () + " to enter into the house.");
+
+				if (bluePlayerI_Steps + bluePlayerII_Steps + bluePlayerIV_Steps == 0 && selectDiceNumAnimation != 6) 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						// Player is not available...
+						break;
+
+					case 3:
+						playerTurn = "YELLOW";
+						break;
+
+					case 4:
+						playerTurn = "GREEN";
+						break;
+					}
+					InitializeDice ();
+				}
+			}
+		}
+	}
+
+	public void bluePlayerIV_UI()
+	{
+		SoundManagerScript.playerAudioSource.Play ();
+		bluePlayerI_Border.SetActive (false);
+		bluePlayerII_Border.SetActive (false);
+		bluePlayerIII_Border.SetActive (false);
+		bluePlayerIV_Border.SetActive (false);
+
+		BluePlayerI_Button.interactable = false;
+		BluePlayerII_Button.interactable = false;
+		BluePlayerIII_Button.interactable = false;
+		BluePlayerIV_Button.interactable = false;
+
+		if (playerTurn == "BLUE" && (blueMovementBlocks.Count - bluePlayerIV_Steps) > selectDiceNumAnimation) 
+		{ 
+			if (bluePlayerIV_Steps > 0) 
+			{
+				Vector3[] bluePlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					bluePlayer_Path [i] = blueMovementBlocks [bluePlayerIV_Steps + i].transform.position;
+				}
+
+				bluePlayerIV_Steps += selectDiceNumAnimation;
+
+				if (selectDiceNumAnimation == 6) 
+				{
+					playerTurn = "BLUE";
+				} 
+				else 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						//Player is not available
+						break;
+
+					case 3:
+						playerTurn = "YELLOW";
+						break;
+
+					case 4:
+						playerTurn = "GREEN";
+						break;
+					}
+				}
+
+				currentPlayerName = "BLUE PLAYER IV";
+
+				if (bluePlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (bluePlayerIV, iTween.Hash ("path", bluePlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (bluePlayerIV, iTween.Hash ("position", bluePlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+
+				}
+			} 
+			else 
+			{
+				if (selectDiceNumAnimation == 6 && bluePlayerIV_Steps == 0) 
+				{
+					Vector3[] bluePlayer_Path = new Vector3[selectDiceNumAnimation];
+					bluePlayer_Path [0] = blueMovementBlocks [bluePlayerIV_Steps].transform.position;
+					bluePlayerIV_Steps += 1;
+					playerTurn = "BLUE";
+					currentPlayerName = "BLUE PLAYER IV";
+					iTween.MoveTo (bluePlayerIV, iTween.Hash ("position", bluePlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+			}
+		} 
+		else 
+		{
+			// Condition when Player Coin is reached successfully in House....(Actual Number of requiblue moves to get into the House)
+			if (playerTurn == "BLUE" && (blueMovementBlocks.Count - bluePlayerIV_Steps) == selectDiceNumAnimation) 
+			{
+				Vector3[] bluePlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					bluePlayer_Path [i] = blueMovementBlocks [bluePlayerIV_Steps + i].transform.position;
+				}
+
+				bluePlayerIV_Steps += selectDiceNumAnimation;
+
+				playerTurn = "BLUE";
+
+				//bluePlayerIV_Steps = 0;
+
+				if (bluePlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (bluePlayerIV, iTween.Hash ("path", bluePlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (bluePlayerIV, iTween.Hash ("position", bluePlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+
+				totalBlueInHouse += 1;
+				Debug.Log ("Cool !!");
+				BluePlayerIV_Button.enabled = false;
+			} 
+			else 
+			{
+				Debug.Log ("You need " + (blueMovementBlocks.Count - bluePlayerIV_Steps).ToString () + " to enter into the house.");
+
+				if (bluePlayerI_Steps + bluePlayerII_Steps + bluePlayerIII_Steps == 0 && selectDiceNumAnimation != 6) 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						// Player is not available...
+						break;
+
+					case 3:
+						playerTurn = "YELLOW";
+						break;
+
+					case 4:
+						playerTurn = "GREEN";
+						break;
+					}
+					InitializeDice ();
+				}
+			}
+		}
+	}
+	//==================================== YELLOW PLAYERS MOVEMENT =============================================================
+
+	public void yellowPlayerI_UI()
+	{
+		SoundManagerScript.playerAudioSource.Play ();
+		yellowPlayerI_Border.SetActive (false);
+		yellowPlayerII_Border.SetActive (false);
+		yellowPlayerIII_Border.SetActive (false);
+		yellowPlayerIV_Border.SetActive (false);
+
+		YellowPlayerI_Button.interactable = false;
+		YellowPlayerII_Button.interactable = false;
+		YellowPlayerIII_Button.interactable = false;
+		YellowPlayerIV_Button.interactable = false;
+
+		if (playerTurn == "YELLOW" && (yellowMovementBlocks.Count - yellowPlayerI_Steps) > selectDiceNumAnimation) 
+		{ 
+			if (yellowPlayerI_Steps > 0) 
+			{
+				Vector3[] yellowPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					yellowPlayer_Path [i] = yellowMovementBlocks [yellowPlayerI_Steps + i].transform.position;
+				}
+
+				yellowPlayerI_Steps += selectDiceNumAnimation;
+
+				if (selectDiceNumAnimation == 6) 
+				{
+					playerTurn = "YELLOW";
+				} 
+				else 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						//Player is not available
+						break;
+
+					case 3:
+						playerTurn = "RED";
+						break;
+
+					case 4:
+						playerTurn = "RED";
+						break;
+					}
+				}
+
+				currentPlayerName = "YELLOW PLAYER I";
+
+				if (yellowPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (yellowPlayerI, iTween.Hash ("path", yellowPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (yellowPlayerI, iTween.Hash ("position", yellowPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+
+				}
+			} 
+			else 
+			{
+				if (selectDiceNumAnimation == 6 && yellowPlayerI_Steps == 0) 
+				{
+					Vector3[] yellowPlayer_Path = new Vector3[selectDiceNumAnimation];
+					yellowPlayer_Path [0] = yellowMovementBlocks [yellowPlayerI_Steps].transform.position;
+					yellowPlayerI_Steps += 1;
+					playerTurn = "YELLOW";
+					currentPlayerName = "YELLOW PLAYER I";
+					iTween.MoveTo (yellowPlayerI, iTween.Hash ("position", yellowPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+
+				}
+			}
+		} 
+		else 
+		{
+			// Condition when Player Coin is reached successfully in House....(Actual Number of requiyellow moves to get into the House)
+			if (playerTurn == "YELLOW" && (yellowMovementBlocks.Count - yellowPlayerI_Steps) == selectDiceNumAnimation) 
+			{
+				Vector3[] yellowPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					yellowPlayer_Path [i] = yellowMovementBlocks [yellowPlayerI_Steps + i].transform.position;
+				}
+
+				yellowPlayerI_Steps += selectDiceNumAnimation;
+
+				playerTurn = "YELLOW";
+
+				//yellowPlayerI_Steps = 0;
+
+				if (yellowPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (yellowPlayerI, iTween.Hash ("path", yellowPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (yellowPlayerI, iTween.Hash ("position", yellowPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+
+				totalYellowInHouse += 1;
+				Debug.Log ("Cool !!");
+				YellowPlayerI_Button.enabled = false;
+			} 
+			else 
+			{
+				Debug.Log ("You need " + (yellowMovementBlocks.Count - yellowPlayerI_Steps).ToString () + " to enter into the house.");
+
+				if (yellowPlayerII_Steps + yellowPlayerIII_Steps + yellowPlayerIV_Steps == 0 && selectDiceNumAnimation != 6) 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						// Player is not available...
+						break;
+
+					case 3:
+						playerTurn = "RED";
+						break;
+
+					case 4:
+						playerTurn = "RED";
+						break;
+					}
+					InitializeDice ();
+				}
+			}
+		}
+	}
+
+	public void yellowPlayerII_UI()
+	{
+		SoundManagerScript.playerAudioSource.Play ();
+		yellowPlayerI_Border.SetActive (false);
+		yellowPlayerII_Border.SetActive (false);
+		yellowPlayerIII_Border.SetActive (false);
+		yellowPlayerIV_Border.SetActive (false);
+
+		YellowPlayerI_Button.interactable = false;
+		YellowPlayerII_Button.interactable = false;
+		YellowPlayerIII_Button.interactable = false;
+		YellowPlayerIV_Button.interactable = false;
+
+		if (playerTurn == "YELLOW" && (yellowMovementBlocks.Count - yellowPlayerII_Steps) > selectDiceNumAnimation) 
+		{ 
+			if (yellowPlayerII_Steps > 0) 
+			{
+				Vector3[] yellowPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					yellowPlayer_Path [i] = yellowMovementBlocks [yellowPlayerII_Steps + i].transform.position;
+				}
+
+				yellowPlayerII_Steps += selectDiceNumAnimation;
+
+				if (selectDiceNumAnimation == 6) 
+				{
+					playerTurn = "YELLOW";
+				} 
+				else 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						//Player is not available
+						break;
+
+					case 3:
+						playerTurn = "RED";
+						break;
+
+					case 4:
+						playerTurn = "RED";
+						break;
+					}
+				}
+
+
+				currentPlayerName = "YELLOW PLAYER II";
+
+				if (yellowPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (yellowPlayerII, iTween.Hash ("path", yellowPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (yellowPlayerII, iTween.Hash ("position", yellowPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+
+				}
+			} 
+			else 
+			{
+				if (selectDiceNumAnimation == 6 && yellowPlayerII_Steps == 0) 
+				{
+					Vector3[] yellowPlayer_Path = new Vector3[selectDiceNumAnimation];
+					yellowPlayer_Path [0] = yellowMovementBlocks [yellowPlayerII_Steps].transform.position;
+					yellowPlayerII_Steps += 1;
+					playerTurn = "YELLOW";
+
+					currentPlayerName = "YELLOW PLAYER II";
+					iTween.MoveTo (yellowPlayerII, iTween.Hash ("position", yellowPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+
+				}
+			}
+		} 
+		else 
+		{
+			// Condition when Player Coin is reached successfully in House....(Actual Number of requiyellow moves to get into the House)
+			if (playerTurn == "YELLOW" && (yellowMovementBlocks.Count - yellowPlayerII_Steps) == selectDiceNumAnimation) 
+			{
+				Vector3[] yellowPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					yellowPlayer_Path [i] = yellowMovementBlocks [yellowPlayerII_Steps + i].transform.position;
+				}
+
+				yellowPlayerII_Steps += selectDiceNumAnimation;
+
+				playerTurn = "YELLOW";
+
+				//yellowPlayerII_Steps = 0;
+
+				if (yellowPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (yellowPlayerII, iTween.Hash ("path", yellowPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (yellowPlayerII, iTween.Hash ("position", yellowPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+
+				totalYellowInHouse += 1;
+				Debug.Log ("Cool !!");
+				YellowPlayerII_Button.enabled = false;
+			} 
+			else 
+			{
+				Debug.Log ("You need " + (yellowMovementBlocks.Count - yellowPlayerII_Steps).ToString () + " to enter into the house.");
+
+				if (yellowPlayerI_Steps + yellowPlayerIII_Steps + yellowPlayerIV_Steps == 0 && selectDiceNumAnimation != 6) 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						// Player is not available...
+						break;
+
+					case 3:
+						playerTurn = "RED";
+						break;
+
+					case 4:
+						playerTurn = "RED";
+						break;
+					}
+					InitializeDice ();
+				}
+			}
+		}
+	}
+
+	public void yellowPlayerIII_UI()
+	{
+		SoundManagerScript.playerAudioSource.Play ();
+		yellowPlayerI_Border.SetActive (false);
+		yellowPlayerII_Border.SetActive (false);
+		yellowPlayerIII_Border.SetActive (false);
+		yellowPlayerIV_Border.SetActive (false);
+
+		YellowPlayerI_Button.interactable = false;
+		YellowPlayerII_Button.interactable = false;
+		YellowPlayerIII_Button.interactable = false;
+		YellowPlayerIV_Button.interactable = false;
+
+		if (playerTurn == "YELLOW" && (yellowMovementBlocks.Count - yellowPlayerIII_Steps) > selectDiceNumAnimation) 
+		{ 
+			if (yellowPlayerIII_Steps > 0) 
+			{
+				Vector3[] yellowPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					yellowPlayer_Path [i] = yellowMovementBlocks [yellowPlayerIII_Steps + i].transform.position;
+				}
+
+				yellowPlayerIII_Steps += selectDiceNumAnimation;
+
+				if (selectDiceNumAnimation == 6) 
+				{
+					playerTurn = "YELLOW";
+				} 
+				else 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						//Player is not available
+						break;
+
+					case 3:
+						playerTurn = "RED";
+						break;
+
+					case 4:
+						playerTurn = "RED";
+						break;
+					}
+				}
+
+				currentPlayerName = "YELLOW PLAYER III";
+
+				if (yellowPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (yellowPlayerIII, iTween.Hash ("path", yellowPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (yellowPlayerIII, iTween.Hash ("position", yellowPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+
+				}
+			} 
+			else 
+			{
+				if (selectDiceNumAnimation == 6 && yellowPlayerIII_Steps == 0) 
+				{
+					Vector3[] yellowPlayer_Path = new Vector3[selectDiceNumAnimation];
+					yellowPlayer_Path [0] = yellowMovementBlocks [yellowPlayerIII_Steps].transform.position;
+					yellowPlayerIII_Steps += 1;
+					playerTurn = "YELLOW";
+					currentPlayerName = "YELLOW PLAYER III";
+					iTween.MoveTo (yellowPlayerIII, iTween.Hash ("position", yellowPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+
+				}
+			}
+		} 
+		else 
+		{
+			// Condition when Player Coin is reached successfully in House....(Actual Number of requiyellow moves to get into the House)
+			if (playerTurn == "YELLOW" && (yellowMovementBlocks.Count - yellowPlayerIII_Steps) == selectDiceNumAnimation) 
+			{
+				Vector3[] yellowPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					yellowPlayer_Path [i] = yellowMovementBlocks [yellowPlayerIII_Steps + i].transform.position;
+				}
+
+				yellowPlayerIII_Steps += selectDiceNumAnimation;
+
+				playerTurn = "YELLOW";
+
+				//yellowPlayerIII_Steps = 0;
+
+				if (yellowPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (yellowPlayerIII, iTween.Hash ("path", yellowPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (yellowPlayerIII, iTween.Hash ("position", yellowPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+
+				totalYellowInHouse += 1;
+				Debug.Log ("Cool !!");
+				YellowPlayerIII_Button.enabled = false;
+			} 
+			else 
+			{
+				Debug.Log ("You need " + (yellowMovementBlocks.Count - yellowPlayerIII_Steps).ToString () + " to enter into the house.");
+
+				if (yellowPlayerI_Steps + yellowPlayerII_Steps + yellowPlayerIV_Steps == 0 && selectDiceNumAnimation != 6) 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						// Player is not available...
+						break;
+
+					case 3:
+						playerTurn = "RED";
+						break;
+
+					case 4:
+						playerTurn = "RED";
+						break;
+					}
+					InitializeDice ();
+				}
+			}
+		}
+	}
+
+	public void yellowPlayerIV_UI()
+	{
+		SoundManagerScript.playerAudioSource.Play ();
+		yellowPlayerI_Border.SetActive (false);
+		yellowPlayerII_Border.SetActive (false);
+		yellowPlayerIII_Border.SetActive (false);
+		yellowPlayerIV_Border.SetActive (false);
+
+		YellowPlayerI_Button.interactable = false;
+		YellowPlayerII_Button.interactable = false;
+		YellowPlayerIII_Button.interactable = false;
+		YellowPlayerIV_Button.interactable = false;
+
+		if (playerTurn == "YELLOW" && (yellowMovementBlocks.Count - yellowPlayerIV_Steps) > selectDiceNumAnimation) 
+		{ 
+			if (yellowPlayerIV_Steps > 0) 
+			{
+				Vector3[] yellowPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					yellowPlayer_Path [i] = yellowMovementBlocks [yellowPlayerIV_Steps + i].transform.position;
+				}
+
+				yellowPlayerIV_Steps += selectDiceNumAnimation;
+
+				if (selectDiceNumAnimation == 6) 
+				{
+					playerTurn = "YELLOW";
+				} 
+				else 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						//Player is not available
+						break;
+
+					case 3:
+						playerTurn = "RED";
+						break;
+
+					case 4:
+						playerTurn = "RED";
+						break;
+					}
+				}
+
+				currentPlayerName = "YELLOW PLAYER IV";
+
+				if (yellowPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (yellowPlayerIV, iTween.Hash ("path", yellowPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (yellowPlayerIV, iTween.Hash ("position", yellowPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+
+				}
+			} 
+			else 
+			{
+				if (selectDiceNumAnimation == 6 && yellowPlayerIV_Steps == 0) 
+				{
+					Vector3[] yellowPlayer_Path = new Vector3[selectDiceNumAnimation];
+					yellowPlayer_Path [0] = yellowMovementBlocks [yellowPlayerIV_Steps].transform.position;
+					yellowPlayerIV_Steps += 1;
+					playerTurn = "YELLOW";
+					currentPlayerName = "YELLOW PLAYER IV";
+					iTween.MoveTo (yellowPlayerIV, iTween.Hash ("position", yellowPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+
+				}
+			}
+		} 
+		else 
+		{
+			// Condition when Player Coin is reached successfully in House....(Actual Number of requiyellow moves to get into the House)
+			if (playerTurn == "YELLOW" && (yellowMovementBlocks.Count - yellowPlayerIV_Steps) == selectDiceNumAnimation) 
+			{
+				Vector3[] yellowPlayer_Path = new Vector3[selectDiceNumAnimation];
+
+				for (int i = 0; i < selectDiceNumAnimation; i++) 
+				{
+					yellowPlayer_Path [i] = yellowMovementBlocks [yellowPlayerIV_Steps + i].transform.position;
+				}
+
+				yellowPlayerIV_Steps += selectDiceNumAnimation;
+
+				playerTurn = "YELLOW";
+
+				//yellowPlayerIV_Steps = 0;
+
+				if (yellowPlayer_Path.Length > 1) 
+				{
+					iTween.MoveTo (yellowPlayerIV, iTween.Hash ("path", yellowPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				} 
+				else 
+				{
+					iTween.MoveTo (yellowPlayerIV, iTween.Hash ("position", yellowPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+				}
+
+				totalYellowInHouse += 1;
+				Debug.Log ("Cool !!");
+				YellowPlayerIV_Button.enabled = false;
+			} 
+			else 
+			{
+				Debug.Log ("You need " + (yellowMovementBlocks.Count - yellowPlayerIV_Steps).ToString () + " to enter into the house.");
+
+				if (yellowPlayerI_Steps + yellowPlayerII_Steps + yellowPlayerIII_Steps == 0 && selectDiceNumAnimation != 6) 
+				{
+					switch (MainMenuScript.howManyPlayers) 
+					{
+					case 2:
+						// Player is not available...
+						break;
+
+					case 3:
+						playerTurn = "RED";
+						break;
+
+					case 4:
+						playerTurn = "RED";
+						break;
+					}
+					InitializeDice ();
+				}
+			}
+		}
+	}
+	//=============================================================================================================================
+	// Use this for initialization
+	void Start () 
+
+	{
+		QualitySettings.vSyncCount = 1;
+		Application.targetFrameRate = 30;
+
+		randomNo = new System.Random ();
+
+		dice1_Roll_Animation.SetActive (false);
+		dice2_Roll_Animation.SetActive (false);
+		dice3_Roll_Animation.SetActive (false);
+		dice4_Roll_Animation.SetActive (false);
+		dice5_Roll_Animation.SetActive (false);
+		dice6_Roll_Animation.SetActive (false);
+
+		// Players initial positions.....
+		redPlayerI_Pos = redPlayerI.transform.position;
+		redPlayerII_Pos = redPlayerII.transform.position;
+		redPlayerIII_Pos = redPlayerIII.transform.position;
+		redPlayerIV_Pos = redPlayerIV.transform.position;
+
+		greenPlayerI_Pos = greenPlayerI.transform.position;
+		greenPlayerII_Pos = greenPlayerII.transform.position;
+		greenPlayerIII_Pos = greenPlayerIII.transform.position;
+		greenPlayerIV_Pos = greenPlayerIV.transform.position;
+
+		bluePlayerI_Pos = bluePlayerI.transform.position;
+		bluePlayerII_Pos = bluePlayerII.transform.position;
+		bluePlayerIII_Pos = bluePlayerIII.transform.position;
+		bluePlayerIV_Pos = bluePlayerIV.transform.position;
+
+		yellowPlayerI_Pos = yellowPlayerI.transform.position;
+		yellowPlayerII_Pos = yellowPlayerII.transform.position;
+		yellowPlayerIII_Pos = yellowPlayerIII.transform.position;
+		yellowPlayerIV_Pos = yellowPlayerIV.transform.position;
+
+		redPlayerI_Border.SetActive (false);
+		redPlayerII_Border.SetActive (false);
+		redPlayerIII_Border.SetActive (false);
+		redPlayerIV_Border.SetActive (false);
+
+		yellowPlayerI_Border.SetActive (false);
+		yellowPlayerII_Border.SetActive (false);
+		yellowPlayerIII_Border.SetActive (false);
+		yellowPlayerIV_Border.SetActive (false);
+
+		bluePlayerI_Border.SetActive (false);
+		bluePlayerII_Border.SetActive (false);
+		bluePlayerIII_Border.SetActive (false);
+		bluePlayerIV_Border.SetActive (false);
+
+		greenPlayerI_Border.SetActive (false);
+		greenPlayerII_Border.SetActive (false);
+		greenPlayerIII_Border.SetActive (false);
+		greenPlayerIV_Border.SetActive (false);
+
+		redScreen.SetActive (false);
+		greenScreen.SetActive (false);
+		yellowScreen.SetActive (false);
+		blueScreen.SetActive (false);
+
+		// Initilaizing players here....
+		switch (MainMenuScript.howManyPlayers) 
+		{
+			case 2:
+				playerTurn = "RED";
+
+				frameRed.SetActive (true);
+				frameGreen.SetActive (false);
+				frameBlue.SetActive (false);
+				frameYellow.SetActive (false);
+					//diceRoll.position = redDiceRollPos.position;
+				bluePlayerI.SetActive (false);
+				bluePlayerII.SetActive (false);
+				bluePlayerIII.SetActive (false);
+				bluePlayerIV.SetActive (false);
+
+				yellowPlayerI.SetActive (false);
+				yellowPlayerII.SetActive (false);
+				yellowPlayerIII.SetActive (false);
+				yellowPlayerIV.SetActive (false);
+				break;
+
+			case 3:
+				playerTurn = "YELLOW";
+
+				frameRed.SetActive (false);
+				frameGreen.SetActive (false);
+				frameBlue.SetActive (false);
+				frameYellow.SetActive (true);
+
+				diceRoll.position = yellowDiceRollPos.position;
+				greenPlayerI.SetActive (false);
+				greenPlayerII.SetActive (false);
+				greenPlayerIII.SetActive (false);
+				greenPlayerIV.SetActive (false);
+				
+				break;
+
+			case 4:
+				playerTurn = "RED";
+
+				frameRed.SetActive (true);
+				frameGreen.SetActive (false);
+				frameBlue.SetActive (false);
+				frameYellow.SetActive (false);				
+
+				diceRoll.position = redDiceRollPos.position;
+				// keep all players active
+				break;
+		}
+	}
+	
+	// Update is called once per frame
+	void Update () 
+	{
+	
+	}
 }
