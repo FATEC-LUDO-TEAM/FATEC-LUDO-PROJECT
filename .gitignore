@@ -2,5 +2,7 @@ site-back-end/obj
 site-back-end/bin
 ludo-game/Library
 ludo-game/Temp
+ludo-game/Logs
+ludo-game/UserSettings
 launch.json
 tasks.json
