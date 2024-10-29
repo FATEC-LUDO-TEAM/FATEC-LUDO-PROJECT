@@ -1,16 +1,86 @@
-
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tela de Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background-image: linear-gradient(#000034, #000000);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Pixelify Sans', sans-serif;
+            color: black;
+        }
+        #logo {
+            width: 150px;
+            margin-bottom: 20px;
+        }
+        #login-card {
+            background-color: #D1A76E;
+            border: 4px solid #8B5E3C;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 280px;
+            position: relative;
+        }
+        .icon-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .icon-container i {
+            color: #FBC233;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        button {
+            background-color: #FBC233;
+            color: #000;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-family: 'Pixelify Sans', sans-serif;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #e5ae2d;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
 <body>
-    <h1>Login!</h1>
-    <form id="my-form">
-        <label>usuario</label>
-        <input type="text" name="name">
-        <br><br>
-        
-        <label>senha</label>
-        <input type="password" name="password">
-        <br><br>
-
-        <button type="submit">Logar</button>
-    </form>
+    <img id="logo" src="assets/logo.png" alt="Logo do Site">
+    <div id="login-card">
+        <div class="icon-container">
+            <i class="bi bi-arrow-left-square-fill"></i>
+            <i class="bi bi-x-square-fill"></i>
+        </div>
+        <h1>CRIAR CONTA</h1>
+        <p class="subtitle">Tem uma conta? <a href="#" style="color: #FBC233;">Entrar</a></p>
+        <input type="text" placeholder="nome">
+        <input type="email" placeholder="e-mail">
+        <input type="password" placeholder="senha">
+        <button type="submit">Criar</button>
+    </div>
 </body>
-<script src="scripts/login.js"></script>
+</html>

@@ -1,3 +1,6 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 //checar se o usuario ta logado
 function getCookie(name) {
     let cookieArr = document.cookie.split(";");
