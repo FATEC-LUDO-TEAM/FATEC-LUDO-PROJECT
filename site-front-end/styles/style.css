@@ -1,5 +1,5 @@
 body {
-    background-image: url('../assets/Back.png');
+    background-image: url('../assets/Backgroud.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -136,14 +136,15 @@ h1 {
     color: #333;
     font-size: 16px;
 }
+
 .archive-button {
-    background-color: #FBC233;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-    font-size: 14px;
     color: #000;
+    background-color: #FBC233; /* cor do botão */
+    padding: 10px 20px;
+    text-decoration: none; /* remove o sublinhado */
+    border-radius: 5px;
+    display: inline-block;
+    text-align: center;
 }
 .coin-balance {
     font-size: 14px;
@@ -152,13 +153,12 @@ h1 {
 
 .item-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
     width: 100%;
     margin-bottom: 20px;
 }
 .item {
-    background-color: #ccc;
     padding: 10px;
     border-radius: 8px;
     text-align: center;
@@ -174,17 +174,6 @@ h1 {
     margin: 0;
 }
 
-.pagination {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    margin-top: 15px
-}
-.pagination span {
-    font-size: 16px;
-    cursor: pointer;
-    color: #333;
-}
 .page-number {
     font-weight: bold;
     color: #000034;
@@ -242,4 +231,92 @@ h1 {
     color: #333;
     cursor: pointer;
     float: right;
+}
+/* Estilo para o card da loja */
+.store-card {
+    background-color: #D9A875;
+    width: 400px;
+    padding: 20px;
+    border: 4px solid #8B5E3C;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    font-family: 'Pixelify Sans', sans-serif;
+    color: black;
+}
+
+.store-card-header {
+    font-size: 28px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.store-card-description {
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.inventory-button {
+    display: block;
+    background-color: #F6C238;
+    color: black;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.inventory-button:hover {
+    background-color: #e0b028;
+}
+
+/* Grid específico para os itens dentro do card da loja */
+.store-item-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+/* Estilo dos itens na grid dentro do card da loja */
+.store-item-grid .item {
+    background-color: #D1A76E;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    border: 2px solid #8B5E3C;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.store-item-grid .item img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 5px;
+}
+
+.store-item-grid .item p {
+    font-size: 12px;
+    color: #333;
+    margin: 0;
+}
+/* Estilo para o link das imagens do card */
+.item a {
+    text-decoration: none; /* Remove a sublinha */
+    color: inherit; /* Herda a cor do elemento pai */
+}
+
+.item a:hover {
+    color: #c69b6d; /* Cor de destaque ao passar o mouse */
+}
+
+/* Estilo para o título do pacote abaixo da imagem */
+.item p {
+    color: #5a3e2b; /* Define uma cor que combine com o card */
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 1.1em;
+    text-align: center;
+    margin-top: 8px;
 }
