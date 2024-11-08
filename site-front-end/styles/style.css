@@ -136,12 +136,11 @@ h1 {
     color: #333;
     font-size: 16px;
 }
-
 .archive-button {
     color: #000;
-    background-color: #FBC233; /* cor do botão */
+    background-color: #FBC233;
     padding: 10px 20px;
-    text-decoration: none; /* remove o sublinhado */
+    text-decoration: none;
     border-radius: 5px;
     display: inline-block;
     text-align: center;
@@ -232,7 +231,6 @@ h1 {
     cursor: pointer;
     float: right;
 }
-/* Estilo para o card da loja */
 .store-card {
     background-color: #D9A875;
     width: 400px;
@@ -274,14 +272,12 @@ h1 {
     background-color: #e0b028;
 }
 
-/* Grid específico para os itens dentro do card da loja */
 .store-item-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
 }
 
-/* Estilo dos itens na grid dentro do card da loja */
 .store-item-grid .item {
     background-color: #D1A76E;
     padding: 10px;
@@ -302,21 +298,38 @@ h1 {
     color: #333;
     margin: 0;
 }
-/* Estilo para o link das imagens do card */
+
 .item a {
-    text-decoration: none; /* Remove a sublinha */
-    color: inherit; /* Herda a cor do elemento pai */
+    text-decoration: none; 
+    color: inherit;
 }
 
 .item a:hover {
-    color: #c69b6d; /* Cor de destaque ao passar o mouse */
+    color: #c69b6d;
 }
 
-/* Estilo para o título do pacote abaixo da imagem */
 .item p {
-    color: #5a3e2b; /* Define uma cor que combine com o card */
+    color: #5a3e2b; 
     font-family: 'Pixelify Sans', sans-serif;
     font-size: 1.1em;
     text-align: center;
     margin-top: 8px;
+}
+.itemDetalhe{
+    text-align: center;
+}
+.itemDetalhe img {
+    width: 80px;
+    height: 80px;
+}
+.itemDetalhe-grid {
+    display: grid;
+    width: 100%;
+}.itemDetalhe p {
+    color: #5a3e2b;
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 20px;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 10px;
 }
