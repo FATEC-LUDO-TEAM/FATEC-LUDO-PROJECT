@@ -65,8 +65,10 @@ public class UserController : ControllerBase
         var UsuarioEncontrado = _ludocontext.Users.Where(u => u.username == jsonBody.Username && u.password == jsonBody.Password).FirstOrDefault();
         if(UsuarioEncontrado == null)
         {
-            return Results.Unauthorized();
+            UsuarioEncontrado = _ludocontext.Users.Where(u => u.email == jsonBody.Username && u.password == jsonBody.Password).FirstOrDefault();
+            if (UsuarioEncontrado == null) return Results.Unauthorized();
         }
+
         var userToken = JwtService.GenerateJwtToken(UsuarioEncontrado.id);
         return Results.Ok(userToken);
     }
