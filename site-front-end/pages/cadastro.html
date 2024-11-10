@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Cadastro</title>
     <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../styles/style.css">
@@ -17,12 +17,14 @@
         </div>
         <h1>CRIAR CONTA</h1>
         <p class="subtitle">Tem uma conta? <a href="#" style="color: #FBC233;">Entrar</a></p>
-        <input type="text" placeholder="nome">
-        <input type="email" placeholder="e-mail">
-        <input type="password" placeholder="senha">
-        <button type="submit">Criar</button>
+        <form id="my-form">
+            <input type="text" placeholder="nome">
+            <input type="email" placeholder="e-mail">
+            <input type="password" placeholder="senha">
+            <button type="submit">Criar</button>
+        </form>
     </div>
 </body>
-<script src="scripts/cadastro.js"></script>
+<script src="../scripts/cadastro.js"></script>
 <script src="../scripts/geral.js"></script>
 </html>

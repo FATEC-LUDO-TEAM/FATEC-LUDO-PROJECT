@@ -62,11 +62,10 @@ public class UserController : ControllerBase
     public IResult LoginUser ([FromBody] LoginUserBody jsonBody)
     {
         //procura se existe um usuário com tal senha e nome no banco
-        var UsuarioEncontrado = _ludocontext.Users.Where(u => u.username == jsonBody.Username && u.password == jsonBody.Password).FirstOrDefault();
+        var UsuarioEncontrado = _ludocontext.Users.Where(u => u.email == jsonBody.Username && u.password == jsonBody.Password).FirstOrDefault();
         if(UsuarioEncontrado == null)
         {
-            UsuarioEncontrado = _ludocontext.Users.Where(u => u.email == jsonBody.Username && u.password == jsonBody.Password).FirstOrDefault();
-            if (UsuarioEncontrado == null) return Results.Unauthorized();
+            return Results.Unauthorized();
         }
 
         var userToken = JwtService.GenerateJwtToken(UsuarioEncontrado.id);

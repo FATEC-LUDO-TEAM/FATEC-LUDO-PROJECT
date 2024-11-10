@@ -16,9 +16,11 @@
             <i class="bi bi-x-square-fill" onclick="goBack()"></i>
         </div>
         <h1>BEM VINDO</h1>
+        
         <form id="my-form">
-            <input type="email" placeholder="e-mail">
-            <input type="password" placeholder="senha">
+            <div id="error-message">Email e/ou senha Incorretos!</div>
+            <input type="email" required name="email" placeholder="e-mail">
+            <input type="password" required name="password" placeholder="senha">
             <button type="submit">Login</button>
         </form>
         
