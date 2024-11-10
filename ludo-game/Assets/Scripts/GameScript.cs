@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
@@ -139,6 +139,7 @@ public class GameScript : MonoBehaviour {
 					playerTurn = "NONE";
 				}
 				break;
+
 
 			case 3:
 				// If any 1 of 3 player wins==============================================
@@ -1117,6 +1118,7 @@ public class GameScript : MonoBehaviour {
 
 		switch (MainMenuScript.howManyPlayers) 
 		{
+			
 			case 2:
 				if (playerTurn == "RED") 
 				{

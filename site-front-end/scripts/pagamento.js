@@ -52,4 +52,18 @@ document.getElementById('payment-form').addEventListener('submit', function(even
     } else {
         alert("Por favor, preencha todos os campos.");
     }
+
+    function openModal() {
+        document.getElementById("confirmation-modal").style.display = "block";
+    }
+
+    function closeModal() {
+        document.getElementById("confirmation-modal").style.display = "none";
+    }
+
+    function confirmPayment() {
+        alert("Pagamento confirmado com sucesso!");
+        closeModal();
+    }
+
 });
