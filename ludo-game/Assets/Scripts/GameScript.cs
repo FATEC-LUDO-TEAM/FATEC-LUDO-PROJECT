@@ -140,6 +140,7 @@ public class GameScript : MonoBehaviour {
 				}
 				break;
 
+
 			case 3:
 				// If any 1 of 3 player wins==============================================
 			if (totalRedInHouse > 3 && totalBlueInHouse < 4 && totalYellowInHouse < 4 && playerTurn == "RED") 

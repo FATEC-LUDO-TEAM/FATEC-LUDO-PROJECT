@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class RedPlayerI_Script : MonoBehaviour {
@@ -21,3 +21,6 @@ public class RedPlayerI_Script : MonoBehaviour {
 		redPlayerI_ColName = "none";
 	}
 }
+
+
+
