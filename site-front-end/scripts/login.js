@@ -1,7 +1,7 @@
 document.getElementById('my-form').addEventListener('submit', function(event) {
     event.preventDefault();
     const form = event.target;
-    var name = form.elements['name'].value;
+    var name = form.elements['email'].value;
     var password = form.elements['password'].value;
 
     //se todos os campos tiverem preenchidos, proceder no login
@@ -29,6 +29,8 @@ document.getElementById('my-form').addEventListener('submit', function(event) {
                     return response.json();
                 } else if (response.status === 401) {
                     // Resposta 401 Unauthorized
+                    var elemento = document.getElementById('error-message');
+                    elemento.style.display = 'block';
                     throw new Error('Não autorizado');
                 } else {
                     // Outros tipos de resposta

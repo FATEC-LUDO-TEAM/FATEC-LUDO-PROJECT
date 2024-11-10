@@ -42,27 +42,30 @@ position: relative;
     cursor: pointer;
 }
 button {
-background-color: #FBC233;
-color: #000;
-padding: 10px 20px;
-border: none;
-border-radius: 5px;
-font-size: 16px;
-font-family: 'Pixelify Sans', sans-serif;
-cursor: pointer;
-transition: background-color 0.3s ease;
-margin-top: 15px;
+    background-color: #FBC233;
+    color: #000;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-family: 'Pixelify Sans', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 15px;
+    width: 50%;
+    margin: 15px auto 0px;
 }
 button:hover {
 background-color: #e5ae2d;
 }
 input {
-width: 100%;
-padding: 10px;
-margin: 5px 0;
-border: 1px solid #ccc;
-border-radius: 5px;
-font-size: 14px;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
 }
 .profile-info {
     display: flex;
@@ -332,4 +335,21 @@ h1 {
     text-align: center;
     margin-top: 0;
     margin-bottom: 10px;
+}
+#my-form {
+    box-sizing: border-box;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+}
+#error-message {
+    box-sizing: border-box;
+    background-color: #a30808;
+    text-align: center;
+    width: 100%;
+    color: white;
+    border-radius: 5px;
+    padding: 3px 20px;
+    margin: 0px 0px 5px 0px;
+    display: none;
 }
