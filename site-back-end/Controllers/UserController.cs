@@ -69,7 +69,8 @@ public class UserController : ControllerBase
         }
 
         var userToken = JwtService.GenerateJwtToken(UsuarioEncontrado.id);
-        return Results.Ok(userToken);
+        var userInfo = UsuarioEncontrado;
+        return Results.Ok(UsuarioEncontrado);
     }
 
     // [Authorize]
@@ -104,5 +105,17 @@ public class UserController : ControllerBase
         // filtro o resultado para não voltar informações sensiveis do usuario, como a senha
         List<ListUsersResponse> ListaFiltrada = _mapper.Map<List<ListUsersResponse>>(ListaGerada); 
         return Results.Ok(ListaFiltrada);
+    }
+
+    [HttpGet("user_coins")]
+    public IResult UserCoins ([FromQuery] String user_id)
+    {
+        var usuarioEncontrado = _ludocontext.Users.Where(u => u.id == user_id).FirstOrDefault();
+        if(usuarioEncontrado == null)
+        {
+            return Results.NotFound("usuário não foi encontrado");
+        }
+
+        return Results.Ok(usuarioEncontrado.ludo_coins);
     }
 }

@@ -55,9 +55,21 @@ button {
     width: 50%;
     margin: 15px auto 0px;
 }
+
 button:hover {
-background-color: #e5ae2d;
+    background-color: #e5ae2d;
 }
+
+button:disabled,
+button[disabled]{
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
+}
+button:disabled:hover{
+    cursor: default;
+}
+
 input {
     box-sizing: border-box;
     width: 100%;
@@ -151,6 +163,11 @@ h1 {
 .coin-balance {
     font-size: 14px;
     color: #333;
+    margin-right: 10px;
+}
+.coin-content {
+    display: flex;
+    align-items: baseline;
 }
 
 .item-grid {
@@ -353,3 +370,32 @@ h1 {
     margin: 0px 0px 5px 0px;
     display: none;
 }
+#conflict-message {
+    box-sizing: border-box;
+    background-color: #a30808;
+    text-align: center;
+    width: 100%;
+    color: white;
+    border-radius: 5px;
+    padding: 3px 20px;
+    margin: 0px 0px 5px 0px;
+    display: none;
+}
+.subtitle {
+    margin-top: 0px;
+}
+.btn-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+}
+.edit-btns {
+    display: flex;
+    width: 100%;
+}
+
+.edit-btns button {
+    margin: 2px;
+}
+

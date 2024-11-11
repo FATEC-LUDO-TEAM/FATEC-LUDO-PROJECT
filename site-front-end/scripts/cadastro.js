@@ -32,7 +32,11 @@ document.getElementById('my-form').addEventListener('submit', function(event) {
                 if (response.status === 400) {
                     // Resposta 400 Bad Request
                     throw new Error('Dados inválidos');
-                
+                }
+                else if (response.status === 409) {
+                    var elemento = document.getElementById('conflict-message');
+                    elemento.style.display = 'block';
+                    throw new Error('Conflito: Usuário/Email já existente');
                 }
             })
             .then(data => {

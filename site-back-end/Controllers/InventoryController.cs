@@ -14,7 +14,7 @@ public class InventoryController: ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet("list")]
+    [HttpPost("list")]
     public IResult ListInventory ([FromBody] ListInventoryBody jsonBody)
     {
         // primeiro pego a lista de ids de cosmeticos que o usuario tem

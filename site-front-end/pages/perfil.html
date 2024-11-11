@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minha Conta</title>
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
@@ -19,17 +20,24 @@
         <div class="profile-info">
             <img src="https://via.placeholder.com/100" alt="User Icon" class="profile-image">
             <div class="stats">
-                <p>Tier:</p>
-                <p>Partidas jogadas:</p>
-                <p>Vitórias:</p>
-                <p>Ludocoins: <i class="bi bi-coin"></i></p>
+                <p id="tier_output">Tier:</p>
+                <p id="plays_output">Partidas jogadas:</p>
+                <p id="victories_output">Vitórias:</p>
+                <p id="ludocoins_output">Ludocoins: <i class="bi bi-coin"></i></p>
             </div>
         </div>
-        <input type="text" placeholder="nome">
-        <input type="email" placeholder="e-mail">
-        <input type="password" placeholder="Alterar Senha?">
-        <button type="submit">Editar</button>
+        
+        <input type="text" disabled placeholder="nome" id="user_name_input">
+        <input type="email" disabled placeholder="e-mail" id="user_email_input">
+        <input type="password" disabled placeholder="senha" id="user_password_input">
+
+        <div class="edit-btns">
+            <button id="edit_btn" type="submit" onclick="openForEdit()">Editar</button>
+            <button id="save_btn" onclick="closeForSave()" disabled>Salvar</button>
+        </div>
+        
     </div>
 </body>
-<script src="../scripts/geral.js"></script>
+    <script src="../scripts/geral.js"></script>
+    <script src="../scripts/perfil.js"></script>
 </html>

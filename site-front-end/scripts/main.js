@@ -1,6 +1,3 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-
 //checar se o usuario ta logado
 function getCookie(name) {
     let cookieArr = document.cookie.split(";");
@@ -24,11 +21,9 @@ function isCookieExpired(cookieName) {
 }
 
 if (getCookie("loginToken") && !isCookieExpired("loginToken")) {
-    alert("usuario ta logado");
+    console.log("usuario ta logado");
 } else {
-    alert("usuario nao ta logado, rediricionando a pagina de login...");
-    window.location.href = "cadastro.html";
+    console.log("usuario nao ta logado, rediricionando a pagina de login...");
+    window.location.href = "login.html";
 }
-
-
 //checar se o usuario ta logado
