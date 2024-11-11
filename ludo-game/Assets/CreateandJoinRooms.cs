@@ -11,6 +11,8 @@ public class CreateandJoinRooms : MonoBehaviourPunCallbacks
     public Text feedbackText;
     public Button startGameButton;
 
+    public GameObject CreateJoin;
+
     private const int maxPlayers = 2;
 
     private void Awake()
@@ -41,11 +43,18 @@ public class CreateandJoinRooms : MonoBehaviourPunCallbacks
         {
             AssignTeam("Red");
             feedbackText.text = "Você é o jogador vermelho!";
+             createInput.gameObject.SetActive(false);
+            joinInput.gameObject.SetActive(false);
+            CreateJoin.SetActive(false);
+
         }
         else if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
         {
             AssignTeam("Green");
             feedbackText.text = "Você é o jogador verde!";
+            createInput.gameObject.SetActive(false);
+        joinInput.gameObject.SetActive(false);
+         CreateJoin.SetActive(false);   
         }
 
         // Oculta os campos de entrada após entrar na sala

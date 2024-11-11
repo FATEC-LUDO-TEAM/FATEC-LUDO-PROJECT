@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System.Linq.Expressions;
 
 public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
 {
@@ -23,7 +24,7 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
     public GameObject greenScreen, redScreen;
     public Text greenRankText, redRankText;
 
-    private string playerTurn = "none";
+    private string playerTurn = "RED";
     public Transform diceRoll;
     public Button DiceRollButton;
 
@@ -43,9 +44,7 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
 
 	public List<GameObject> redMovementBlocks = new List<GameObject>();
 	public List<GameObject> greenMovementBlocks = new List<GameObject>();
-	public List<GameObject> yellowMovementBlocks = new List<GameObject>();
-	public List<GameObject> blueMovementBlocks = new List<GameObject>();
-
+	
     public GameObject redPlayerI, redPlayerII, redPlayerIII, redPlayerIV;
     public GameObject greenPlayerI, greenPlayerII, greenPlayerIII, greenPlayerIV;
 
@@ -190,11 +189,11 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void DiceRollResult(int result)
+    void DiceRollResult(int selectDiceNumAnimation)
     {
         DiceRollButton.interactable = false;
-
-        switch (result)
+		selectDiceNumAnimation = 6;
+        switch (selectDiceNumAnimation)
         {
             case 1:
                 dice1_Roll_Animation.SetActive(true);
@@ -254,7 +253,7 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
     [PunRPC]
     IEnumerator PlayersNotInitialized()
     {
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(10.8f);
 
         dice1_Roll_Animation.SetActive(false);
         dice2_Roll_Animation.SetActive(false);
@@ -269,12 +268,14 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
         }
         switch(playerTurn)
 		{
-		case "RED": 	
+		case "RED": 
+	
 
 			//==================== CONDITION FOR BORDER GLOW ========================
 			if ((redMovementBlocks.Count - redPlayerI_Steps) >= selectDiceNumAnimation && redPlayerI_Steps > 0 && (redMovementBlocks.Count > redPlayerI_Steps)) {
 				redPlayerI_Border.SetActive (true);
 				RedPlayerI_Button.interactable = true;
+
 			} else {
 				redPlayerI_Border.SetActive (false);
 				RedPlayerI_Button.interactable = false;
@@ -321,7 +322,7 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
 				redPlayerIV_Border.SetActive (true);
 				RedPlayerIV_Button.interactable = true;
 			}	
-            break;
+        break;
 
             case "GREEN":
 
@@ -330,6 +331,7 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
 			{
 				greenPlayerI_Border.SetActive (true);
 				GreenPlayerI_Button.interactable = true;
+				Debug.Log ("Vc nao é o master porra !!");
 			} 
 			else 
 			{
@@ -341,6 +343,7 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
 			{
 				greenPlayerII_Border.SetActive (true);
 				GreenPlayerII_Button.interactable = true;
+				Debug.Log ("vc nao é o master porra");
 			} 
 			else 
 			{
@@ -352,6 +355,7 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
 			{
 				greenPlayerIII_Border.SetActive (true);
 				GreenPlayerIII_Button.interactable = true;
+				Debug.Log ("vc nao é o master porra");
 			} 
 			else 
 			{
@@ -363,6 +367,7 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
 			{
 				greenPlayerIV_Border.SetActive (true);
 				GreenPlayerIV_Button.interactable = true;
+				Debug.Log ("vc nao é o master porra");
 			} 
 			else 
 			{
@@ -375,21 +380,25 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
 			{
 				greenPlayerI_Border.SetActive (true);
 				GreenPlayerI_Button.interactable = true;
+				Debug.Log ("vc nao é o master porra");
 			}
 			if (selectDiceNumAnimation == 6 && greenPlayerII_Steps == 0) 
 			{
 				greenPlayerII_Border.SetActive (true);
 				GreenPlayerII_Button.interactable = true;
+				Debug.Log ("vc nao é o master porra");
 			}				
 			if (selectDiceNumAnimation == 6 && greenPlayerIII_Steps == 0) 
 			{
 				greenPlayerIII_Border.SetActive (true);
 				GreenPlayerIII_Button.interactable = true;
+				Debug.Log ("vc nao é o master porra");
 			}					
 			if (selectDiceNumAnimation == 6 && greenPlayerIV_Steps == 0) 
 			{
 				greenPlayerIV_Border.SetActive (true);
 				GreenPlayerIV_Button.interactable = true;
+				Debug.Log ("vc nao é o master porra");
 			}
             break;
         }

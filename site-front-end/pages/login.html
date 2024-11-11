@@ -23,10 +23,24 @@
             <input type="email" required name="email" placeholder="e-mail">
             <input type="password" required name="password" placeholder="senha">
             <button type="submit">Login</button>
+            <button type="button" onclick="forgotPassword()">Esqueci a senha</button>
         </form>
         
     </div>
 </body>
-    <script src="../scripts/geral.js"></script>
+    <!-- <script src="../scripts/geral.js"></script> -->
     <script src="../scripts/login.js"></script>
+</html>
+
+<script>
+    function redirectoMenu() {
+        window.location.href = "menu.html";
+
+
+    function forgotPassword() {
+        // Redirecionar ou abrir a página de recuperação de senha
+        window.location.href = "esqueci.html";
+    }
+    }
+</script>
 </html>
