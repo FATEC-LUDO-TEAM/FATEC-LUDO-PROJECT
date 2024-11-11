@@ -18,8 +18,22 @@
         <h1>BEM VINDO</h1>
         <input type="email" placeholder="e-mail">
         <input type="password" placeholder="senha">
-        <button type="submit">Login</button>
+        <button type="submit" onclick="redirectoMenu()">Login</button>
+        <button type="button" onclick="forgotPassword()">Esqueci a senha</button>
     </div>
 </body>
 <script src="../scripts/geral.js"></script>
+</html>
+
+<script>
+    function redirectoMenu() {
+        window.location.href = "menu.html";
+
+
+    function forgotPassword() {
+        // Redirecionar ou abrir a página de recuperação de senha
+        window.location.href = "esqueci.html";
+    }
+    }
+</script>
 </html>
