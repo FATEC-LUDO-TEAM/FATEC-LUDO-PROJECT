@@ -39,6 +39,43 @@ MonoBehaviour:
   - DestroySpaceship
   - Fire
   - RespawnSpaceship
+  - CapturePiece
+  - greenPlayerI_UI
+  - greenPlayerII_UI
+  - greenPlayerIII_UI
+  - greenPlayerIV_UI
+  - HandleWin
+  - InitializeDice
+  - MovePlayerPieceRPC
+  - redPlayerI_UI
+  - redPlayerII_UI
+  - redPlayerIII_UI
+  - redPlayerIV_UI
+  - SetInitialTurn
+  - SyncDiceRoll
+  - SyncTurn
+  - UpdateGreenPlayerI_ColName
+  - UpdateGreenPlayerII_ColName
+  - UpdateGreenPlayerIII_ColName
+  - UpdateGreenPlayerIV_ColName
+  - UpdateRedPlayerI_ColName
+  - UpdateRedPlayerII_ColName
+  - UpdateRedPlayerIII_ColName
+  - UpdateRedPlayerIV_ColName
+  - AssignTurn
+  - DiceRollResult
+  - InitializeGame
+  - MoveGreenPlayerI
+  - MoveGreenPlayerII
+  - MoveGreenPlayerIII
+  - MoveGreenPlayerIV
+  - MoveRedPlayerI
+  - MoveRedPlayerII
+  - MoveRedPlayerIII
+  - MoveRedPlayerIV
+  - PlayersNotInitialized
+  - StartGameCompletedRoutine
+  - SyncGameState
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 0
