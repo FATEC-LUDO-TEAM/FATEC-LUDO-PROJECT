@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System.Linq.Expressions;
 
 public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
@@ -167,11 +168,14 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
         else
     	{
         Debug.Log("Conexão com o servidor perdida. Tentando reconectar... Voltando ao Menu");
-		SceneManager.LoadScene("CoreMenu");
+		//SceneManager.LoadScene("CoreMenu");
     	}
     }
 
 
+//▒█▀▀▄ ░▀░ █▀▀ █▀▀ 　 ▒█▀▀█ █▀▀█ █░░ █░░ 
+//▒█░▒█ ▀█▀ █░░ █▀▀ 　 ▒█▄▄▀ █░░█ █░░ █░░ 
+//▒█▄▄▀ ▀▀▀ ▀▀▀ ▀▀▀ 　 ▒█░▒█ ▀▀▀▀ ▀▀▀ ▀▀▀ 
 
     
     public void DiceRoll()
@@ -179,8 +183,11 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
     {
         if (playerTurn == "RED" && PhotonNetwork.IsMasterClient || playerTurn == "GREEN" && !PhotonNetwork.IsMasterClient)
         {
+			Debug.Log("O jogo entendeu que é seu turno e vc pode rodar");
             selectDiceNumAnimation = randomNo.Next(1, 7);
+			selectDiceNumAnimation = 6;
             photonView.RPC("DiceRollResult", RpcTarget.All, selectDiceNumAnimation);
+            ExecutePlayersNotInitialized();
         }
         else
         {
@@ -189,10 +196,10 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void DiceRollResult(int selectDiceNumAnimation)
+    void DiceRollResult(int result)
     {
         DiceRollButton.interactable = false;
-		selectDiceNumAnimation = 6;
+		selectDiceNumAnimation = result;
         switch (selectDiceNumAnimation)
         {
             case 1:
@@ -245,482 +252,460 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
                 break;
         }
        
-
-        photonView.RPC("PlayersNotInitialized", RpcTarget.All);
+	   
     }
+//▒█▀▀█ █░░ █▀▀█ █░░█ █▀▀ █▀▀█ █▀▀ 　 █▀▀▄ █▀▀█ ▀▀█▀▀ 　 
+//▒█▄▄█ █░░ █▄▄█ █▄▄█ █▀▀ █▄▄▀ ▀▀█ 　 █░░█ █░░█ ░░█░░ 　 
+//▒█░░░ ▀▀▀ ▀░░▀ ▄▄▄█ ▀▀▀ ▀░▀▀ ▀▀▀ 　 ▀░░▀ ▀▀▀▀ ░░▀░░ 　 
+
+//▀█▀ █▀▀▄ ░▀░ ▀▀█▀▀ ░▀░ █▀▀█ █░░ ░▀░ ▀▀█ █▀▀ █▀▀▄ 
+//▒█░ █░░█ ▀█▀ ░░█░░ ▀█▀ █▄▄█ █░░ ▀█▀ ▄▀░ █▀▀ █░░█ 
+//▄█▄ ▀░░▀ ▀▀▀ ░░▀░░ ▀▀▀ ▀░░▀ ▀▀▀ ▀▀▀ ▀▀▀ ▀▀▀ ▀▀▀░ 
 
 
-    [PunRPC]
-    IEnumerator PlayersNotInitialized()
-    {
-        yield return new WaitForSeconds(10.8f);
+    void ExecutePlayersNotInitialized()
+{
+    AtivarBordasJogador();
 
-        dice1_Roll_Animation.SetActive(false);
-        dice2_Roll_Animation.SetActive(false);
-        dice3_Roll_Animation.SetActive(false);
-        dice4_Roll_Animation.SetActive(false);
-        dice5_Roll_Animation.SetActive(false);
-        dice6_Roll_Animation.SetActive(false);
-        
-        if (playerTurn == "RED" && PhotonNetwork.IsMasterClient || playerTurn == "GREEN" && !PhotonNetwork.IsMasterClient)
-        {
-            DiceRollButton.interactable = true;
-        }
-        switch(playerTurn)
-		{
-		case "RED": 
-	
-
-			//==================== CONDITION FOR BORDER GLOW ========================
-			if ((redMovementBlocks.Count - redPlayerI_Steps) >= selectDiceNumAnimation && redPlayerI_Steps > 0 && (redMovementBlocks.Count > redPlayerI_Steps)) {
-				redPlayerI_Border.SetActive (true);
-				RedPlayerI_Button.interactable = true;
-
-			} else {
-				redPlayerI_Border.SetActive (false);
-				RedPlayerI_Button.interactable = false;
-			}
-
-			if ((redMovementBlocks.Count - redPlayerII_Steps) >= selectDiceNumAnimation && redPlayerII_Steps > 0 && (redMovementBlocks.Count > redPlayerII_Steps)) {
-				redPlayerII_Border.SetActive (true);
-				RedPlayerII_Button.interactable = true;
-			} else {
-				redPlayerII_Border.SetActive (false);
-				RedPlayerII_Button.interactable = false;
-			}
-
-			if ((redMovementBlocks.Count - redPlayerIII_Steps) >= selectDiceNumAnimation && redPlayerIII_Steps > 0 && (redMovementBlocks.Count > redPlayerIII_Steps)) {
-				redPlayerIII_Border.SetActive (true);
-				RedPlayerIII_Button.interactable = true;
-			} else {
-				redPlayerIII_Border.SetActive (false);
-				RedPlayerIII_Button.interactable = false;
-			}
-
-			if ((redMovementBlocks.Count - redPlayerIV_Steps) >= selectDiceNumAnimation && redPlayerIV_Steps > 0 && (redMovementBlocks.Count > redPlayerIV_Steps)) {
-				redPlayerIV_Border.SetActive (true);
-				RedPlayerIV_Button.interactable = true;
-			} else {
-				redPlayerIV_Border.SetActive (false);
-				RedPlayerIV_Button.interactable = false;
-			}
-			//========================= PLAYERS BORDER GLOW WHEN OPENING ===========================================
-
-			if (selectDiceNumAnimation == 6 && redPlayerI_Steps == 0) {
-				redPlayerI_Border.SetActive (true);
-				RedPlayerI_Button.interactable = true;
-			}
-			if (selectDiceNumAnimation == 6 && redPlayerII_Steps == 0) {
-				redPlayerII_Border.SetActive (true);
-				RedPlayerII_Button.interactable = true;
-			}				
-			if (selectDiceNumAnimation == 6 && redPlayerIII_Steps == 0) {
-				redPlayerIII_Border.SetActive (true);
-				RedPlayerIII_Button.interactable = true;
-			}					
-			if (selectDiceNumAnimation == 6 && redPlayerIV_Steps == 0) {
-				redPlayerIV_Border.SetActive (true);
-				RedPlayerIV_Button.interactable = true;
-			}	
-        break;
-
-            case "GREEN":
-
-			//==================== CONDITION FOR BORDER GLOW ========================
-			if ((greenMovementBlocks.Count - greenPlayerI_Steps) >= selectDiceNumAnimation && greenPlayerI_Steps > 0 && (greenMovementBlocks.Count > greenPlayerI_Steps)) 
-			{
-				greenPlayerI_Border.SetActive (true);
-				GreenPlayerI_Button.interactable = true;
-				Debug.Log ("Vc nao é o master porra !!");
-			} 
-			else 
-			{
-				greenPlayerI_Border.SetActive (false);
-				GreenPlayerI_Button.interactable = false;
-			}
-
-			if ((greenMovementBlocks.Count - greenPlayerII_Steps) >= selectDiceNumAnimation && greenPlayerII_Steps > 0 && (greenMovementBlocks.Count > greenPlayerII_Steps)) 
-			{
-				greenPlayerII_Border.SetActive (true);
-				GreenPlayerII_Button.interactable = true;
-				Debug.Log ("vc nao é o master porra");
-			} 
-			else 
-			{
-				greenPlayerII_Border.SetActive (false);
-				GreenPlayerII_Button.interactable = false;
-			}
-
-			if ((greenMovementBlocks.Count - greenPlayerIII_Steps) >= selectDiceNumAnimation && greenPlayerIII_Steps > 0 && (greenMovementBlocks.Count > greenPlayerIII_Steps)) 
-			{
-				greenPlayerIII_Border.SetActive (true);
-				GreenPlayerIII_Button.interactable = true;
-				Debug.Log ("vc nao é o master porra");
-			} 
-			else 
-			{
-				greenPlayerIII_Border.SetActive (false);
-				GreenPlayerIII_Button.interactable = false;
-			}
-
-			if ((greenMovementBlocks.Count - greenPlayerIV_Steps) >= selectDiceNumAnimation && greenPlayerIV_Steps > 0 && (greenMovementBlocks.Count > greenPlayerIV_Steps)) 
-			{
-				greenPlayerIV_Border.SetActive (true);
-				GreenPlayerIV_Button.interactable = true;
-				Debug.Log ("vc nao é o master porra");
-			} 
-			else 
-			{
-				greenPlayerIV_Border.SetActive (false);
-				GreenPlayerIV_Button.interactable = false;
-			}
-			//=======================================================================================================
-
-			if (selectDiceNumAnimation == 6 && greenPlayerI_Steps == 0) 
-			{
-				greenPlayerI_Border.SetActive (true);
-				GreenPlayerI_Button.interactable = true;
-				Debug.Log ("vc nao é o master porra");
-			}
-			if (selectDiceNumAnimation == 6 && greenPlayerII_Steps == 0) 
-			{
-				greenPlayerII_Border.SetActive (true);
-				GreenPlayerII_Button.interactable = true;
-				Debug.Log ("vc nao é o master porra");
-			}				
-			if (selectDiceNumAnimation == 6 && greenPlayerIII_Steps == 0) 
-			{
-				greenPlayerIII_Border.SetActive (true);
-				GreenPlayerIII_Button.interactable = true;
-				Debug.Log ("vc nao é o master porra");
-			}					
-			if (selectDiceNumAnimation == 6 && greenPlayerIV_Steps == 0) 
-			{
-				greenPlayerIV_Border.SetActive (true);
-				GreenPlayerIV_Button.interactable = true;
-				Debug.Log ("vc nao é o master porra");
-			}
-            break;
-        }
-        bool redHasMoves = CheckPlayerMoves("RED");
-        bool greenHasMoves = CheckPlayerMoves("GREEN");
-
-        if (playerTurn == "RED" && !redHasMoves)
-        {
-            playerTurn = "GREEN";
-			photonView.RPC("SyncGameState", RpcTarget.All);
-            photonView.RPC("InitializeDice", RpcTarget.All);
+    string turncolor = playerTurn;
+    if (DeveMudarTurno())
+    	{
+		Debug.Log("DeveMudarTurno retornou TRUE: Mudando o turno.");
+        playerTurn = (playerTurn == "RED") ? "GREEN" : "RED";
+    	}
+		else{
+			Debug.Log("DeveMudarTurno retornou FALSE: Mantendo o turno atual.");
+		}
+		Debug.Log("RedPlayerI_Border ativo: " + redPlayerI_Border.activeInHierarchy + " | RedPlayerI_Button interagível: " + RedPlayerI_Button.interactable);
+     photonView.RPC("SyncPlayersState", RpcTarget.Others,
+        playerTurn, selectDiceNumAnimation,
+        redPlayerI_Border.activeInHierarchy, RedPlayerI_Button.interactable,
+        redPlayerII_Border.activeInHierarchy, RedPlayerII_Button.interactable,
+        redPlayerIII_Border.activeInHierarchy, RedPlayerIII_Button.interactable,
+        redPlayerIV_Border.activeInHierarchy, RedPlayerIV_Button.interactable,
+        greenPlayerI_Border.activeInHierarchy, GreenPlayerI_Button.interactable,
+        greenPlayerII_Border.activeInHierarchy, GreenPlayerII_Button.interactable,
+        greenPlayerIII_Border.activeInHierarchy, GreenPlayerIII_Button.interactable,
+        greenPlayerIV_Border.activeInHierarchy, GreenPlayerIV_Button.interactable);
      
-        }
-        else if (playerTurn == "GREEN" && !greenHasMoves)
-        {
-            playerTurn = "RED";
-			photonView.RPC("SyncGameState", RpcTarget.All);
-            photonView.RPC("InitializeDice", RpcTarget.All);
-            
-        }
-
-        DiceRollButton.interactable = true;
-    }
-
-    bool CheckPlayerMoves(string color)
-    {
-        if (playerTurn == "RED" && PhotonNetwork.IsMasterClient)
-		{
-			return redPlayerI_Border.activeInHierarchy || redPlayerII_Border.activeInHierarchy ||
-            redPlayerIII_Border.activeInHierarchy || redPlayerIV_Border.activeInHierarchy;
-        }
-
-        else if(playerTurn == "GREEN" && !PhotonNetwork.IsMasterClient)
-		{
-            return greenPlayerI_Border.activeInHierarchy || greenPlayerII_Border.activeInHierarchy ||
-        	greenPlayerIII_Border.activeInHierarchy || greenPlayerIV_Border.activeInHierarchy;
-
-        }
-        else {
-            return false;
-        }
-    }
-
-    [PunRPC]
-    void InitializeDice()
-    {
-        DiceRollButton.interactable = true;
-
-        dice1_Roll_Animation.SetActive(false);
-        dice2_Roll_Animation.SetActive(false);
-        dice3_Roll_Animation.SetActive(false);
-        dice4_Roll_Animation.SetActive(false);
-        dice5_Roll_Animation.SetActive(false);
-        dice6_Roll_Animation.SetActive(false);
-
-        if (playerTurn == "RED")
-        {
-            diceRoll.position = redDiceRollPos.position;
-            frameRed.SetActive(true);
-            frameGreen.SetActive(false);
-              if (totalRedInHouse > 3) 
-				{
-					SoundManagerScript.winAudioSource.Play ();
-					redScreen.SetActive (true);		
-					photonView.RPC("StartGameCompletedRoutine", RpcTarget.All);			
-					//StartCoroutine ("GameCompletedRoutine");
-					playerTurn = "NONE";
-				}
-              
-
-				
-        }
-        else if (playerTurn == "GREEN")
-        {
-            diceRoll.position = greenDiceRollPos.position;
-            frameRed.SetActive(false);
-            frameGreen.SetActive(true);
-            if (totalGreenInHouse > 3) 
-				{
-					SoundManagerScript.winAudioSource.Play ();
-					greenScreen.SetActive (true);
-					photonView.RPC("StartGameCompletedRoutine", RpcTarget.All);
-					//StartCoroutine ("GameCompletedRoutine");
-					playerTurn = "NONE";
-				}
-
-				
-        }
-        if (currentPlayerName != "none") {
-			switch (playerTurn) {
-                case "RED":
-				if (currentPlayerName.Contains ("RED PLAYER")) {
-					if (currentPlayer == GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName && (currentPlayer != "Star" && GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName != "Star")) {
-						SoundManagerScript.dismissalAudioSource.Play ();
-						greenPlayerI.transform.position = greenPlayerI_Pos;
-						GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName = "none";
-						greenPlayerI_Steps = 0;
-						playerTurn = "RED";
-					}
-					if (currentPlayer == GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName && (currentPlayer != "Star" && GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName != "Star")) {
-						SoundManagerScript.dismissalAudioSource.Play ();
-						greenPlayerII.transform.position = greenPlayerII_Pos;
-						GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName = "none";
-						greenPlayerII_Steps = 0;
-						playerTurn = "RED";
-					}
-					if (currentPlayer == GreenPlayerIII_Script_Multiplayer.greenPlayerIII_ColName && (currentPlayer != "Star" && GreenPlayerIII_Script_Multiplayer.greenPlayerIII_ColName != "Star")) {
-						SoundManagerScript.dismissalAudioSource.Play ();
-						greenPlayerIII.transform.position = greenPlayerIII_Pos;
-						GreenPlayerIII_Script_Multiplayer.greenPlayerIII_ColName = "none";
-						greenPlayerIII_Steps = 0;
-						playerTurn = "RED";
-					}
-					if (currentPlayer == GreenPlayerIV_Script_Multiplayer.greenPlayerIV_ColName && (currentPlayer != "Star" && GreenPlayerIV_Script_Multiplayer.greenPlayerIV_ColName != "Star")) {
-						SoundManagerScript.dismissalAudioSource.Play ();
-						greenPlayerIV.transform.position = greenPlayerIV_Pos;
-						GreenPlayerIV_Script_Multiplayer.greenPlayerIV_ColName = "none";
-						greenPlayerIV_Steps = 0;
-						playerTurn = "RED";
-					}
-                } 
-                break; 
-                case "GREEN":
-                if (currentPlayerName.Contains ("GREEN PLAYER")) {
-					if (currentPlayer == RedPlayerI_Script_Multiplayer.redPlayerI_ColName && (currentPlayer != "Star" && RedPlayerI_Script_Multiplayer.redPlayerI_ColName != "Star")) {
-						SoundManagerScript.dismissalAudioSource.Play ();
-						redPlayerI.transform.position = redPlayerI_Pos;
-						RedPlayerI_Script_Multiplayer.redPlayerI_ColName = "none";
-						redPlayerI_Steps = 0;
-						playerTurn = "GREEN";
-					}
-					if (currentPlayer == RedPlayerII_Script_Multiplayer.redPlayerII_ColName && (currentPlayer != "Star" && RedPlayerII_Script_Multiplayer.redPlayerII_ColName != "Star")) {
-						SoundManagerScript.dismissalAudioSource.Play ();
-						redPlayerII.transform.position = redPlayerII_Pos;
-						RedPlayerII_Script_Multiplayer.redPlayerII_ColName = "none";
-						redPlayerII_Steps = 0;
-						playerTurn = "GREEN";
-					}
-					if (currentPlayer == RedPlayerIII_Script_Multiplayer.redPlayerIII_ColName && (currentPlayer != "Star" && RedPlayerIII_Script_Multiplayer.redPlayerIII_ColName != "Star")) {
-						SoundManagerScript.dismissalAudioSource.Play ();
-						redPlayerIII.transform.position = redPlayerIII_Pos;
-						RedPlayerIII_Script_Multiplayer.redPlayerIII_ColName = "none";
-						redPlayerIII_Steps = 0;
-						playerTurn = "GREEN";
-					}
-					if (currentPlayer == RedPlayerIV_Script_Multiplayer.redPlayerIV_ColName && (currentPlayer != "Star" && RedPlayerIV_Script_Multiplayer.redPlayerIV_ColName != "Star")) {
-						SoundManagerScript.dismissalAudioSource.Play ();
-						redPlayerIV.transform.position = redPlayerIV_Pos;
-						RedPlayerIV_Script_Multiplayer.redPlayerIV_ColName = "none";
-						redPlayerIV_Steps = 0;
-						playerTurn = "GREEN";
-					}
-				}
-				break; 
-            }
-        }
-
-        
-                GreenPlayerI_Button.interactable = false;
-				GreenPlayerII_Button.interactable = false;
-				GreenPlayerIII_Button.interactable = false;
-				GreenPlayerIV_Button.interactable = false;
-                greenPlayerI_Border.SetActive (false);
-				greenPlayerII_Border.SetActive (false);
-				greenPlayerIII_Border.SetActive (false);
-				greenPlayerIV_Border.SetActive (false);
-                RedPlayerI_Button.interactable = false;
-				RedPlayerII_Button.interactable = false;
-				RedPlayerIII_Button.interactable = false;
-				RedPlayerIV_Button.interactable = false;
-                redPlayerI_Border.SetActive (false);
-				redPlayerII_Border.SetActive (false);
-				redPlayerIII_Border.SetActive (false);
-				redPlayerIV_Border.SetActive (false);
-
+     if (turncolor != playerTurn){
         photonView.RPC("SyncGameState", RpcTarget.All);
-    }
-void OnMoveComplete()
-{
-    // Chama o método InitializeDice em todos os clientes
-    photonView.RPC("InitializeDice", RpcTarget.All);
+        InitializeDice();
+     }
+     Debug.Log("Player Turn" + playerTurn);
+     
 }
+ 
 
-public void redPlayerI_UI()
+
+	private void AtivarBordasJogador()
 {
-    if (playerTurn  == "RED")
+    bool isPlayerRed = playerTurn == "RED";
+    int stepsThreshold = selectDiceNumAnimation;
+    
+    // Se for RED, ativa as bordas dos jogadores vermelhos conforme os passos
+    if (isPlayerRed)
     {
-        photonView.RPC("MoveRedPlayerI", RpcTarget.All);
+        RedPlayerI_Button.interactable = AtivarBordaSePossivel(redPlayerI_Steps, redPlayerI_Border, stepsThreshold, redMovementBlocks);
+        RedPlayerII_Button.interactable = AtivarBordaSePossivel(redPlayerII_Steps, redPlayerII_Border, stepsThreshold, redMovementBlocks);
+        RedPlayerIII_Button.interactable = AtivarBordaSePossivel(redPlayerIII_Steps, redPlayerIII_Border, stepsThreshold, redMovementBlocks);
+        RedPlayerIV_Button.interactable = AtivarBordaSePossivel(redPlayerIV_Steps, redPlayerIV_Border, stepsThreshold, redMovementBlocks);
+    }
+    else // Se for GREEN, ativa as bordas dos jogadores verdes conforme os passos
+    {
+        GreenPlayerI_Button.interactable = AtivarBordaSePossivel(greenPlayerI_Steps, greenPlayerI_Border, stepsThreshold, greenMovementBlocks);
+        GreenPlayerII_Button.interactable = AtivarBordaSePossivel(greenPlayerII_Steps, greenPlayerII_Border, stepsThreshold, greenMovementBlocks);
+        GreenPlayerIII_Button.interactable = AtivarBordaSePossivel(greenPlayerIII_Steps, greenPlayerIII_Border, stepsThreshold, greenMovementBlocks);
+        GreenPlayerIV_Button.interactable = AtivarBordaSePossivel(greenPlayerIV_Steps, greenPlayerIV_Border, stepsThreshold, greenMovementBlocks);
     }
 }
 
+private bool AtivarBordaSePossivel(int playerSteps, GameObject playerBorder, int stepsThreshold, List<GameObject> movementBlocks)
+{
+    if ((movementBlocks.Count - playerSteps) >= stepsThreshold && playerSteps > 0 && (movementBlocks.Count > playerSteps))
+	{
+    playerBorder.SetActive(true);
+    return true; // O botão do jogador pode ser interagido
+	}
+	else if (stepsThreshold == 6 && playerSteps == 0)
+	{
+    playerBorder.SetActive(true);
+    return true;
+	}
+	else
+	{
+    playerBorder.SetActive(false);
+    return false;
+	}	
 
+}
+   
+
+
+
+private bool DeveMudarTurno()
+{
+    bool isRedTurn = playerTurn == "RED";
+
+    // Verifica se todas as bordas dos jogadores estão desativadas para o turno atual
+    if (isRedTurn)
+    {
+        return !redPlayerI_Border.activeInHierarchy &&
+               !redPlayerII_Border.activeInHierarchy &&
+               !redPlayerIII_Border.activeInHierarchy &&
+               !redPlayerIV_Border.activeInHierarchy;
+    }
+    else
+    {
+        return !greenPlayerI_Border.activeInHierarchy &&
+               !greenPlayerII_Border.activeInHierarchy &&
+               !greenPlayerIII_Border.activeInHierarchy &&
+               !greenPlayerIV_Border.activeInHierarchy;
+    }
+} 
 
 [PunRPC]
-void MoveRedPlayerI()
+void SyncPlayersState(string turn, int diceValue,
+    bool redPlayerIBorderActive, bool redPlayerIButtonInteractable,
+    bool redPlayerIIBorderActive, bool redPlayerIIButtonInteractable,
+    bool redPlayerIIIBorderActive, bool redPlayerIIIButtonInteractable,
+    bool redPlayerIVBorderActive, bool redPlayerIVButtonInteractable,
+    bool greenPlayerIBorderActive, bool greenPlayerIButtonInteractable,
+    bool greenPlayerIIBorderActive, bool greenPlayerIIButtonInteractable,
+    bool greenPlayerIIIBorderActive, bool greenPlayerIIIButtonInteractable,
+    bool greenPlayerIVBorderActive, bool greenPlayerIVButtonInteractable)
 {
-    SoundManagerScript.playerAudioSource.Play();
+    playerTurn = turn;
+    selectDiceNumAnimation = diceValue;
+    Debug.Log("    selectDiceNumAnimation =  "  + selectDiceNumAnimation.ToString());
 
-    // Desativar bordas e botões para evitar conflitos de interação
-    redPlayerI_Border.SetActive(false);
-    redPlayerII_Border.SetActive(false);
-    redPlayerIII_Border.SetActive(false);
-    redPlayerIV_Border.SetActive(false);
+    // Sincronize os estados de borda e botão
+    redPlayerI_Border.SetActive(redPlayerIBorderActive);
+    RedPlayerI_Button.interactable = redPlayerIButtonInteractable;
+
+    redPlayerII_Border.SetActive(redPlayerIIBorderActive);
+    RedPlayerII_Button.interactable = redPlayerIIButtonInteractable;
+
+     redPlayerIII_Border.SetActive(redPlayerIIIBorderActive);
+    RedPlayerIII_Button.interactable = redPlayerIIIButtonInteractable;
+
+    redPlayerIV_Border.SetActive(redPlayerIVBorderActive);
+    RedPlayerIV_Button.interactable = redPlayerIVButtonInteractable;
+
+    greenPlayerI_Border.SetActive(greenPlayerIBorderActive);
+    GreenPlayerI_Button.interactable = greenPlayerIButtonInteractable;
+
+    greenPlayerII_Border.SetActive(greenPlayerIIBorderActive);
+    GreenPlayerII_Button.interactable = greenPlayerIIButtonInteractable;
+
+    greenPlayerIII_Border.SetActive(greenPlayerIIIBorderActive);
+    GreenPlayerIII_Button.interactable = greenPlayerIIIButtonInteractable;
+
+    greenPlayerIV_Border.SetActive(greenPlayerIVBorderActive);
+    GreenPlayerIV_Button.interactable = greenPlayerIVButtonInteractable;
+
+   
+}
+
+
+
+
+
+	//▀█▀ █▀▀▄ ░▀░ ▀▀█▀▀ ░▀░ █▀▀█ █░░ ░▀░ ▀▀█ █▀▀ 　 ▒█▀▀▄ ░▀░ █▀▀ █▀▀ 
+	//▒█░ █░░█ ▀█▀ ░░█░░ ▀█▀ █▄▄█ █░░ ▀█▀ ▄▀░ █▀▀ 　 ▒█░▒█ ▀█▀ █░░ █▀▀ 
+	//▄█▄ ▀░░▀ ▀▀▀ ░░▀░░ ▀▀▀ ▀░░▀ ▀▀▀ ▀▀▀ ▀▀▀ ▀▀▀ 　 ▒█▄▄▀ ▀▀▀ ▀▀▀ ▀▀▀ 
+
+void InitializeDice()
+{
+    DiceRollButton.interactable = true;
+	DesativarInteracaoPecas(); 
+
+	    
+
+    ConfigurarPosicaoDado();
+
+	VerificarUltrapassagem();
+
+    // Sincroniza o estado entre as máquinas para garantir o frame correto em volta das casinhas
+
+	bool vitoria = VerificarCondicaoVitoria();
+    photonView.RPC("SyncDiceState", RpcTarget.Others, playerTurn, selectDiceNumAnimation, vitoria, 
+    redPlayerI_Steps, redPlayerII_Steps, redPlayerIII_Steps, redPlayerIV_Steps, 
+    greenPlayerI_Steps, greenPlayerII_Steps, greenPlayerIII_Steps, greenPlayerIV_Steps, 
+    redPlayerI.transform.position, redPlayerII.transform.position, redPlayerIII.transform.position, redPlayerIV.transform.position,
+    greenPlayerI.transform.position, greenPlayerII.transform.position, greenPlayerIII.transform.position, greenPlayerIV.transform.position);
+
+    // Verifica se houve vitória antes de preparar o próximo turno
+  
+}
+
+private void ConfigurarPosicaoDado()
+{
+    dice1_Roll_Animation.SetActive(false);
+    dice2_Roll_Animation.SetActive(false);
+    dice3_Roll_Animation.SetActive(false);
+    dice4_Roll_Animation.SetActive(false);
+    dice5_Roll_Animation.SetActive(false);
+    dice6_Roll_Animation.SetActive(false);
+
+//se playerturn é Red, redposition, se não green
+    diceRoll.position = (playerTurn == "RED") ? redDiceRollPos.position : greenDiceRollPos.position;
+
+	
+
+}
+
+private bool VerificarCondicaoVitoria()
+{
+    if (playerTurn == "RED" && totalRedInHouse > 3)
+    {
+        redScreen.SetActive(true);
+        photonView.RPC("StartGameCompletedRoutine", RpcTarget.All);
+        playerTurn = "NONE";
+        return true;
+    }
+    else if (playerTurn == "GREEN" && totalGreenInHouse > 3)
+    {
+        greenScreen.SetActive(true);
+        photonView.RPC("StartGameCompletedRoutine", RpcTarget.All);
+        playerTurn = "NONE";
+        return true;
+    }
+    return false;
+}
+
+
+private void VerificarUltrapassagem()
+{
+    if (currentPlayerName.Contains("RED PLAYER"))
+    {
+        // Verifica se o jogador vermelho ultrapassou alguma peça verde
+        if (currentPlayer == GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName && (currentPlayer != "Star" && GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName != "Star"))
+        {
+            ProcessarUltrapassagem(greenPlayerI, ref greenPlayerI_Steps, greenPlayerI_Pos, "RED");
+        }
+        if (currentPlayer == GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName && (currentPlayer != "Star" && GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName != "Star"))
+        {
+            ProcessarUltrapassagem(greenPlayerII, ref greenPlayerII_Steps, greenPlayerII_Pos, "RED");
+        }
+        if (currentPlayer == GreenPlayerIII_Script_Multiplayer.greenPlayerIII_ColName && (currentPlayer != "Star" && GreenPlayerIII_Script_Multiplayer.greenPlayerIII_ColName != "Star"))
+        {
+            ProcessarUltrapassagem(greenPlayerIII, ref greenPlayerIII_Steps, greenPlayerIII_Pos, "RED");
+        }
+        if (currentPlayer == GreenPlayerIV_Script_Multiplayer.greenPlayerIV_ColName && (currentPlayer != "Star" && GreenPlayerIV_Script_Multiplayer.greenPlayerIV_ColName != "Star"))
+        {
+            ProcessarUltrapassagem(greenPlayerIV, ref greenPlayerIV_Steps, greenPlayerIV_Pos, "RED");
+        }
+    }
+    else if (currentPlayerName.Contains("GREEN PLAYER"))
+    {
+        // Verifica se o jogador verde ultrapassou alguma peça vermelha
+        if (currentPlayer == RedPlayerI_Script_Multiplayer.redPlayerI_ColName && (currentPlayer != "Star" && RedPlayerI_Script_Multiplayer.redPlayerI_ColName != "Star"))
+        {
+            ProcessarUltrapassagem(redPlayerI, ref redPlayerI_Steps, redPlayerI_Pos, "GREEN");
+        }
+        if (currentPlayer == RedPlayerII_Script_Multiplayer.redPlayerII_ColName && (currentPlayer != "Star" && RedPlayerII_Script_Multiplayer.redPlayerII_ColName != "Star"))
+        {
+            ProcessarUltrapassagem(redPlayerII, ref redPlayerII_Steps, redPlayerII_Pos, "GREEN");
+        }
+        if (currentPlayer == RedPlayerIII_Script_Multiplayer.redPlayerIII_ColName && (currentPlayer != "Star" && RedPlayerIII_Script_Multiplayer.redPlayerIII_ColName != "Star"))
+        {
+            ProcessarUltrapassagem(redPlayerIII, ref redPlayerIII_Steps, redPlayerIII_Pos, "GREEN");
+        }
+        if (currentPlayer == RedPlayerIV_Script_Multiplayer.redPlayerIV_ColName && (currentPlayer != "Star" && RedPlayerIV_Script_Multiplayer.redPlayerIV_ColName != "Star"))
+        {
+            ProcessarUltrapassagem(redPlayerIV, ref redPlayerIV_Steps, redPlayerIV_Pos, "GREEN");
+        }
+    }
+}
+
+private void ProcessarUltrapassagem(GameObject player, ref int playerSteps, Vector3 playerPosInicial, string playerColor)
+{
+    SoundManagerScript.dismissalAudioSource.Play();
+    player.transform.position = playerPosInicial;
+    playerSteps = 0;
+    playerTurn = playerColor;
+
+}
+
+[PunRPC]
+void SyncDiceState(string newTurn, int diceValue, bool vitoria, 
+    int redPlayerI_Steps, int redPlayerII_Steps, int redPlayerIII_Steps, int redPlayerIV_Steps,
+    int greenPlayerI_Steps, int greenPlayerII_Steps, int greenPlayerIII_Steps, int greenPlayerIV_Steps,
+    Vector3 redPlayer1_Pos, Vector3 redPlayer2_Pos, Vector3 redPlayer3_Pos, Vector3 redPlayer4_Pos,
+    Vector3 greenPlayer1_Pos, Vector3 greenPlayer2_Pos, Vector3 greenPlayer3_Pos, Vector3 greenPlayer4_Pos)
+{
+    // Atualiza o turno, valor do dado e os passos das peças
+    playerTurn = newTurn;
+    selectDiceNumAnimation = diceValue;
+    this.redPlayerI_Steps = redPlayerI_Steps;
+    this.redPlayerII_Steps = redPlayerII_Steps;
+    this.redPlayerIII_Steps = redPlayerIII_Steps;
+    this.redPlayerIV_Steps = redPlayerIV_Steps;
+    this.greenPlayerI_Steps = greenPlayerI_Steps;
+    this.greenPlayerII_Steps = greenPlayerII_Steps;
+    this.greenPlayerIII_Steps = greenPlayerIII_Steps;
+    this.greenPlayerIV_Steps = greenPlayerIV_Steps;
+
+    // Atualiza as posições das peças
+    redPlayerI.transform.position = redPlayer1_Pos;
+    redPlayerII.transform.position = redPlayer2_Pos;
+    redPlayerIII.transform.position = redPlayer3_Pos;
+    redPlayerIV.transform.position = redPlayer4_Pos;
     
+    greenPlayerI.transform.position = greenPlayer1_Pos;
+    greenPlayerII.transform.position = greenPlayer2_Pos;
+    greenPlayerIII.transform.position = greenPlayer3_Pos;
+    greenPlayerIV.transform.position = greenPlayer4_Pos;
+
+    if (vitoria)
+    {
+        // Lógica de final de jogo se alguém venceu
+       SceneManager.LoadScene("CoreMenu");
+    }
+    else
+    {
+       Debug.Log("segura aí que não acabou ainda ");
+    }
+}
+
+
+private void DesativarInteracaoPecas()
+{
+    GreenPlayerI_Button.interactable = false;
+    GreenPlayerII_Button.interactable = false;
+    GreenPlayerIII_Button.interactable = false;
+    GreenPlayerIV_Button.interactable = false;
+    greenPlayerI_Border.SetActive(false);
+    greenPlayerII_Border.SetActive(false);
+    greenPlayerIII_Border.SetActive(false);
+    greenPlayerIV_Border.SetActive(false);
+
     RedPlayerI_Button.interactable = false;
     RedPlayerII_Button.interactable = false;
     RedPlayerIII_Button.interactable = false;
     RedPlayerIV_Button.interactable = false;
+    redPlayerI_Border.SetActive(false);
+    redPlayerII_Border.SetActive(false);
+    redPlayerIII_Border.SetActive(false);
+    redPlayerIV_Border.SetActive(false);
+}
+
+
+//▒█▀▄▀█ █▀▀█ ▀█░█▀ ░▀░ █▀▄▀█ █▀▀ █▀▀▄ ▀▀█▀▀ █▀▀█ █▀▀ 
+//▒█▒█▒█ █░░█ ░█▄█░ ▀█▀ █░▀░█ █▀▀ █░░█ ░░█░░ █░░█ ▀▀█ 
+//▒█░░▒█ ▀▀▀▀ ░░▀░░ ▀▀▀ ▀░░░▀ ▀▀▀ ▀░░▀ ░░▀░░ ▀▀▀▀ ▀▀▀ 
+
+//█▀▀▄ █▀▀█ █▀▀ 　 █▀▀█ █▀▀ █▀▀ █▀▀█ █▀▀ 
+//█░░█ █▄▄█ ▀▀█ 　 █░░█ █▀▀ █░░ █▄▄█ ▀▀█ 
+//▀▀▀░ ▀░░▀ ▀▀▀ 　 █▀▀▀ ▀▀▀ ▀▀▀ ▀░░▀ ▀▀▀ 
 
 
 
-    if (playerTurn == "RED" && (redMovementBlocks.Count - redPlayerI_Steps) > selectDiceNumAnimation)
+
+public void redPlayerI_UI()
+{
+	Debug.Log("Chegou em redPlayerI_UI.");
+
+    if (playerTurn  == "RED")
     {
-        if (redPlayerI_Steps > 0) 
-			{
-				Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
 
-				for (int i = 0; i < selectDiceNumAnimation; i++) 
-				{
-					redPlayer_Path [i] = redMovementBlocks [redPlayerI_Steps + i].transform.position;
-				}
-
-				redPlayerI_Steps += selectDiceNumAnimation;			
-
-				if (selectDiceNumAnimation == 6) 
-				{
-					playerTurn = "RED";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-				} 
-				else 
-				{
-					playerTurn = "GREEN";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-                    photonView.RPC("InitializeDice", RpcTarget.All);
-				}
-			
-
-				//currentPlayer = RedPlayerI_Script_Multiplayer.redPlayerI_ColName;
-				currentPlayerName = "RED PLAYER I";
-
-				//if(redPlayerI_Steps + selectDiceNumAnimation == redMovementBlocks.Count)
-				if (redPlayer_Path.Length > 1) 
-				{
-					//redPlayerI.transform.DOPath (redPlayer_Path, 2.0f, PathType.Linear, PathMode.Full3D, 10, Color.red);
-					iTween.MoveTo (redPlayerI, iTween.Hash ("path", redPlayer_Path, 
-															"speed", 125,"time",2.0f, 
-															"easetype", "elastic", "looptype", "none", 
-															"oncomplete", "OnMoveComplete", 
-															"oncompletetarget", this.gameObject));
-				} 
-				else 
-				{
-					iTween.MoveTo (redPlayerI, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-			} 
-        else 
-			{
-				if (selectDiceNumAnimation == 6 && redPlayerI_Steps == 0) 
-				{
-					Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
-					redPlayer_Path [0] = redMovementBlocks [redPlayerI_Steps].transform.position;
-					redPlayerI_Steps += 1;
-					playerTurn = "RED";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-					//currentPlayer = RedPlayerI_Script_Multiplayer.redPlayerI_ColName;
-					currentPlayerName = "RED PLAYER I";
-					iTween.MoveTo (redPlayerI, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-			}
+        photonView.RPC("MoveRedPlayerI", RpcTarget.All);
     }
-    else
-	{
-			// Condition when Player Coin is reached successfully in House....(Actual Number of required moves to get into the House)
-			if (playerTurn == "RED" && (redMovementBlocks.Count - redPlayerI_Steps) == selectDiceNumAnimation) 
-			{
-				Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
-
-				for (int i = 0; i < selectDiceNumAnimation; i++) 
-				{
-					redPlayer_Path [i] = redMovementBlocks [redPlayerI_Steps + i].transform.position;
-				}
-
-				redPlayerI_Steps += selectDiceNumAnimation;
-
-				playerTurn = "RED";
-                photonView.RPC("SyncGameState", RpcTarget.All);
-
-				//redPlayerI_Steps = 0;
-
-				if (redPlayer_Path.Length > 1) 
-				{
-					iTween.MoveTo (redPlayerI, iTween.Hash ("path", redPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				} 
-				else 
-				{
-					iTween.MoveTo (redPlayerI, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-				totalRedInHouse += 1;
-				Debug.Log ("Cool !!");
-				RedPlayerI_Button.enabled = false;
-			}
-			else
-			{
-				Debug.Log ("You need "+  (redMovementBlocks.Count - redPlayerI_Steps).ToString() + " to enter into the house.");
-                
-
-				if(redPlayerII_Steps + redPlayerIII_Steps + redPlayerIV_Steps == 0 && selectDiceNumAnimation != 6)
-				{   playerTurn = "GREEN";
-					photonView.RPC("InitializeDice", RpcTarget.All);
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-				}
-				
-			}
-	}
-    
 }
  
  public void redPlayerII_UI()
 {
+	Debug.Log("Chegou em redPlayerII_UI.");
     if (playerTurn  == "RED")
     {
         photonView.RPC("MoveRedPlayerII", RpcTarget.All);
+    }
+}
+
+public void redPlayerIII_UI()
+{
+	Debug.Log("Chegou em redPlayerIII_UI.");
+    if (playerTurn  == "RED")
+    {
+        photonView.RPC("MoveRedPlayerIII", RpcTarget.All);
+    }
+}
+
+public void redPlayerIV_UI()
+{	Debug.Log("Chegou em redPlayerIV_UI.");
+    if (playerTurn  == "RED")
+    {
+        photonView.RPC("MoveRedPlayerIV", RpcTarget.All);
+    }
+}
+
+
+public void greenPlayerI_UI()
+{
+    Debug.Log("Tentou clickar né safado");
+    if (playerTurn  == "GREEN")
+    {
+        photonView.RPC("MoveGreenPlayerI", RpcTarget.All);
+    }
+}
+
+public void greenPlayerII_UI()
+{
+    Debug.Log("Tentou clickar né safado");
+    if (playerTurn  == "GREEN")
+    {
+        photonView.RPC("MoveGreenPlayerII", RpcTarget.All);
+    }
+}
+
+public void greenPlayerIII_UI()
+{
+    Debug.Log("Tentou clickar né safado");
+    if (playerTurn  == "GREEN")
+    {
+        photonView.RPC("MoveGreenPlayerIII", RpcTarget.All);
+    }
+}
+
+
+public void greenPlayerIV_UI()
+{
+    Debug.Log("Tentou clickar né safado");
+    if (playerTurn  == "GREEN")
+    {
+        photonView.RPC("MoveGreenPlayerIV", RpcTarget.All);
+    }
+}
+
+[PunRPC]
+void MoveRedPlayerI()
+{
+    currentPlayerName = "RED PLAYER I";
+    if (playerTurn != "RED") return;
+    // Desativa bordas e botões antes de iniciar o movimento
+    DesativarInteracaoPecas();
+	
+    // Verifica se o movimento é possível para RedPlayerI com base nos passos e condições
+    if (VerificarMovimentoPossivel(redPlayerI_Steps, selectDiceNumAnimation, redMovementBlocks))
+    {
+        // Executa o movimento
+
+        StartCoroutine(MoverPeca(redPlayerI, redPlayerI_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerI_Button, playerTurn, 
+    	(updatedSteps, updatedTurn) => {
+        redPlayerI_Steps = updatedSteps;
+        playerTurn = updatedTurn;
+    	}));
+	}
+    else
+    {
+        if(redPlayerII_Steps + redPlayerIII_Steps + redPlayerIV_Steps == 0 && selectDiceNumAnimation != 6){
+            TrocarTurno();
+            photonView.RPC("InitializeDice", RpcTarget.All);
+        }
+        else{
+            return;
+        }
     }
 }
 
@@ -729,399 +714,95 @@ void MoveRedPlayerI()
 [PunRPC]
 void MoveRedPlayerII()
 {
-    SoundManagerScript.playerAudioSource.Play();
+    currentPlayerName = "RED PLAYER II";
+    if (playerTurn != "RED") return;
+    // Desativa bordas e botões antes de iniciar o movimento
+    DesativarInteracaoPecas();
 
-    // Desativar bordas e botões para evitar conflitos de interação
-    redPlayerI_Border.SetActive(false);
-    redPlayerII_Border.SetActive(false);
-    redPlayerIII_Border.SetActive(false);
-    redPlayerIV_Border.SetActive(false);
-    
-    RedPlayerI_Button.interactable = false;
-    RedPlayerII_Button.interactable = false;
-    RedPlayerIII_Button.interactable = false;
-    RedPlayerIV_Button.interactable = false;
-
-
-
-    if (playerTurn == "RED" && (redMovementBlocks.Count - redPlayerII_Steps) > selectDiceNumAnimation)
+    // Verifica se o movimento é possível para RedPlayerI com base nos passos e condições
+    if (VerificarMovimentoPossivel(redPlayerII_Steps, selectDiceNumAnimation, redMovementBlocks))
     {
-        if (redPlayerII_Steps > 0) 
-			{
-				Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
-
-				for (int i = 0; i < selectDiceNumAnimation; i++) 
-				{
-					redPlayer_Path [i] = redMovementBlocks [redPlayerII_Steps + i].transform.position;
-				}
-
-				redPlayerII_Steps += selectDiceNumAnimation;			
-
-				if (selectDiceNumAnimation == 6) 
-				{
-					playerTurn = "RED";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-				} 
-				else 
-				{
-					playerTurn = "GREEN";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-                    photonView.RPC("InitializeDice", RpcTarget.All);
-				}
-			
-
-				//currentPlayer = RedPlayerII_Script_Multiplayer.redPlayerII_ColName;
-				currentPlayerName = "RED PLAYER II";
-
-				//if(redPlayerII_Steps + selectDiceNumAnimation == redMovementBlocks.Count)
-				if (redPlayer_Path.Length > 1) 
-				{
-					//redPlayerII.transform.DOPath (redPlayer_Path, 2.0f, PathType.Linear, PathMode.Full3D, 10, Color.red);
-					iTween.MoveTo (redPlayerII, iTween.Hash ("path", redPlayer_Path, 
-															"speed", 125,"time",2.0f, 
-															"easetype", "elastic", "looptype", "none", 
-															"oncomplete", "OnMoveComplete", 
-															"oncompletetarget", this.gameObject));
-				} 
-				else 
-				{
-					iTween.MoveTo (redPlayerII, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-			} 
-        else 
-			{
-				if (selectDiceNumAnimation == 6 && redPlayerII_Steps == 0) 
-				{
-					Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
-					redPlayer_Path [0] = redMovementBlocks [redPlayerII_Steps].transform.position;
-					redPlayerII_Steps += 1;
-					playerTurn = "RED";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-					//currentPlayer = RedPlayerII_Script_Multiplayer.redPlayerII_ColName;
-					currentPlayerName = "RED PLAYER II";
-					iTween.MoveTo (redPlayerII, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-			}
+        // Executa o movimento
+	
+        StartCoroutine(MoverPeca(redPlayerII, redPlayerII_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerII_Button, playerTurn, 
+    	(updatedSteps, updatedTurn) => {
+        redPlayerII_Steps = updatedSteps;
+        playerTurn = updatedTurn;
+    	}));
     }
     else
-	{
-			// Condition when Player Coin is reached successfully in House....(Actual Number of required moves to get into the House)
-			if (playerTurn == "RED" && (redMovementBlocks.Count - redPlayerII_Steps) == selectDiceNumAnimation) 
-			{
-				Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
-
-				for (int i = 0; i < selectDiceNumAnimation; i++) 
-				{
-					redPlayer_Path [i] = redMovementBlocks [redPlayerII_Steps + i].transform.position;
-				}
-
-				redPlayerII_Steps += selectDiceNumAnimation;
-
-				playerTurn = "RED";
-                photonView.RPC("SyncGameState", RpcTarget.All);
-
-				//redPlayerII_Steps = 0;
-
-				if (redPlayer_Path.Length > 1) 
-				{
-					iTween.MoveTo (redPlayerII, iTween.Hash ("path", redPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				} 
-				else 
-				{
-					iTween.MoveTo (redPlayerII, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-				totalRedInHouse += 1;
-				Debug.Log ("Cool !!");
-				RedPlayerII_Button.enabled = false;
-			}
-			else
-			{
-				Debug.Log ("You need "+  (redMovementBlocks.Count - redPlayerII_Steps).ToString() + " to enter into the house.");
-                
-
-				if(redPlayerI_Steps + redPlayerIII_Steps + redPlayerIV_Steps == 0 && selectDiceNumAnimation != 6)
-				{   playerTurn = "GREEN";
-					photonView.RPC("InitializeDice", RpcTarget.All);
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-				}
-			}
-	}
-    
-}
-
-public void redPlayerIII_UI()
-{
-    if (playerTurn  == "RED")
     {
-        photonView.RPC("MoveRedPlayerIII", RpcTarget.All);
+        if(redPlayerI_Steps + redPlayerIII_Steps + redPlayerIV_Steps == 0 && selectDiceNumAnimation != 6){
+            TrocarTurno();
+            photonView.RPC("InitializeDice", RpcTarget.All);
+        }
+        else{
+            return;
+        }
     }
 }
-
-
 
 [PunRPC]
 void MoveRedPlayerIII()
 {
-    SoundManagerScript.playerAudioSource.Play();
+    currentPlayerName = "RED PLAYER III";
+    if (playerTurn != "RED") return;
+    // Desativa bordas e botões antes de iniciar o movimento
+    DesativarInteracaoPecas();
 
-    // Desativar bordas e botões para evitar conflitos de interação
-    redPlayerI_Border.SetActive(false);
-    redPlayerII_Border.SetActive(false);
-    redPlayerIII_Border.SetActive(false);
-    redPlayerIV_Border.SetActive(false);
-    
-    RedPlayerI_Button.interactable = false;
-    RedPlayerII_Button.interactable = false;
-    RedPlayerIII_Button.interactable = false;
-    RedPlayerIV_Button.interactable = false;
-
-
-
-    if (playerTurn == "RED" && (redMovementBlocks.Count - redPlayerIII_Steps) > selectDiceNumAnimation)
+    // Verifica se o movimento é possível para RedPlayerI com base nos passos e condições
+    if (VerificarMovimentoPossivel(redPlayerIII_Steps, selectDiceNumAnimation, redMovementBlocks))
     {
-        if (redPlayerIII_Steps > 0) 
-			{
-				Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
+        // Executa o movimento
+	
+        StartCoroutine(MoverPeca(redPlayerIII, redPlayerIII_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerIII_Button, playerTurn, 
+    	(updatedSteps, updatedTurn) => {
+        redPlayerIII_Steps = updatedSteps;
+        playerTurn = updatedTurn;
+    	}));
 
-				for (int i = 0; i < selectDiceNumAnimation; i++) 
-				{
-					redPlayer_Path [i] = redMovementBlocks [redPlayerIII_Steps + i].transform.position;
-				}
-
-				redPlayerIII_Steps += selectDiceNumAnimation;			
-
-				if (selectDiceNumAnimation == 6) 
-				{
-					playerTurn = "RED";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-				} 
-				else 
-				{
-					playerTurn = "GREEN";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-                    photonView.RPC("InitializeDice", RpcTarget.All);
-				}
-			
-
-				//currentPlayer = RedPlayerIII_Script_Multiplayer.redPlayerI_ColName;
-				currentPlayerName = "RED PLAYER III";
-
-				//if(redPlayerIII_Steps + selectDiceNumAnimation == redMovementBlocks.Count)
-				if (redPlayer_Path.Length > 1) 
-				{
-					//redPlayerIII.transform.DOPath (redPlayer_Path, 2.0f, PathType.Linear, PathMode.Full3D, 10, Color.red);
-					iTween.MoveTo (redPlayerIII, iTween.Hash ("path", redPlayer_Path, 
-															"speed", 125,"time",2.0f, 
-															"easetype", "elastic", "looptype", "none", 
-															"oncomplete", "OnMoveComplete", 
-															"oncompletetarget", this.gameObject));
-				} 
-				else 
-				{
-					iTween.MoveTo (redPlayerIII, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-			} 
-        else 
-			{
-				if (selectDiceNumAnimation == 6 && redPlayerIII_Steps == 0) 
-				{
-					Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
-					redPlayer_Path [0] = redMovementBlocks [redPlayerIII_Steps].transform.position;
-					redPlayerIII_Steps += 1;
-					playerTurn = "RED";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-					//currentPlayer = RedPlayerIII_Script_Multiplayer.redPlayerIII_ColName;
-					currentPlayerName = "RED PLAYER III";
-					iTween.MoveTo (redPlayerIII, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-			}
     }
     else
-	{
-			// Condition when Player Coin is reached successfully in House....(Actual Number of required moves to get into the House)
-			if (playerTurn == "RED" && (redMovementBlocks.Count - redPlayerIII_Steps) == selectDiceNumAnimation) 
-			{
-				Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
-
-				for (int i = 0; i < selectDiceNumAnimation; i++) 
-				{
-					redPlayer_Path [i] = redMovementBlocks [redPlayerIII_Steps + i].transform.position;
-				}
-
-				redPlayerIII_Steps += selectDiceNumAnimation;
-
-				playerTurn = "RED";
-                photonView.RPC("SyncGameState", RpcTarget.All);
-
-				//redPlayerIII_Steps = 0;
-
-				if (redPlayer_Path.Length > 1) 
-				{
-					iTween.MoveTo (redPlayerIII, iTween.Hash ("path", redPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				} 
-				else 
-				{
-					iTween.MoveTo (redPlayerIII, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-				totalRedInHouse += 1;
-				Debug.Log ("Cool !!");
-				RedPlayerIII_Button.enabled = false;
-			}
-			else
-			{
-				Debug.Log ("You need "+  (redMovementBlocks.Count - redPlayerIII_Steps).ToString() + " to enter into the house.");
-                
-
-				if(redPlayerI_Steps + redPlayerII_Steps + redPlayerIV_Steps == 0 && selectDiceNumAnimation != 6)
-				{   playerTurn = "GREEN";
-					photonView.RPC("InitializeDice", RpcTarget.All);
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-				}
-			}
-	}
-    
-}
-
-
-public void redPlayerIV_UI()
-{
-    if (playerTurn  == "RED")
     {
-        photonView.RPC("MoveRedPlayerIV", RpcTarget.All);
+        if(redPlayerI_Steps + redPlayerII_Steps + redPlayerIV_Steps == 0 && selectDiceNumAnimation != 6){
+            TrocarTurno();
+            photonView.RPC("InitializeDice", RpcTarget.All);
+        }
+        else{
+            return;
+        }
     }
 }
-
-
 
 [PunRPC]
 void MoveRedPlayerIV()
 {
-    SoundManagerScript.playerAudioSource.Play();
+    currentPlayerName = "RED PLAYER I";
+    if (playerTurn != "RED") return;
+    // Desativa bordas e botões antes de iniciar o movimento
+    DesativarInteracaoPecas();
 
-    // Desativar bordas e botões para evitar conflitos de interação
-    redPlayerI_Border.SetActive(false);
-    redPlayerII_Border.SetActive(false);
-    redPlayerIII_Border.SetActive(false);
-    redPlayerIV_Border.SetActive(false);
-    
-    RedPlayerI_Button.interactable = false;
-    RedPlayerII_Button.interactable = false;
-    RedPlayerIII_Button.interactable = false;
-    RedPlayerIV_Button.interactable = false;
-
-
-
-    if (playerTurn == "RED" && (redMovementBlocks.Count - redPlayerIV_Steps) > selectDiceNumAnimation)
+    // Verifica se o movimento é possível para RedPlayerI com base nos passos e condições
+    if (VerificarMovimentoPossivel(redPlayerI_Steps, selectDiceNumAnimation, redMovementBlocks))
     {
-        if (redPlayerIV_Steps > 0) 
-			{
-				Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
+        // Executa o movimento
+		
+         StartCoroutine(MoverPeca(redPlayerIV, redPlayerIV_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerIV_Button, playerTurn, 
+    	(updatedSteps, updatedTurn) => {
+        redPlayerIV_Steps = updatedSteps;
+        playerTurn = updatedTurn;
+    	}));
 
-				for (int i = 0; i < selectDiceNumAnimation; i++) 
-				{
-					redPlayer_Path [i] = redMovementBlocks [redPlayerIV_Steps + i].transform.position;
-				}
-
-				redPlayerIV_Steps += selectDiceNumAnimation;			
-
-				if (selectDiceNumAnimation == 6) 
-				{
-					playerTurn = "RED";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-				} 
-				else 
-				{
-					playerTurn = "GREEN";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-                    photonView.RPC("InitializeDice", RpcTarget.All);
-				}
-			
-
-				//currentPlayer = RedPlayerIV_Script_Multiplayer.redPlayerI_ColName;
-				currentPlayerName = "RED PLAYER IV";
-
-				//if(redPlayerIV_Steps + selectDiceNumAnimation == redMovementBlocks.Count)
-				if (redPlayer_Path.Length > 1) 
-				{
-					//redPlayerIV.transform.DOPath (redPlayer_Path, 2.0f, PathType.Linear, PathMode.Full3D, 10, Color.red);
-					iTween.MoveTo (redPlayerIV, iTween.Hash ("path", redPlayer_Path, 
-															"speed", 125,"time",2.0f, 
-															"easetype", "elastic", "looptype", "none", 
-															"oncomplete", "OnMoveComplete", 
-															"oncompletetarget", this.gameObject));
-				} 
-				else 
-				{
-					iTween.MoveTo (redPlayerIV, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-			} 
-        else 
-			{
-				if (selectDiceNumAnimation == 6 && redPlayerIV_Steps == 0) 
-				{
-					Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
-					redPlayer_Path [0] = redMovementBlocks [redPlayerIV_Steps].transform.position;
-					redPlayerIV_Steps += 1;
-					playerTurn = "RED";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-					//currentPlayer = RedPlayerIV_Script_Multiplayer.redPlayerIV_ColName;
-					currentPlayerName = "RED PLAYER IV";
-					iTween.MoveTo (redPlayerIV, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-			}
     }
     else
-	{
-			// Condition when Player Coin is reached successfully in House....(Actual Number of required moves to get into the House)
-			if (playerTurn == "RED" && (redMovementBlocks.Count - redPlayerIV_Steps) == selectDiceNumAnimation) 
-			{
-				Vector3[] redPlayer_Path = new Vector3[selectDiceNumAnimation];
-
-				for (int i = 0; i < selectDiceNumAnimation; i++) 
-				{
-					redPlayer_Path [i] = redMovementBlocks [redPlayerIV_Steps + i].transform.position;
-				}
-
-				redPlayerIV_Steps += selectDiceNumAnimation;
-
-				playerTurn = "RED";
-                photonView.RPC("SyncGameState", RpcTarget.All);
-
-				//redPlayerIV_Steps = 0;
-
-				if (redPlayer_Path.Length > 1) 
-				{
-					iTween.MoveTo (redPlayerIV, iTween.Hash ("path", redPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				} 
-				else 
-				{
-					iTween.MoveTo (redPlayerIV, iTween.Hash ("position", redPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-				totalRedInHouse += 1;
-				Debug.Log ("Cool !!");
-				RedPlayerIV_Button.enabled = false;
-			}
-			else
-			{
-				Debug.Log ("You need "+  (redMovementBlocks.Count - redPlayerIV_Steps).ToString() + " to enter into the house.");
-                
-
-				if(redPlayerI_Steps + redPlayerII_Steps + redPlayerIII_Steps == 0 && selectDiceNumAnimation != 6)
-				{   playerTurn = "GREEN";
-					photonView.RPC("InitializeDice", RpcTarget.All);
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-				}
-			}
-	}
-    
-}
-
-
-public void greenPlayerI_UI()
-{
-    if (playerTurn  == "GREEN")
     {
-        photonView.RPC("MoveGreenPlayerI", RpcTarget.All);
+        if(redPlayerI_Steps + redPlayerII_Steps + redPlayerIII_Steps == 0 && selectDiceNumAnimation != 6){
+            TrocarTurno();
+            photonView.RPC("InitializeDice", RpcTarget.All);
+        }
+        else{
+            return;
+        }
     }
 }
 
@@ -1130,523 +811,220 @@ public void greenPlayerI_UI()
 [PunRPC]
 void MoveGreenPlayerI()
 {
-    SoundManagerScript.playerAudioSource.Play();
+    currentPlayerName = "GREEN PLAYER I";
+    if (playerTurn != "GREEN") return;
+    // Desativa bordas e botões antes de iniciar o movimento
+    DesativarInteracaoPecas();
 
-    // Desativar bordas e botões para evitar conflitos de interação
-    greenPlayerI_Border.SetActive(false);
-    greenPlayerII_Border.SetActive(false);
-    greenPlayerIII_Border.SetActive(false);
-    greenPlayerIV_Border.SetActive(false);
-    
-    GreenPlayerI_Button.interactable = false;
-    GreenPlayerII_Button.interactable = false;
-    GreenPlayerIII_Button.interactable = false;
-    GreenPlayerIV_Button.interactable = false;
-
-
-
-    if (playerTurn == "GREEN" && (greenMovementBlocks.Count - greenPlayerI_Steps) > selectDiceNumAnimation)
+    // Verifica se o movimento é possível para GreenPlayerI com base nos passos e condições
+    if (VerificarMovimentoPossivel(greenPlayerI_Steps, selectDiceNumAnimation, greenMovementBlocks))
     {
-        if (greenPlayerI_Steps > 0) 
-			{
-				Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
-
-				for (int i = 0; i < selectDiceNumAnimation; i++) 
-				{
-					greenPlayer_Path [i] = greenMovementBlocks [greenPlayerI_Steps + i].transform.position;
-				}
-
-				greenPlayerI_Steps += selectDiceNumAnimation;			
-
-				if (selectDiceNumAnimation == 6) 
-				{
-					playerTurn = "GREEN";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-				} 
-				else 
-				{
-					playerTurn = "GREEN";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-                    photonView.RPC("InitializeDice", RpcTarget.All);
-				}
-			
-
-				//currentPlayer = GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName;
-				currentPlayerName = "GREEN PLAYER I";
-
-				//if(greenPlayerI_Steps + selectDiceNumAnimation == greenMovementBlocks.Count)
-				if (greenPlayer_Path.Length > 1) 
-				{
-					//greenPlayerI.transform.DOPath (greenPlayer_Path, 2.0f, PathType.Linear, PathMode.Full3D, 10, Color.green);
-					iTween.MoveTo (greenPlayerI, iTween.Hash ("path", greenPlayer_Path, 
-															"speed", 125,"time",2.0f, 
-															"easetype", "elastic", "looptype", "none", 
-															"oncomplete", "OnMoveComplete", 
-															"oncompletetarget", this.gameObject));
-				} 
-				else 
-				{
-					iTween.MoveTo (greenPlayerI, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-			} 
-        else 
-			{
-				if (selectDiceNumAnimation == 6 && greenPlayerI_Steps == 0) 
-				{
-					Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
-					greenPlayer_Path [0] = greenMovementBlocks [greenPlayerI_Steps].transform.position;
-					greenPlayerI_Steps += 1;
-					playerTurn = "GREEN";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-					//currentPlayer = GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName;
-					currentPlayerName = "GREEN PLAYER I";
-					iTween.MoveTo (greenPlayerI, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-			}
+        // Executa o movimento
+        StartCoroutine(MoverPeca(greenPlayerI, greenPlayerI_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerI_Button, playerTurn, 
+    	(updatedSteps, updatedTurn) => {
+        greenPlayerI_Steps = updatedSteps;
+        playerTurn = updatedTurn;
+    	}));
     }
     else
-	{
-			// Condition when Player Coin is reached successfully in House....(Actual Number of requigreen moves to get into the House)
-			if (playerTurn == "GREEN" && (greenMovementBlocks.Count - greenPlayerI_Steps) == selectDiceNumAnimation) 
-			{
-				Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
-
-				for (int i = 0; i < selectDiceNumAnimation; i++) 
-				{
-					greenPlayer_Path [i] = greenMovementBlocks [greenPlayerI_Steps + i].transform.position;
-				}
-
-				greenPlayerI_Steps += selectDiceNumAnimation;
-
-				playerTurn = "GREEN";
-                photonView.RPC("SyncGameState", RpcTarget.All);
-
-				//greenPlayerI_Steps = 0;
-
-				if (greenPlayer_Path.Length > 1) 
-				{
-					iTween.MoveTo (greenPlayerI, iTween.Hash ("path", greenPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				} 
-				else 
-				{
-					iTween.MoveTo (greenPlayerI, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-				totalGreenInHouse += 1;
-				Debug.Log ("Cool !!");
-				GreenPlayerI_Button.enabled = false;
-			}
-			else
-			{
-				Debug.Log ("You need "+  (greenMovementBlocks.Count - greenPlayerI_Steps).ToString() + " to enter into the house.");
-                
-
-				if(greenPlayerII_Steps + greenPlayerIII_Steps + greenPlayerIV_Steps == 0 && selectDiceNumAnimation != 6)
-				{   playerTurn = "GREEN";
-					photonView.RPC("InitializeDice", RpcTarget.All);
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-				}
-			}
-	}
-    
-}
-
-public void greenPlayerII_UI()
-{
-    if (playerTurn  == "GREEN")
     {
-        photonView.RPC("MoveGreenPlayerII", RpcTarget.All);
+        if(greenPlayerII_Steps + greenPlayerIII_Steps + greenPlayerIV_Steps == 0 && selectDiceNumAnimation != 6){
+            TrocarTurno();
+            photonView.RPC("InitializeDice", RpcTarget.All);
+        }
+        else{
+            return;
+        }
     }
 }
-
 
 
 [PunRPC]
 void MoveGreenPlayerII()
 {
-    SoundManagerScript.playerAudioSource.Play();
+    currentPlayerName = "GREEN PLAYER II";
+    if (playerTurn != "GREEN") return;
+    // Desativa bordas e botões antes de iniciar o movimento
+    DesativarInteracaoPecas();
 
-    // Desativar bordas e botões para evitar conflitos de interação
-    greenPlayerI_Border.SetActive(false);
-    greenPlayerII_Border.SetActive(false);
-    greenPlayerIII_Border.SetActive(false);
-    greenPlayerIV_Border.SetActive(false);
-    
-    GreenPlayerI_Button.interactable = false;
-    GreenPlayerII_Button.interactable = false;
-    GreenPlayerIII_Button.interactable = false;
-    GreenPlayerIV_Button.interactable = false;
-
-
-
-    if (playerTurn == "GREEN" && (greenMovementBlocks.Count - greenPlayerII_Steps) > selectDiceNumAnimation)
+    // Verifica se o movimento é possível para GreenPlayerI com base nos passos e condições
+    if (VerificarMovimentoPossivel(greenPlayerII_Steps, selectDiceNumAnimation, greenMovementBlocks))
     {
-        if (greenPlayerII_Steps > 0) 
-			{
-				Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
-
-				for (int i = 0; i < selectDiceNumAnimation; i++) 
-				{
-					greenPlayer_Path [i] = greenMovementBlocks [greenPlayerII_Steps + i].transform.position;
-				}
-
-				greenPlayerII_Steps += selectDiceNumAnimation;			
-
-				if (selectDiceNumAnimation == 6) 
-				{
-					playerTurn = "GREEN";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-				} 
-				else 
-				{
-					playerTurn = "GREEN";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-                    photonView.RPC("InitializeDice", RpcTarget.All);
-				}
-			
-
-				//currentPlayer = GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName;
-				currentPlayerName = "GREEN PLAYER II";
-
-				//if(greenPlayerII_Steps + selectDiceNumAnimation == greenMovementBlocks.Count)
-				if (greenPlayer_Path.Length > 1) 
-				{
-					//greenPlayerII.transform.DOPath (greenPlayer_Path, 2.0f, PathType.Linear, PathMode.Full3D, 10, Color.green);
-					iTween.MoveTo (greenPlayerII, iTween.Hash ("path", greenPlayer_Path, 
-															"speed", 125,"time",2.0f, 
-															"easetype", "elastic", "looptype", "none", 
-															"oncomplete", "OnMoveComplete", 
-															"oncompletetarget", this.gameObject));
-				} 
-				else 
-				{
-					iTween.MoveTo (greenPlayerII, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-			} 
-        else 
-			{
-				if (selectDiceNumAnimation == 6 && greenPlayerII_Steps == 0) 
-				{
-					Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
-					greenPlayer_Path [0] = greenMovementBlocks [greenPlayerII_Steps].transform.position;
-					greenPlayerII_Steps += 1;
-					playerTurn = "GREEN";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-					//currentPlayer = GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName;
-					currentPlayerName = "GREEN PLAYER II";
-					iTween.MoveTo (greenPlayerII, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-			}
+        // Executa o movimento
+          StartCoroutine(MoverPeca(greenPlayerII, greenPlayerII_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerII_Button, playerTurn, 
+    	(updatedSteps, updatedTurn) => {
+        greenPlayerII_Steps = updatedSteps;
+        playerTurn = updatedTurn;
+    	}));
+		
     }
     else
-	{
-			// Condition when Player Coin is reached successfully in House....(Actual Number of requigreen moves to get into the House)
-			if (playerTurn == "GREEN" && (greenMovementBlocks.Count - greenPlayerII_Steps) == selectDiceNumAnimation) 
-			{
-				Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
-
-				for (int i = 0; i < selectDiceNumAnimation; i++) 
-				{
-					greenPlayer_Path [i] = greenMovementBlocks [greenPlayerII_Steps + i].transform.position;
-				}
-
-				greenPlayerII_Steps += selectDiceNumAnimation;
-
-				playerTurn = "GREEN";
-                photonView.RPC("SyncGameState", RpcTarget.All);
-
-				//greenPlayerII_Steps = 0;
-
-				if (greenPlayer_Path.Length > 1) 
-				{
-					iTween.MoveTo (greenPlayerII, iTween.Hash ("path", greenPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				} 
-				else 
-				{
-					iTween.MoveTo (greenPlayerII, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-				totalGreenInHouse += 1;
-				Debug.Log ("Cool !!");
-				GreenPlayerII_Button.enabled = false;
-			}
-			else
-			{
-				Debug.Log ("You need "+  (greenMovementBlocks.Count - greenPlayerII_Steps).ToString() + " to enter into the house.");
-                
-
-				if(greenPlayerI_Steps + greenPlayerIII_Steps + greenPlayerIV_Steps == 0 && selectDiceNumAnimation != 6)
-				{   playerTurn = "GREEN";
-					photonView.RPC("InitializeDice", RpcTarget.All);
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-				}
-			}
-	}
-    
-}
-
-public void greenPlayerIII_UI()
-{
-    if (playerTurn  == "GREEN")
     {
-        photonView.RPC("MoveGreenPlayerIII", RpcTarget.All);
+        if(greenPlayerI_Steps + greenPlayerIII_Steps + greenPlayerIV_Steps == 0 && selectDiceNumAnimation != 6){
+            TrocarTurno();
+            photonView.RPC("InitializeDice", RpcTarget.All);
+        }
+        else{
+            return;
+        }
     }
 }
-
-
 
 [PunRPC]
 void MoveGreenPlayerIII()
 {
-    SoundManagerScript.playerAudioSource.Play();
+    currentPlayerName = "GREEN PLAYER III";
+    if (playerTurn != "GREEN") return;
+    // Desativa bordas e botões antes de iniciar o movimento
+    DesativarInteracaoPecas();
 
-    // Desativar bordas e botões para evitar conflitos de interação
-    greenPlayerI_Border.SetActive(false);
-    greenPlayerII_Border.SetActive(false);
-    greenPlayerIII_Border.SetActive(false);
-    greenPlayerIV_Border.SetActive(false);
-    
-    GreenPlayerI_Button.interactable = false;
-    GreenPlayerII_Button.interactable = false;
-    GreenPlayerIII_Button.interactable = false;
-    GreenPlayerIV_Button.interactable = false;
-
-
-
-    if (playerTurn == "GREEN" && (greenMovementBlocks.Count - greenPlayerIII_Steps) > selectDiceNumAnimation)
+    // Verifica se o movimento é possível para GreenPlayerI com base nos passos e condições
+    if (VerificarMovimentoPossivel(greenPlayerIII_Steps, selectDiceNumAnimation, greenMovementBlocks))
     {
-        if (greenPlayerIII_Steps > 0) 
-			{
-				Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
-
-				for (int i = 0; i < selectDiceNumAnimation; i++) 
-				{
-					greenPlayer_Path [i] = greenMovementBlocks [greenPlayerIII_Steps + i].transform.position;
-				}
-
-				greenPlayerIII_Steps += selectDiceNumAnimation;			
-
-				if (selectDiceNumAnimation == 6) 
-				{
-					playerTurn = "GREEN";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-				} 
-				else 
-				{
-					playerTurn = "GREEN";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-                    photonView.RPC("InitializeDice", RpcTarget.All);
-				}
-			
-
-				//currentPlayer = GreenPlayerIII_Script_Multiplayer.greenPlayerI_ColName;
-				currentPlayerName = "GREEN PLAYER III";
-
-				//if(greenPlayerIII_Steps + selectDiceNumAnimation == greenMovementBlocks.Count)
-				if (greenPlayer_Path.Length > 1) 
-				{
-					//greenPlayerIII.transform.DOPath (greenPlayer_Path, 2.0f, PathType.Linear, PathMode.Full3D, 10, Color.green);
-					iTween.MoveTo (greenPlayerIII, iTween.Hash ("path", greenPlayer_Path, 
-															"speed", 125,"time",2.0f, 
-															"easetype", "elastic", "looptype", "none", 
-															"oncomplete", "OnMoveComplete", 
-															"oncompletetarget", this.gameObject));
-				} 
-				else 
-				{
-					iTween.MoveTo (greenPlayerIII, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-			} 
-        else 
-			{
-				if (selectDiceNumAnimation == 6 && greenPlayerIII_Steps == 0) 
-				{
-					Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
-					greenPlayer_Path [0] = greenMovementBlocks [greenPlayerIII_Steps].transform.position;
-					greenPlayerIII_Steps += 1;
-					playerTurn = "GREEN";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-					//currentPlayer = GreenPlayerIII_Script_Multiplayer.greenPlayerIII_ColName;
-					currentPlayerName = "GREEN PLAYER III";
-					iTween.MoveTo (greenPlayerIII, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-			}
+        // Executa o movimento
+          StartCoroutine(MoverPeca(greenPlayerIII, greenPlayerIII_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerIII_Button, playerTurn, 
+    	(updatedSteps, updatedTurn) => {
+        greenPlayerIII_Steps = updatedSteps;
+        playerTurn = updatedTurn;
+    	}));
     }
     else
-	{
-			// Condition when Player Coin is reached successfully in House....(Actual Number of requigreen moves to get into the House)
-			if (playerTurn == "GREEN" && (greenMovementBlocks.Count - greenPlayerIII_Steps) == selectDiceNumAnimation) 
-			{
-				Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
-
-				for (int i = 0; i < selectDiceNumAnimation; i++) 
-				{
-					greenPlayer_Path [i] = greenMovementBlocks [greenPlayerIII_Steps + i].transform.position;
-				}
-
-				greenPlayerIII_Steps += selectDiceNumAnimation;
-
-				playerTurn = "GREEN";
-                photonView.RPC("SyncGameState", RpcTarget.All);
-
-				//greenPlayerIII_Steps = 0;
-
-				if (greenPlayer_Path.Length > 1) 
-				{
-					iTween.MoveTo (greenPlayerIII, iTween.Hash ("path", greenPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				} 
-				else 
-				{
-					iTween.MoveTo (greenPlayerIII, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-				totalGreenInHouse += 1;
-				Debug.Log ("Cool !!");
-				GreenPlayerIII_Button.enabled = false;
-			}
-			else
-			{
-				Debug.Log ("You need "+  (greenMovementBlocks.Count - greenPlayerIII_Steps).ToString() + " to enter into the house.");
-                
-
-				if(greenPlayerI_Steps + greenPlayerII_Steps + greenPlayerIV_Steps == 0 && selectDiceNumAnimation != 6)
-				{   playerTurn = "GREEN";
-					photonView.RPC("InitializeDice", RpcTarget.All);
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-				}
-			}
-	}
-    
-}
-
-public void greenPlayerIV_UI()
-{
-    if (playerTurn  == "GREEN")
     {
-        photonView.RPC("MoveGreenPlayerIV", RpcTarget.All);
+        if(greenPlayerI_Steps + greenPlayerII_Steps + greenPlayerIV_Steps == 0 && selectDiceNumAnimation != 6){
+            TrocarTurno();
+            photonView.RPC("InitializeDice", RpcTarget.All);
+        }
+        else{
+            return;
+        }
     }
 }
-
-
 
 [PunRPC]
 void MoveGreenPlayerIV()
 {
-    SoundManagerScript.playerAudioSource.Play();
+    currentPlayerName = "GREEN PLAYER I";
+    if (playerTurn != "GREEN") return;
+    // Desativa bordas e botões antes de iniciar o movimento
+    DesativarInteracaoPecas();
 
-    // Desativar bordas e botões para evitar conflitos de interação
-    greenPlayerI_Border.SetActive(false);
-    greenPlayerII_Border.SetActive(false);
-    greenPlayerIII_Border.SetActive(false);
-    greenPlayerIV_Border.SetActive(false);
-    
-    GreenPlayerI_Button.interactable = false;
-    GreenPlayerII_Button.interactable = false;
-    GreenPlayerIII_Button.interactable = false;
-    GreenPlayerIV_Button.interactable = false;
-
-
-
-    if (playerTurn == "GREEN" && (greenMovementBlocks.Count - greenPlayerIV_Steps) > selectDiceNumAnimation)
+    // Verifica se o movimento é possível para GreenPlayerI com base nos passos e condições
+    if (VerificarMovimentoPossivel(greenPlayerI_Steps, selectDiceNumAnimation, greenMovementBlocks))
     {
-        if (greenPlayerIV_Steps > 0) 
-			{
-				Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
+        // Executa o movimento
+          StartCoroutine(MoverPeca(greenPlayerIV, greenPlayerIV_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerIV_Button, playerTurn, 
+    	(updatedSteps, updatedTurn) => {
+        greenPlayerIV_Steps = updatedSteps;
+        playerTurn = updatedTurn;
+    	}));
+	}
+    else
+    {
+        if(greenPlayerI_Steps + greenPlayerII_Steps + greenPlayerIII_Steps == 0 && selectDiceNumAnimation != 6){
+            TrocarTurno();
+            photonView.RPC("InitializeDice", RpcTarget.All);
+        }
+        else{
+            return;
+        }
+    }
+}
 
-				for (int i = 0; i < selectDiceNumAnimation; i++) 
-				{
-					greenPlayer_Path [i] = greenMovementBlocks [greenPlayerIV_Steps + i].transform.position;
-				}
 
-				greenPlayerIV_Steps += selectDiceNumAnimation;			
+// Verifica se a peça pode se mover com base na posição e passos
+bool VerificarMovimentoPossivel(int playerSteps, int diceValue, List<GameObject> movementBlocks)
+{
+    if (playerSteps == 0 && diceValue != 6)
+    {
+        return false;
+    }
+    // Verifica se os passos restantes permitem o movimento com base no total de blocos e posição atual
+    return (movementBlocks.Count - playerSteps) >= diceValue;
+}
 
-				if (selectDiceNumAnimation == 6) 
-				{
-					playerTurn = "GREEN";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-				} 
-				else 
-				{
-					playerTurn = "GREEN";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-                    photonView.RPC("InitializeDice", RpcTarget.All);
-				}
-			
+// Coroutine para mover a peça
+IEnumerator MoverPeca(GameObject player, int playerSteps, int diceValue, List<GameObject> movementBlocks, Button playerButton, string color, System.Action<int, string> callback)
+{
+    int stepsToMove = diceValue;
+    Vector3[] Player_Path = new Vector3[stepsToMove];
 
-				//currentPlayer = GreenPlayerIV_Script_Multiplayer.greenPlayerI_ColName;
-				currentPlayerName = "GREEN PLAYER IV";
+    if (playerSteps > 0)
+    {
+        for (int i = 0; i < stepsToMove; i++)
+        {
+            Player_Path[i] = movementBlocks[playerSteps + i].transform.position;
+        }
+        playerSteps += stepsToMove;
 
-				//if(greenPlayerIV_Steps + selectDiceNumAnimation == greenMovementBlocks.Count)
-				if (greenPlayer_Path.Length > 1) 
-				{
-					//greenPlayerIV.transform.DOPath (greenPlayer_Path, 2.0f, PathType.Linear, PathMode.Full3D, 10, Color.green);
-					iTween.MoveTo (greenPlayerIV, iTween.Hash ("path", greenPlayer_Path, 
-															"speed", 125,"time",2.0f, 
-															"easetype", "elastic", "looptype", "none", 
-															"oncomplete", "OnMoveComplete", 
-															"oncompletetarget", this.gameObject));
-				} 
-				else 
-				{
-					iTween.MoveTo (greenPlayerIV, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-			} 
-        else 
-			{
-				if (selectDiceNumAnimation == 6 && greenPlayerIV_Steps == 0) 
-				{
-					Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
-					greenPlayer_Path [0] = greenMovementBlocks [greenPlayerIV_Steps].transform.position;
-					greenPlayerIV_Steps += 1;
-					playerTurn = "GREEN";
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-					//currentPlayer = GreenPlayerIV_Script_Multiplayer.greenPlayerIV_ColName;
-					currentPlayerName = "GREEN PLAYER IV";
-					iTween.MoveTo (greenPlayerIV, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-			}
+        if ((movementBlocks.Count - playerSteps) == 0)
+        {
+            playerTurn = "RED"; // Manter o turno no vermelho, pois a peça chegou na casa
+            totalRedInHouse += 1;
+            playerButton.interactable = false;
+        }
+        else if (diceValue != 6)
+        {
+            TrocarTurno();  // Troca de turno se não tirou 6 no dado
+        }
+
+        // Movimento com iTween
+        if (Player_Path.Length > 1)
+        {
+            iTween.MoveTo(player, iTween.Hash("path", Player_Path, "speed", 125, "time", 2.0f, "easetype", "elastic", "looptype", "none"));
+        }
+        else
+        {
+            iTween.MoveTo(player, iTween.Hash("position", Player_Path[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "looptype", "none"));
+        }
+        yield return new WaitForSeconds(2.0f); // Espera o movimento completar
     }
     else
-	{
-			// Condition when Player Coin is reached successfully in House....(Actual Number of requigreen moves to get into the House)
-			if (playerTurn == "GREEN" && (greenMovementBlocks.Count - greenPlayerIV_Steps) == selectDiceNumAnimation) 
-			{
-				Vector3[] greenPlayer_Path = new Vector3[selectDiceNumAnimation];
-
-				for (int i = 0; i < selectDiceNumAnimation; i++) 
-				{
-					greenPlayer_Path [i] = greenMovementBlocks [greenPlayerIV_Steps + i].transform.position;
-				}
-
-				greenPlayerIV_Steps += selectDiceNumAnimation;
-
-				playerTurn = "GREEN";
-                photonView.RPC("SyncGameState", RpcTarget.All);
-
-				//greenPlayerIV_Steps = 0;
-
-				if (greenPlayer_Path.Length > 1) 
-				{
-					iTween.MoveTo (greenPlayerIV, iTween.Hash ("path", greenPlayer_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				} 
-				else 
-				{
-					iTween.MoveTo (greenPlayerIV, iTween.Hash ("position", greenPlayer_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "OnMoveComplete", "oncompletetarget", this.gameObject));
-				}
-				totalGreenInHouse += 1;
-				Debug.Log ("Cool !!");
-				GreenPlayerIV_Button.enabled = false;
-			}
-			else
-			{
-				Debug.Log ("You need "+  (greenMovementBlocks.Count - greenPlayerIV_Steps).ToString() + " to enter into the house.");
-                
-
-				if(greenPlayerI_Steps + greenPlayerII_Steps + greenPlayerIII_Steps == 0 && selectDiceNumAnimation != 6)
-				{   playerTurn = "GREEN";
-					photonView.RPC("InitializeDice", RpcTarget.All);
-                    photonView.RPC("SyncGameState", RpcTarget.All);
-				}
-			}
-	}
-    
+    {
+        // Caso especial de sair da base com 6
+        Player_Path[0] = movementBlocks[playerSteps].transform.position;
+        playerSteps += 1;
+        playerTurn = "RED";  // Manter o turno no vermelho
+        iTween.MoveTo(player, iTween.Hash("position", Player_Path[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "looptype", "none"));
+        yield return new WaitForSeconds(2.0f);
+    }
+	callback(playerSteps, color);
+    // Sincronização após movimento ou troca de turno
+    photonView.RPC("InitializeDice", RpcTarget.All);
 }
 
+// Função de troca de turno
+void TrocarTurno()
+{
+    playerTurn = (playerTurn == "RED") ? "GREEN" : "RED";
 }
+
+
+
+ void Update()
+    {
+        if (Input.GetMouseButtonDown(0)) // Detecta clique esquerdo do mouse
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                Debug.Log("Raycast hit object: " + hit.collider.gameObject.name);
+            }
+
+            // Para UI (caso seja UI)
+            PointerEventData pointerEventData = new PointerEventData(EventSystem.current);
+            pointerEventData.position = Input.mousePosition;
+            var results = new System.Collections.Generic.List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerEventData, results);
+
+            foreach (var result in results)
+            {
+                Debug.Log("UI Raycast hit object: " + result.gameObject.name);
+            }
+        }
+    }
+
+
+}
+
