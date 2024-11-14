@@ -419,21 +419,19 @@ void InitializeDice()
 {
     DiceRollButton.interactable = true;
 	DesativarInteracaoPecas(); 
-
-	    
-
-    ConfigurarPosicaoDado();
-
 	VerificarUltrapassagem();
 
-    // Sincroniza o estado entre as máquinas para garantir o frame correto em volta das casinhas
+int totalInHouse = (playerTurn == "RED") ? totalRedInHouse : totalGreenInHouse;
 
 	bool vitoria = VerificarCondicaoVitoria();
-    photonView.RPC("SyncDiceState", RpcTarget.Others, playerTurn, selectDiceNumAnimation, vitoria, 
-    redPlayerI_Steps, redPlayerII_Steps, redPlayerIII_Steps, redPlayerIV_Steps, 
-    greenPlayerI_Steps, greenPlayerII_Steps, greenPlayerIII_Steps, greenPlayerIV_Steps, 
-    redPlayerI.transform.position, redPlayerII.transform.position, redPlayerIII.transform.position, redPlayerIV.transform.position,
-    greenPlayerI.transform.position, greenPlayerII.transform.position, greenPlayerIII.transform.position, greenPlayerIV.transform.position);
+ photonView.RPC("SyncDiceState", RpcTarget.Others, playerTurn, selectDiceNumAnimation, vitoria,
+               redPlayerI_Steps, redPlayerII_Steps, redPlayerIII_Steps, redPlayerIV_Steps,
+               greenPlayerI_Steps, greenPlayerII_Steps, greenPlayerIII_Steps, greenPlayerIV_Steps,
+               totalInHouse,
+               RedPlayerI_Button.interactable, RedPlayerII_Button.interactable, RedPlayerIII_Button.interactable, RedPlayerIV_Button.interactable,
+               GreenPlayerI_Button.interactable, GreenPlayerII_Button.interactable, GreenPlayerIII_Button.interactable, GreenPlayerIV_Button.interactable, 
+               redPlayerI.transform.position, redPlayerII.transform.position, redPlayerIII.transform.position, redPlayerIV.transform.position,
+               greenPlayerI.transform.position, greenPlayerII.transform.position, greenPlayerIII.transform.position, greenPlayerIV.transform.position);
 
     // Verifica se houve vitória antes de preparar o próximo turno
   
@@ -532,6 +530,9 @@ private void ProcessarUltrapassagem(GameObject player, ref int playerSteps, Vect
 void SyncDiceState(string newTurn, int diceValue, bool vitoria, 
     int redPlayerI_Steps, int redPlayerII_Steps, int redPlayerIII_Steps, int redPlayerIV_Steps,
     int greenPlayerI_Steps, int greenPlayerII_Steps, int greenPlayerIII_Steps, int greenPlayerIV_Steps,
+    int totalInHouse,
+    bool  redPlayer1Interactable, bool redPlayer2Interactable, bool redPlayer3Interactable,  bool redPlayer4Interactable,
+    bool greenPlayer1Interactable, bool greenPlayer2Interactable, bool greenPlayer3Interactable, bool greenPlayer4Interactable,
     Vector3 redPlayer1_Pos, Vector3 redPlayer2_Pos, Vector3 redPlayer3_Pos, Vector3 redPlayer4_Pos,
     Vector3 greenPlayer1_Pos, Vector3 greenPlayer2_Pos, Vector3 greenPlayer3_Pos, Vector3 greenPlayer4_Pos)
 {
@@ -547,6 +548,28 @@ void SyncDiceState(string newTurn, int diceValue, bool vitoria,
     this.greenPlayerIII_Steps = greenPlayerIII_Steps;
     this.greenPlayerIV_Steps = greenPlayerIV_Steps;
 
+    if (playerTurn == "RED")
+    {
+        totalRedInHouse = totalInHouse;
+    }
+    else if (playerTurn == "GREEN")
+    {
+        totalGreenInHouse = totalInHouse;
+    }
+
+    // Atualiza o estado de interatividade dos botões das peças vermelhas
+    RedPlayerI_Button.interactable = redPlayer1Interactable;
+    RedPlayerII_Button.interactable = redPlayer2Interactable;
+    RedPlayerIII_Button.interactable = redPlayer3Interactable;
+    RedPlayerIV_Button.interactable = redPlayer4Interactable;
+
+    // Atualiza o estado de interatividade dos botões das peças verdes
+    GreenPlayerI_Button.interactable = greenPlayer1Interactable;
+    GreenPlayerII_Button.interactable = greenPlayer2Interactable;
+    GreenPlayerIII_Button.interactable = greenPlayer3Interactable;
+    GreenPlayerIV_Button.interactable = greenPlayer4Interactable;
+
+    Debug.Log("SyncDiceState concluído com turno: " + playerTurn + ", totalInHouse atualizado: " + totalInHouse);
     // Atualiza as posições das peças
     redPlayerI.transform.position = redPlayer1_Pos;
     redPlayerII.transform.position = redPlayer2_Pos;
@@ -557,6 +580,8 @@ void SyncDiceState(string newTurn, int diceValue, bool vitoria,
     greenPlayerII.transform.position = greenPlayer2_Pos;
     greenPlayerIII.transform.position = greenPlayer3_Pos;
     greenPlayerIV.transform.position = greenPlayer4_Pos;
+    ConfigurarPosicaoDado();
+
 
     if (vitoria)
     {
@@ -568,7 +593,6 @@ void SyncDiceState(string newTurn, int diceValue, bool vitoria,
        Debug.Log("segura aí que não acabou ainda ");
     }
 }
-
 
 private void DesativarInteracaoPecas()
 {
@@ -603,204 +627,307 @@ private void DesativarInteracaoPecas()
 
 
 
+
 public void redPlayerI_UI()
 {
-	Debug.Log("Chegou em redPlayerI_UI.");
+    Debug.Log("Tentativa de clique em RedPlayerI");
 
-    if (playerTurn  == "RED")
+    // Verifica se é o Master Client e se é o turno vermelho
+    if (!PhotonNetwork.IsMasterClient)
     {
-
-        photonView.RPC("MoveRedPlayerI", RpcTarget.All);
+        Debug.Log("Somente o Master Client pode mover a peça RED.");
+        return;
     }
+
+    if (playerTurn != "RED")
+    {
+        Debug.Log("Não é o turno do jogador RED.");
+        return;
+    }
+
+    // Executa o movimento da peça
+    MoveRedPlayerI();
 }
- 
- public void redPlayerII_UI()
+
+
+public void redPlayerII_UI()
 {
-	Debug.Log("Chegou em redPlayerII_UI.");
-    if (playerTurn  == "RED")
+    Debug.Log("Tentativa de clique em RedPlayerII");
+
+    // Verifica se é o Master Client e se é o turno vermelho
+    if (!PhotonNetwork.IsMasterClient)
     {
-        photonView.RPC("MoveRedPlayerII", RpcTarget.All);
+        Debug.Log("Somente o Master Client pode mover a peça RED.");
+        return;
     }
+
+    if (playerTurn != "RED")
+    {
+        Debug.Log("Não é o turno do jogador RED.");
+        return;
+    }
+
+    // Executa o movimento da peça
+    MoveRedPlayerII();
 }
 
 public void redPlayerIII_UI()
 {
-	Debug.Log("Chegou em redPlayerIII_UI.");
-    if (playerTurn  == "RED")
+    Debug.Log("Tentativa de clique em RedPlayerIII");
+
+    // Verifica se é o Master Client e se é o turno vermelho
+    if (!PhotonNetwork.IsMasterClient)
     {
-        photonView.RPC("MoveRedPlayerIII", RpcTarget.All);
+        Debug.Log("Somente o Master Client pode mover a peça RED.");
+        return;
     }
+
+    if (playerTurn != "RED")
+    {
+        Debug.Log("Não é o turno do jogador RED.");
+        return;
+    }
+
+    // Executa o movimento da peça
+    MoveRedPlayerIII();
 }
 
+
 public void redPlayerIV_UI()
-{	Debug.Log("Chegou em redPlayerIV_UI.");
-    if (playerTurn  == "RED")
+{
+    Debug.Log("Tentativa de clique em RedPlayerIV");
+
+    // Verifica se é o Master Client e se é o turno vermelho
+    if (!PhotonNetwork.IsMasterClient)
     {
-        photonView.RPC("MoveRedPlayerIV", RpcTarget.All);
+        Debug.Log("Somente o Master Client pode mover a peça RED.");
+        return;
     }
+
+    if (playerTurn != "RED")
+    {
+        Debug.Log("Não é o turno do jogador RED.");
+        return;
+    }
+
+    // Executa o movimento da peça
+    MoveRedPlayerIV();
 }
+
+
 
 
 public void greenPlayerI_UI()
 {
-    Debug.Log("Tentou clickar né safado");
-    if (playerTurn  == "GREEN")
+    Debug.Log("Tentativa de clique em GreenPlayerI");
+
+    // Verifica se é o Master Client e se é o turno vermelho
+     if (PhotonNetwork.IsMasterClient)
     {
-        photonView.RPC("MoveGreenPlayerI", RpcTarget.All);
+        Debug.Log("Somente o Non Master Client pode mover a peça GREEN.");
+        return;
     }
+
+    if (playerTurn != "GREEN")
+    {
+        Debug.Log("Não é o turno do jogador GREEN.");
+        return;
+    }
+
+    // Executa o movimento da peça
+    MoveGreenPlayerI();
 }
+
 
 public void greenPlayerII_UI()
 {
-    Debug.Log("Tentou clickar né safado");
-    if (playerTurn  == "GREEN")
+    Debug.Log("Tentativa de clique em GreenPlayerII");
+
+    // Verifica se é o Master Client e se é o turno vermelho
+     if (PhotonNetwork.IsMasterClient)
     {
-        photonView.RPC("MoveGreenPlayerII", RpcTarget.All);
+        Debug.Log("Somente o Non Master Client pode mover a peça GREEN.");
+        return;
     }
+
+    if (playerTurn != "GREEN")
+    {
+        Debug.Log("Não é o turno do jogador GREEN.");
+        return;
+    }
+
+    // Executa o movimento da peça
+    MoveGreenPlayerII();
 }
 
 public void greenPlayerIII_UI()
 {
-    Debug.Log("Tentou clickar né safado");
-    if (playerTurn  == "GREEN")
+    Debug.Log("Tentativa de clique em GreenPlayerIII");
+
+    // Verifica se é o Master Client e se é o turno vermelho
+     if (PhotonNetwork.IsMasterClient)
     {
-        photonView.RPC("MoveGreenPlayerIII", RpcTarget.All);
+        Debug.Log("Somente o Non Master Client pode mover a peça GREEN.");
+        return;
     }
+
+    if (playerTurn != "GREEN")
+    {
+        Debug.Log("Não é o turno do jogador GREEN.");
+        return;
+    }
+
+    // Executa o movimento da peça
+    MoveGreenPlayerIII();
 }
 
 
 public void greenPlayerIV_UI()
 {
-    Debug.Log("Tentou clickar né safado");
-    if (playerTurn  == "GREEN")
+    Debug.Log("Tentativa de clique em GreenPlayerIV");
+
+    // Verifica se é o Master Client e se é o turno vermelho
+    if (PhotonNetwork.IsMasterClient)
     {
-        photonView.RPC("MoveGreenPlayerIV", RpcTarget.All);
+        Debug.Log("Somente o Non Master Client pode mover a peça GREEN.");
+        return;
     }
+
+    if (playerTurn != "GREEN")
+    {
+        Debug.Log("Não é o turno do jogador GREEN.");
+        return;
+    }
+
+    // Executa o movimento da peça
+    MoveGreenPlayerIV();
 }
 
-[PunRPC]
+
+
+
+
 void MoveRedPlayerI()
 {
     currentPlayerName = "RED PLAYER I";
     if (playerTurn != "RED") return;
+
     // Desativa bordas e botões antes de iniciar o movimento
     DesativarInteracaoPecas();
-	
-    // Verifica se o movimento é possível para RedPlayerI com base nos passos e condições
+
+    // Verifica se o movimento é possível para RedPlayerI
     if (VerificarMovimentoPossivel(redPlayerI_Steps, selectDiceNumAnimation, redMovementBlocks))
     {
-        // Executa o movimento
-
-        StartCoroutine(MoverPeca(redPlayerI, redPlayerI_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerI_Button, playerTurn, 
-    	(updatedSteps, updatedTurn) => {
-        redPlayerI_Steps = updatedSteps;
-        playerTurn = updatedTurn;
-    	}));
-	}
+        // Executa o movimento e atualiza os passos e turno
+        StartCoroutine(MoverPeca(redPlayerI, redPlayerI_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerI_Button, playerTurn, totalRedInHouse));
+    }
     else
     {
-        if(redPlayerII_Steps + redPlayerIII_Steps + redPlayerIV_Steps == 0 && selectDiceNumAnimation != 6){
+        // Caso o movimento não seja possível, troca o turno ou finaliza a jogada
+        if (redPlayerII_Steps + redPlayerIII_Steps + redPlayerIV_Steps == 0 && selectDiceNumAnimation != 6)
+        {
             TrocarTurno();
-            photonView.RPC("InitializeDice", RpcTarget.All);
+            InitializeDice();
         }
-        else{
+        else
+        {
+            Debug.Log("Movimento não é possível com esta peça, turno mantido.");
             return;
         }
     }
 }
 
 
-
-[PunRPC]
 void MoveRedPlayerII()
 {
     currentPlayerName = "RED PLAYER II";
     if (playerTurn != "RED") return;
+
     // Desativa bordas e botões antes de iniciar o movimento
     DesativarInteracaoPecas();
 
-    // Verifica se o movimento é possível para RedPlayerI com base nos passos e condições
+    // Verifica se o movimento é possível para RedPlayerI
     if (VerificarMovimentoPossivel(redPlayerII_Steps, selectDiceNumAnimation, redMovementBlocks))
     {
-        // Executa o movimento
-	
-        StartCoroutine(MoverPeca(redPlayerII, redPlayerII_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerII_Button, playerTurn, 
-    	(updatedSteps, updatedTurn) => {
-        redPlayerII_Steps = updatedSteps;
-        playerTurn = updatedTurn;
-    	}));
+        // Executa o movimento e atualiza os passos e turno
+        StartCoroutine(MoverPeca(redPlayerII, redPlayerII_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerII_Button, playerTurn, totalRedInHouse));
     }
     else
     {
-        if(redPlayerI_Steps + redPlayerIII_Steps + redPlayerIV_Steps == 0 && selectDiceNumAnimation != 6){
+        // Caso o movimento não seja possível, troca o turno ou finaliza a jogada
+        if (redPlayerI_Steps + redPlayerIII_Steps + redPlayerIV_Steps == 0 && selectDiceNumAnimation != 6)
+        {
             TrocarTurno();
-            photonView.RPC("InitializeDice", RpcTarget.All);
+            InitializeDice();
         }
-        else{
+        else
+        {
+            Debug.Log("Movimento não é possível com esta peça, turno mantido.");
             return;
         }
     }
 }
 
-[PunRPC]
+
+
 void MoveRedPlayerIII()
 {
     currentPlayerName = "RED PLAYER III";
     if (playerTurn != "RED") return;
+
     // Desativa bordas e botões antes de iniciar o movimento
     DesativarInteracaoPecas();
 
-    // Verifica se o movimento é possível para RedPlayerI com base nos passos e condições
+    // Verifica se o movimento é possível para RedPlayerI
     if (VerificarMovimentoPossivel(redPlayerIII_Steps, selectDiceNumAnimation, redMovementBlocks))
     {
-        // Executa o movimento
-	
-        StartCoroutine(MoverPeca(redPlayerIII, redPlayerIII_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerIII_Button, playerTurn, 
-    	(updatedSteps, updatedTurn) => {
-        redPlayerIII_Steps = updatedSteps;
-        playerTurn = updatedTurn;
-    	}));
-
+        // Executa o movimento e atualiza os passos e turno
+        StartCoroutine(MoverPeca(redPlayerIII, redPlayerIII_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerIII_Button, playerTurn, totalRedInHouse));
     }
     else
     {
-        if(redPlayerI_Steps + redPlayerII_Steps + redPlayerIV_Steps == 0 && selectDiceNumAnimation != 6){
+        // Caso o movimento não seja possível, troca o turno ou finaliza a jogada
+        if (redPlayerI_Steps + redPlayerII_Steps + redPlayerIV_Steps == 0 && selectDiceNumAnimation != 6)
+        {
             TrocarTurno();
-            photonView.RPC("InitializeDice", RpcTarget.All);
+            InitializeDice();
         }
-        else{
+        else
+        {
+            Debug.Log("Movimento não é possível com esta peça, turno mantido.");
             return;
         }
     }
 }
 
-[PunRPC]
+
+
+
 void MoveRedPlayerIV()
 {
-    currentPlayerName = "RED PLAYER I";
+    currentPlayerName = "RED PLAYER IV";
     if (playerTurn != "RED") return;
+
     // Desativa bordas e botões antes de iniciar o movimento
     DesativarInteracaoPecas();
 
-    // Verifica se o movimento é possível para RedPlayerI com base nos passos e condições
-    if (VerificarMovimentoPossivel(redPlayerI_Steps, selectDiceNumAnimation, redMovementBlocks))
+    // Verifica se o movimento é possível para RedPlayerI
+    if (VerificarMovimentoPossivel(redPlayerIV_Steps, selectDiceNumAnimation, redMovementBlocks))
     {
-        // Executa o movimento
-		
-         StartCoroutine(MoverPeca(redPlayerIV, redPlayerIV_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerIV_Button, playerTurn, 
-    	(updatedSteps, updatedTurn) => {
-        redPlayerIV_Steps = updatedSteps;
-        playerTurn = updatedTurn;
-    	}));
-
+        // Executa o movimento e atualiza os passos e turno
+        StartCoroutine(MoverPeca(redPlayerIV, redPlayerIV_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerIV_Button, playerTurn, totalRedInHouse));
     }
     else
     {
-        if(redPlayerI_Steps + redPlayerII_Steps + redPlayerIII_Steps == 0 && selectDiceNumAnimation != 6){
+        // Caso o movimento não seja possível, troca o turno ou finaliza a jogada
+        if (redPlayerI_Steps + redPlayerII_Steps + redPlayerIII_Steps == 0 && selectDiceNumAnimation != 6)
+        {
             TrocarTurno();
-            photonView.RPC("InitializeDice", RpcTarget.All);
+            InitializeDice();
         }
-        else{
+        else
+        {
+            Debug.Log("Movimento não é possível com esta peça, turno mantido.");
             return;
         }
     }
@@ -808,142 +935,139 @@ void MoveRedPlayerIV()
 
 
 
-[PunRPC]
 void MoveGreenPlayerI()
 {
     currentPlayerName = "GREEN PLAYER I";
     if (playerTurn != "GREEN") return;
+
     // Desativa bordas e botões antes de iniciar o movimento
     DesativarInteracaoPecas();
 
-    // Verifica se o movimento é possível para GreenPlayerI com base nos passos e condições
+    // Verifica se o movimento é possível para GreenPlayerI
     if (VerificarMovimentoPossivel(greenPlayerI_Steps, selectDiceNumAnimation, greenMovementBlocks))
     {
-        // Executa o movimento
-        StartCoroutine(MoverPeca(greenPlayerI, greenPlayerI_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerI_Button, playerTurn, 
-    	(updatedSteps, updatedTurn) => {
-        greenPlayerI_Steps = updatedSteps;
-        playerTurn = updatedTurn;
-    	}));
+        // Executa o movimento e atualiza os passos e turno
+        StartCoroutine(MoverPeca(greenPlayerI, greenPlayerI_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerI_Button, playerTurn, totalGreenInHouse));
     }
     else
     {
-        if(greenPlayerII_Steps + greenPlayerIII_Steps + greenPlayerIV_Steps == 0 && selectDiceNumAnimation != 6){
+        // Caso o movimento não seja possível, troca o turno ou finaliza a jogada
+        if (greenPlayerII_Steps + greenPlayerIII_Steps + greenPlayerIV_Steps == 0 && selectDiceNumAnimation != 6)
+        {
             TrocarTurno();
-            photonView.RPC("InitializeDice", RpcTarget.All);
+            InitializeDice();
         }
-        else{
+        else
+        {
+            Debug.Log("Movimento não é possível com esta peça, turno mantido.");
             return;
         }
     }
 }
 
 
-[PunRPC]
 void MoveGreenPlayerII()
 {
     currentPlayerName = "GREEN PLAYER II";
     if (playerTurn != "GREEN") return;
+
     // Desativa bordas e botões antes de iniciar o movimento
     DesativarInteracaoPecas();
 
-    // Verifica se o movimento é possível para GreenPlayerI com base nos passos e condições
+    // Verifica se o movimento é possível para GreenPlayerI
     if (VerificarMovimentoPossivel(greenPlayerII_Steps, selectDiceNumAnimation, greenMovementBlocks))
     {
-        // Executa o movimento
-          StartCoroutine(MoverPeca(greenPlayerII, greenPlayerII_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerII_Button, playerTurn, 
-    	(updatedSteps, updatedTurn) => {
-        greenPlayerII_Steps = updatedSteps;
-        playerTurn = updatedTurn;
-    	}));
-		
+        // Executa o movimento e atualiza os passos e turno
+        StartCoroutine(MoverPeca(greenPlayerII, greenPlayerII_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerII_Button, playerTurn, totalGreenInHouse));
     }
     else
     {
-        if(greenPlayerI_Steps + greenPlayerIII_Steps + greenPlayerIV_Steps == 0 && selectDiceNumAnimation != 6){
+        // Caso o movimento não seja possível, troca o turno ou finaliza a jogada
+        if (greenPlayerI_Steps + greenPlayerIII_Steps + greenPlayerIV_Steps == 0 && selectDiceNumAnimation != 6)
+        {
             TrocarTurno();
-            photonView.RPC("InitializeDice", RpcTarget.All);
+            InitializeDice();
         }
-        else{
+        else
+        {
+            Debug.Log("Movimento não é possível com esta peça, turno mantido.");
             return;
         }
     }
 }
 
-[PunRPC]
+
+
 void MoveGreenPlayerIII()
 {
     currentPlayerName = "GREEN PLAYER III";
     if (playerTurn != "GREEN") return;
+
     // Desativa bordas e botões antes de iniciar o movimento
     DesativarInteracaoPecas();
 
-    // Verifica se o movimento é possível para GreenPlayerI com base nos passos e condições
+    // Verifica se o movimento é possível para GreenPlayerI
     if (VerificarMovimentoPossivel(greenPlayerIII_Steps, selectDiceNumAnimation, greenMovementBlocks))
     {
-        // Executa o movimento
-          StartCoroutine(MoverPeca(greenPlayerIII, greenPlayerIII_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerIII_Button, playerTurn, 
-    	(updatedSteps, updatedTurn) => {
-        greenPlayerIII_Steps = updatedSteps;
-        playerTurn = updatedTurn;
-    	}));
+        // Executa o movimento e atualiza os passos e turno
+        StartCoroutine(MoverPeca(greenPlayerIII, greenPlayerIII_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerIII_Button, playerTurn, totalGreenInHouse));
     }
     else
     {
-        if(greenPlayerI_Steps + greenPlayerII_Steps + greenPlayerIV_Steps == 0 && selectDiceNumAnimation != 6){
+        // Caso o movimento não seja possível, troca o turno ou finaliza a jogada
+        if (greenPlayerI_Steps + greenPlayerII_Steps + greenPlayerIV_Steps == 0 && selectDiceNumAnimation != 6)
+        {
             TrocarTurno();
-            photonView.RPC("InitializeDice", RpcTarget.All);
+            InitializeDice();
         }
-        else{
+        else
+        {
+            Debug.Log("Movimento não é possível com esta peça, turno mantido.");
             return;
         }
     }
 }
 
-[PunRPC]
+
+
+
 void MoveGreenPlayerIV()
 {
-    currentPlayerName = "GREEN PLAYER I";
+    currentPlayerName = "GREEN PLAYER IV";
     if (playerTurn != "GREEN") return;
+
     // Desativa bordas e botões antes de iniciar o movimento
     DesativarInteracaoPecas();
 
-    // Verifica se o movimento é possível para GreenPlayerI com base nos passos e condições
-    if (VerificarMovimentoPossivel(greenPlayerI_Steps, selectDiceNumAnimation, greenMovementBlocks))
+    // Verifica se o movimento é possível para GreenPlayerI
+    if (VerificarMovimentoPossivel(greenPlayerIV_Steps, selectDiceNumAnimation, greenMovementBlocks))
     {
-        // Executa o movimento
-          StartCoroutine(MoverPeca(greenPlayerIV, greenPlayerIV_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerIV_Button, playerTurn, 
-    	(updatedSteps, updatedTurn) => {
-        greenPlayerIV_Steps = updatedSteps;
-        playerTurn = updatedTurn;
-    	}));
-	}
+        // Executa o movimento e atualiza os passos e turno
+        StartCoroutine(MoverPeca(greenPlayerIV, greenPlayerIV_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerIV_Button, playerTurn, totalGreenInHouse));
+    }
     else
     {
-        if(greenPlayerI_Steps + greenPlayerII_Steps + greenPlayerIII_Steps == 0 && selectDiceNumAnimation != 6){
+        // Caso o movimento não seja possível, troca o turno ou finaliza a jogada
+        if (greenPlayerI_Steps + greenPlayerII_Steps + greenPlayerIII_Steps == 0 && selectDiceNumAnimation != 6)
+        {
             TrocarTurno();
-            photonView.RPC("InitializeDice", RpcTarget.All);
+            InitializeDice();
         }
-        else{
+        else
+        {
+            Debug.Log("Movimento não é possível com esta peça, turno mantido.");
             return;
         }
     }
 }
 
 
-// Verifica se a peça pode se mover com base na posição e passos
-bool VerificarMovimentoPossivel(int playerSteps, int diceValue, List<GameObject> movementBlocks)
-{
-    if (playerSteps == 0 && diceValue != 6)
-    {
-        return false;
-    }
-    // Verifica se os passos restantes permitem o movimento com base no total de blocos e posição atual
-    return (movementBlocks.Count - playerSteps) >= diceValue;
-}
 
-// Coroutine para mover a peça
-IEnumerator MoverPeca(GameObject player, int playerSteps, int diceValue, List<GameObject> movementBlocks, Button playerButton, string color, System.Action<int, string> callback)
+
+
+
+
+IEnumerator MoverPeca(GameObject player, int playerSteps, int diceValue, List<GameObject> movementBlocks, Button playerButton, string color, int totalInHouse)
 {
     int stepsToMove = diceValue;
     Vector3[] Player_Path = new Vector3[stepsToMove];
@@ -958,8 +1082,8 @@ IEnumerator MoverPeca(GameObject player, int playerSteps, int diceValue, List<Ga
 
         if ((movementBlocks.Count - playerSteps) == 0)
         {
-            playerTurn = "RED"; // Manter o turno no vermelho, pois a peça chegou na casa
-            totalRedInHouse += 1;
+            playerTurn = color; 
+            totalInHouse += 1;
             playerButton.interactable = false;
         }
         else if (diceValue != 6)
@@ -967,35 +1091,76 @@ IEnumerator MoverPeca(GameObject player, int playerSteps, int diceValue, List<Ga
             TrocarTurno();  // Troca de turno se não tirou 6 no dado
         }
 
-        // Movimento com iTween
+ 
         if (Player_Path.Length > 1)
         {
-            iTween.MoveTo(player, iTween.Hash("path", Player_Path, "speed", 125, "time", 2.0f, "easetype", "elastic", "looptype", "none"));
+
+          photonView.RPC("PlayMovementAnimation", RpcTarget.Others, Player_Path,  player.name);
+
+          iTween.MoveTo (player, iTween.Hash ("path", Player_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
         }
         else
         {
-            iTween.MoveTo(player, iTween.Hash("position", Player_Path[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "looptype", "none"));
+          photonView.RPC("PlayMovementAnimation", RpcTarget.Others, Player_Path,  player.name);
+           iTween.MoveTo (player, iTween.Hash ("position", Player_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
         }
-        yield return new WaitForSeconds(2.0f); // Espera o movimento completar
+    
     }
     else
     {
-        // Caso especial de sair da base com 6
         Player_Path[0] = movementBlocks[playerSteps].transform.position;
         playerSteps += 1;
-        playerTurn = "RED";  // Manter o turno no vermelho
-        iTween.MoveTo(player, iTween.Hash("position", Player_Path[0], "speed", 125, "time", 2.0f, "easetype", "elastic", "looptype", "none"));
-        yield return new WaitForSeconds(2.0f);
+        playerTurn = color; 
+        photonView.RPC("PlayMovementAnimation", RpcTarget.Others, Player_Path,  player.name);
+        iTween.MoveTo (player, iTween.Hash ("position", Player_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
     }
-	callback(playerSteps, color);
-    // Sincronização após movimento ou troca de turno
-    photonView.RPC("InitializeDice", RpcTarget.All);
+
+        yield return new WaitForSeconds(2.0f);
+
 }
 
-// Função de troca de turno
+
+
+
+
+
+bool VerificarMovimentoPossivel(int playerSteps, int diceValue, List<GameObject> movementBlocks)
+{
+    if (playerSteps == 0 && diceValue != 6)
+    {
+        return false;
+    }
+    // Verifica se os passos restantes permitem o movimento com base no total de blocos e posição atual
+    return (movementBlocks.Count - playerSteps) >= diceValue;
+}
+
 void TrocarTurno()
 {
     playerTurn = (playerTurn == "RED") ? "GREEN" : "RED";
+}
+
+
+
+
+
+[PunRPC]
+void PlayMovementAnimation(Vector3[] path, string playerName)
+{
+    GameObject player = GameObject.Find(playerName);
+    if (player != null)
+    {
+        iTween.MoveTo(player, iTween.Hash(
+            "path", path,
+            "speed", 125,
+            "time", 2.0f,
+            "easetype", "elastic",
+            "looptype", "none"
+        ));
+    }
+    else
+    {
+        Debug.LogWarning("GameObject com o nome " + playerName + " não encontrado.");
+    }
 }
 
 
