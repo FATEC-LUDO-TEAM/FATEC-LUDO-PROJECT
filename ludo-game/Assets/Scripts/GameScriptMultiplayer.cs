@@ -183,9 +183,10 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
     {
         if (playerTurn == "RED" && PhotonNetwork.IsMasterClient || playerTurn == "GREEN" && !PhotonNetwork.IsMasterClient)
         {
+           
 			Debug.Log("O jogo entendeu que é seu turno e vc pode rodar");
             selectDiceNumAnimation = randomNo.Next(1, 7);
-			//selectDiceNumAnimation = 6;
+			selectDiceNumAnimation = 6;
             photonView.RPC("SyncDiceRoll", RpcTarget.All, selectDiceNumAnimation);
             ExecutePlayersNotInitialized();
         }
@@ -221,6 +222,7 @@ void PlayDiceAnimation(int diceValue)
         case 5: dice5_Roll_Animation.SetActive(true); break;
         case 6: dice6_Roll_Animation.SetActive(true); break;
     }
+    DiceRollButton.interactable = false;
 }
     
        
@@ -420,9 +422,8 @@ void InitializeDice()
 int totalInHouse = (playerTurn == "RED") ? totalRedInHouse : totalGreenInHouse;
 
 	bool vitoria = VerificarCondicaoVitoria();
- photonView.RPC("SyncDiceState", RpcTarget.Others, playerTurn, selectDiceNumAnimation, vitoria,
-               redPlayerI_Steps, redPlayerII_Steps, redPlayerIII_Steps, redPlayerIV_Steps,
-               greenPlayerI_Steps, greenPlayerII_Steps, greenPlayerIII_Steps, greenPlayerIV_Steps,
+  
+     photonView.RPC("SyncDiceState", RpcTarget.Others, playerTurn, selectDiceNumAnimation, selectDiceNumAnimation,
                totalInHouse,
                RedPlayerI_Button.interactable, RedPlayerII_Button.interactable, RedPlayerIII_Button.interactable, RedPlayerIV_Button.interactable,
                GreenPlayerI_Button.interactable, GreenPlayerII_Button.interactable, GreenPlayerIII_Button.interactable, GreenPlayerIV_Button.interactable, 
@@ -457,59 +458,151 @@ private void VerificarUltrapassagem()
 {
     if (currentPlayerName.Contains("RED PLAYER"))
     {
-        // Verifica se o jogador vermelho ultrapassou alguma peça verde
-        if (currentPlayer == GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName && (currentPlayer != "Star" && GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName != "Star"))
-        {
-            ProcessarUltrapassagem(greenPlayerI, ref greenPlayerI_Steps, greenPlayerI_Pos, "RED");
-        }
-        if (currentPlayer == GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName && (currentPlayer != "Star" && GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName != "Star"))
-        {
-            ProcessarUltrapassagem(greenPlayerII, ref greenPlayerII_Steps, greenPlayerII_Pos, "RED");
-        }
-        if (currentPlayer == GreenPlayerIII_Script_Multiplayer.greenPlayerIII_ColName && (currentPlayer != "Star" && GreenPlayerIII_Script_Multiplayer.greenPlayerIII_ColName != "Star"))
-        {
-            ProcessarUltrapassagem(greenPlayerIII, ref greenPlayerIII_Steps, greenPlayerIII_Pos, "RED");
-        }
-        if (currentPlayer == GreenPlayerIV_Script_Multiplayer.greenPlayerIV_ColName && (currentPlayer != "Star" && GreenPlayerIV_Script_Multiplayer.greenPlayerIV_ColName != "Star"))
-        {
-            ProcessarUltrapassagem(greenPlayerIV, ref greenPlayerIV_Steps, greenPlayerIV_Pos, "RED");
-        }
-    }
-    else if (currentPlayerName.Contains("GREEN PLAYER"))
-    {
-        // Verifica se o jogador verde ultrapassou alguma peça vermelha
-        if (currentPlayer == RedPlayerI_Script_Multiplayer.redPlayerI_ColName && (currentPlayer != "Star" && RedPlayerI_Script_Multiplayer.redPlayerI_ColName != "Star"))
-        {
-            ProcessarUltrapassagem(redPlayerI, ref redPlayerI_Steps, redPlayerI_Pos, "GREEN");
-        }
-        if (currentPlayer == RedPlayerII_Script_Multiplayer.redPlayerII_ColName && (currentPlayer != "Star" && RedPlayerII_Script_Multiplayer.redPlayerII_ColName != "Star"))
-        {
-            ProcessarUltrapassagem(redPlayerII, ref redPlayerII_Steps, redPlayerII_Pos, "GREEN");
-        }
-        if (currentPlayer == RedPlayerIII_Script_Multiplayer.redPlayerIII_ColName && (currentPlayer != "Star" && RedPlayerIII_Script_Multiplayer.redPlayerIII_ColName != "Star"))
-        {
-            ProcessarUltrapassagem(redPlayerIII, ref redPlayerIII_Steps, redPlayerIII_Pos, "GREEN");
-        }
-        if (currentPlayer == RedPlayerIV_Script_Multiplayer.redPlayerIV_ColName && (currentPlayer != "Star" && RedPlayerIV_Script_Multiplayer.redPlayerIV_ColName != "Star"))
-        {
-            ProcessarUltrapassagem(redPlayerIV, ref redPlayerIV_Steps, redPlayerIV_Pos, "GREEN");
-        }
-    }
-}
 
-private void ProcessarUltrapassagem(GameObject player, ref int playerSteps, Vector3 playerPosInicial, string playerColor)
+        if (currentPlayerName == "RED PLAYER I") {
+				Debug.Log ("currentPlayerName = " + currentPlayerName);
+				currentPlayer = RedPlayerI_Script_Multiplayer.redPlayerI_ColName;
+			}
+			if (currentPlayerName == "RED PLAYER II") {
+				Debug.Log ("currentPlayerName = " + currentPlayerName);
+				currentPlayer = RedPlayerII_Script_Multiplayer.redPlayerII_ColName;
+			}
+			if (currentPlayerName == "RED PLAYER III") {
+				Debug.Log ("currentPlayerName = " + currentPlayerName);
+				currentPlayer = RedPlayerIII_Script_Multiplayer.redPlayerIII_ColName;
+			}
+			if (currentPlayerName == "RED PLAYER IV") {
+				Debug.Log ("currentPlayerName = " + currentPlayerName);
+				currentPlayer = RedPlayerIV_Script_Multiplayer.redPlayerIV_ColName;
+			}
+
+    }
+
+     if (currentPlayerName.Contains("GREEN PLAYER"))
+
+     {
+			if (currentPlayerName == "GREEN PLAYER I") {
+				Debug.Log ("currentPlayerName = " + currentPlayerName);
+				currentPlayer = GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName;
+			}
+			if (currentPlayerName == "GREEN PLAYER II") {
+				Debug.Log ("currentPlayerName = " + currentPlayerName);
+				currentPlayer = GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName;
+			}
+			if (currentPlayerName == "GREEN PLAYER III") {
+				Debug.Log ("currentPlayerName = " + currentPlayerName);
+				currentPlayer = GreenPlayerIII_Script_Multiplayer.greenPlayerIII_ColName;
+			}
+			if (currentPlayerName == "GREEN PLAYER IV") {
+				Debug.Log ("currentPlayerName = " + currentPlayerName);
+				currentPlayer = GreenPlayerIV_Script_Multiplayer.greenPlayerIV_ColName;
+			}
+	}
+
+    if (currentPlayerName != "none")
 {
-    SoundManagerScript.dismissalAudioSource.Play();
-    player.transform.position = playerPosInicial;
-    playerSteps = 0;
-    playerTurn = playerColor;
+               
+     
+          if (currentPlayerName.Contains ("RED PLAYER")) {
+                    Debug.Log ("currentPlayerName = " + currentPlayer);
+					if (currentPlayer == GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName && (currentPlayer != "Star" && GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerI.transform.position = greenPlayerI_Pos;
+						GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName = "none";
+						greenPlayerI_Steps = 0;
+						playerTurn = "RED";
+                         Debug.Log("Deu true 1");
+
+    
+					}
+					if (currentPlayer == GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName && (currentPlayer != "Star" && GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerII.transform.position = greenPlayerII_Pos;
+						GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName = "none";
+						greenPlayerII_Steps = 0;
+						playerTurn = "RED";
+                          Debug.Log("Deu true 2");
+					}
+					if (currentPlayer == GreenPlayerIII_Script_Multiplayer.greenPlayerIII_ColName && (currentPlayer != "Star" && GreenPlayerIII_Script_Multiplayer.greenPlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerIII.transform.position = greenPlayerIII_Pos;
+						GreenPlayerIII_Script_Multiplayer.greenPlayerIII_ColName = "none";
+						greenPlayerIII_Steps = 0;
+						playerTurn = "RED";
+                              Debug.Log("Deu true 3");
+					}
+					if (currentPlayer == GreenPlayerIV_Script_Multiplayer.greenPlayerIV_ColName && (currentPlayer != "Star" && GreenPlayerIV_Script_Multiplayer.greenPlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						greenPlayerIV.transform.position = greenPlayerIV_Pos;
+						GreenPlayerIV_Script_Multiplayer.greenPlayerIV_ColName = "none";
+						greenPlayerIV_Steps = 0;
+						playerTurn = "RED";
+                           Debug.Log("Deu true 4");
+					}
+				}
+       
+                
+                if (currentPlayerName.Contains ("GREEN PLAYER")) {
+					if (currentPlayer == RedPlayerI_Script_Multiplayer.redPlayerI_ColName && (currentPlayer != "Star" && RedPlayerI_Script_Multiplayer.redPlayerI_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerI.transform.position = redPlayerI_Pos;
+						RedPlayerI_Script_Multiplayer.redPlayerI_ColName = "none";
+						redPlayerI_Steps = 0;
+						playerTurn = "GREEN";
+                        Debug.Log("Deu true 5");
+					}
+					if (currentPlayer == RedPlayerII_Script_Multiplayer.redPlayerII_ColName && (currentPlayer != "Star" && RedPlayerII_Script_Multiplayer.redPlayerII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerII.transform.position = redPlayerII_Pos;
+						RedPlayerII_Script_Multiplayer.redPlayerII_ColName = "none";
+						redPlayerII_Steps = 0;
+						playerTurn = "GREEN";
+                        Debug.Log("Deu true 6");
+					}
+					if (currentPlayer == RedPlayerIII_Script_Multiplayer.redPlayerIII_ColName && (currentPlayer != "Star" && RedPlayerIII_Script_Multiplayer.redPlayerIII_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerIII.transform.position = redPlayerIII_Pos;
+						RedPlayerIII_Script_Multiplayer.redPlayerIII_ColName = "none";
+						redPlayerIII_Steps = 0;
+						playerTurn = "GREEN";
+                        Debug.Log("Deu true 7");
+					}
+					if (currentPlayer == RedPlayerIV_Script_Multiplayer.redPlayerIV_ColName && (currentPlayer != "Star" && RedPlayerIV_Script_Multiplayer.redPlayerIV_ColName != "Star")) {
+						SoundManagerScript.dismissalAudioSource.Play ();
+						redPlayerIV.transform.position = redPlayerIV_Pos;
+						RedPlayerIV_Script_Multiplayer.redPlayerIV_ColName = "none";
+						redPlayerIV_Steps = 0;
+						playerTurn = "GREEN";
+                             Debug.Log("Deu true 8");
+					}
+				}
+              
+             
+
+
+    
+
+        
+        Debug.Log("GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName" + GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName +
+                  "GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName"  + GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName +                                                                                                
+                  "GreenPlayerIII_Script_Multiplayer.greenPlayerIII_ColName" + GreenPlayerIII_Script_Multiplayer.greenPlayerIII_ColName +
+                  "GreenPlayerIV_Script_Multiplayer.greenPlayerIV_ColName"    + GreenPlayerIV_Script_Multiplayer.greenPlayerIV_ColName +                                                                                                 
+                  "RedPlayerI_Script_Multiplayer.redPlayerI_ColName" + RedPlayerI_Script_Multiplayer.redPlayerI_ColName +
+                  "RedPlayerII_Script_Multiplayer.redPlayerII_ColName" + RedPlayerII_Script_Multiplayer.redPlayerII_ColName +
+                  "RedPlayerIII_Script_Multiplayer.redPlayerIII_ColName" + RedPlayerIII_Script_Multiplayer.redPlayerIII_ColName +
+                  "RedPlayerIV_Script_Multiplayer.redPlayerIV_ColName" + RedPlayerIV_Script_Multiplayer.redPlayerIV_ColName +
+                  "currentPlayerName" + currentPlayerName +
+                   "currentPlayer" + currentPlayer);
+        
+        
+    }
 
 }
+
+
 
 [PunRPC]
 void SyncDiceState(string newTurn, int diceValue, bool vitoria, 
-    int redPlayerI_Steps, int redPlayerII_Steps, int redPlayerIII_Steps, int redPlayerIV_Steps,
-    int greenPlayerI_Steps, int greenPlayerII_Steps, int greenPlayerIII_Steps, int greenPlayerIV_Steps,
     int totalInHouse,
     bool  redPlayer1Interactable, bool redPlayer2Interactable, bool redPlayer3Interactable,  bool redPlayer4Interactable,
     bool greenPlayer1Interactable, bool greenPlayer2Interactable, bool greenPlayer3Interactable, bool greenPlayer4Interactable,
@@ -518,14 +611,7 @@ void SyncDiceState(string newTurn, int diceValue, bool vitoria,
     // Atualiza o turno, valor do dado e os passos das peças
     playerTurn = newTurn;
     selectDiceNumAnimation = diceValue;
-    this.redPlayerI_Steps = redPlayerI_Steps;
-    this.redPlayerII_Steps = redPlayerII_Steps;
-    this.redPlayerIII_Steps = redPlayerIII_Steps;
-    this.redPlayerIV_Steps = redPlayerIV_Steps;
-    this.greenPlayerI_Steps = greenPlayerI_Steps;
-    this.greenPlayerII_Steps = greenPlayerII_Steps;
-    this.greenPlayerIII_Steps = greenPlayerIII_Steps;
-    this.greenPlayerIV_Steps = greenPlayerIV_Steps;
+
 
     dice1_Roll_Animation.SetActive(diceI_Roll_Animation);
     dice2_Roll_Animation.SetActive(diceII_Roll_Animation);
@@ -811,7 +897,7 @@ void MoveRedPlayerI()
     if (VerificarMovimentoPossivel(redPlayerI_Steps, selectDiceNumAnimation, redMovementBlocks))
     {
         // Executa o movimento e atualiza os passos e turno
-        MoverPeca(redPlayerI, redPlayerI_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerI_Button, playerTurn, totalRedInHouse);
+        MoverPeca(redPlayerI, ref redPlayerI_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerI_Button, playerTurn, ref totalRedInHouse);
     }
     else
     {
@@ -842,7 +928,7 @@ void MoveRedPlayerII()
     if (VerificarMovimentoPossivel(redPlayerII_Steps, selectDiceNumAnimation, redMovementBlocks))
     {
         // Executa o movimento e atualiza os passos e turno
-        MoverPeca(redPlayerII, redPlayerII_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerII_Button, playerTurn, totalRedInHouse);
+        MoverPeca(redPlayerII, ref redPlayerII_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerII_Button, playerTurn, ref totalRedInHouse);
     }
     else
     {
@@ -874,7 +960,7 @@ void MoveRedPlayerIII()
     if (VerificarMovimentoPossivel(redPlayerIII_Steps, selectDiceNumAnimation, redMovementBlocks))
     {
         // Executa o movimento e atualiza os passos e turno
-        MoverPeca(redPlayerIII, redPlayerIII_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerIII_Button, playerTurn, totalRedInHouse);
+        MoverPeca(redPlayerIII, ref redPlayerIII_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerIII_Button, playerTurn,  ref totalRedInHouse);
     }
     else
     {
@@ -907,7 +993,7 @@ void MoveRedPlayerIV()
     if (VerificarMovimentoPossivel(redPlayerIV_Steps, selectDiceNumAnimation, redMovementBlocks))
     {
         // Executa o movimento e atualiza os passos e turno
-        MoverPeca(redPlayerIV, redPlayerIV_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerIV_Button, playerTurn, totalRedInHouse);
+        MoverPeca(redPlayerIV, ref redPlayerIV_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerIV_Button, playerTurn,  ref totalRedInHouse);
     }
     else
     {
@@ -939,7 +1025,7 @@ void MoveGreenPlayerI()
     if (VerificarMovimentoPossivel(greenPlayerI_Steps, selectDiceNumAnimation, greenMovementBlocks))
     {
         // Executa o movimento e atualiza os passos e turno
-        MoverPeca(greenPlayerI, greenPlayerI_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerI_Button, playerTurn, totalGreenInHouse);
+        MoverPeca(greenPlayerI, ref greenPlayerI_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerI_Button, playerTurn, ref totalGreenInHouse);
     }
     else
     {
@@ -970,7 +1056,7 @@ void MoveGreenPlayerII()
     if (VerificarMovimentoPossivel(greenPlayerII_Steps, selectDiceNumAnimation, greenMovementBlocks))
     {
         // Executa o movimento e atualiza os passos e turno
-        MoverPeca(greenPlayerII, greenPlayerII_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerII_Button, playerTurn, totalGreenInHouse);
+        MoverPeca(greenPlayerII, ref greenPlayerII_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerII_Button, playerTurn, ref totalGreenInHouse);
     }
     else
     {
@@ -1002,7 +1088,7 @@ void MoveGreenPlayerIII()
     if (VerificarMovimentoPossivel(greenPlayerIII_Steps, selectDiceNumAnimation, greenMovementBlocks))
     {
         // Executa o movimento e atualiza os passos e turno
-        MoverPeca(greenPlayerIII, greenPlayerIII_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerIII_Button, playerTurn, totalGreenInHouse);
+        MoverPeca(greenPlayerIII, ref greenPlayerIII_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerIII_Button, playerTurn, ref totalGreenInHouse);
     }
     else
     {
@@ -1035,7 +1121,7 @@ void MoveGreenPlayerIV()
     if (VerificarMovimentoPossivel(greenPlayerIV_Steps, selectDiceNumAnimation, greenMovementBlocks))
     {
         // Executa o movimento e atualiza os passos e turno
-        MoverPeca(greenPlayerIV, greenPlayerIV_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerIV_Button, playerTurn, totalGreenInHouse);
+        MoverPeca(greenPlayerIV, ref greenPlayerIV_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerIV_Button, playerTurn, ref totalGreenInHouse);
     }
     else
     {
@@ -1059,7 +1145,7 @@ void MoveGreenPlayerIV()
 
 
 
-void MoverPeca(GameObject player, int playerSteps, int diceValue, List<GameObject> movementBlocks, Button playerButton, string color, int totalInHouse)
+void MoverPeca(GameObject player, ref int playerSteps, int diceValue, List<GameObject> movementBlocks, Button playerButton, string color, ref int totalInHouse)
 {
     int stepsToMove = diceValue;
     Vector3[] Player_Path = new Vector3[stepsToMove];
