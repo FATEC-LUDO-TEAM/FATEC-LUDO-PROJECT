@@ -1,9 +1,9 @@
 ﻿
 
 using UnityEngine;
-using Photon.Pun;
+using System.Collections;
 
-public class RedPlayerI_Script_Multiplayer : MonoBehaviourPun
+public class RedPlayerI_Script_Multiplayer : MonoBehaviour
 {
     // Removendo o static para torná-la uma variável instanciada.
     public static string redPlayerI_ColName;
@@ -18,8 +18,7 @@ public class RedPlayerI_Script_Multiplayer : MonoBehaviourPun
         if (col.gameObject.tag == "blocks")
         {
             redPlayerI_ColName = col.gameObject.name;
-            photonView.RPC("UpdateRedPlayerI_ColName", RpcTarget.All, redPlayerI_ColName);
-
+            
             if (col.gameObject.name.Contains("Safe House"))
             {
                 SoundManagerScript.safeHouseAudioSource.Play();
@@ -28,9 +27,5 @@ public class RedPlayerI_Script_Multiplayer : MonoBehaviourPun
     }
 
     // RPC para sincronizar a variável redPlayerI_ColName entre todos os jogadores
-    [PunRPC]
-    void UpdateRedPlayerI_ColName(string colName)
-    {
-        redPlayerI_ColName = colName;
-    }
+
 }

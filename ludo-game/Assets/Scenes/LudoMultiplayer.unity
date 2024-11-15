@@ -2945,6 +2945,8 @@ GameObject:
   - component: {fileID: 497866053}
   - component: {fileID: 497866055}
   - component: {fileID: 497866056}
+  - component: {fileID: 497866058}
+  - component: {fileID: 497866057}
   m_Layer: 5
   m_Name: Red Player II
   m_TagString: Untagged
@@ -3156,6 +3158,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0e26f544b0c5fe44aeb640f33d56e14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &497866057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 497866046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 497866058}
+  sceneViewId: 9
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &497866058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 497866046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &504790709
 GameObject:
   m_ObjectHideFlags: 0
@@ -4743,6 +4784,8 @@ GameObject:
   - component: {fileID: 713624466}
   - component: {fileID: 713624468}
   - component: {fileID: 713624469}
+  - component: {fileID: 713624471}
+  - component: {fileID: 713624470}
   m_Layer: 5
   m_Name: Green Player I
   m_TagString: Untagged
@@ -4954,6 +4997,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34a3e42fb05262e408bc26bf50768d3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &713624470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 713624459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 5
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &713624471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 713624459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &725089331
 GameObject:
   m_ObjectHideFlags: 0
@@ -6054,6 +6135,8 @@ GameObject:
   - component: {fileID: 856219995}
   - component: {fileID: 856219997}
   - component: {fileID: 856219998}
+  - component: {fileID: 856220000}
+  - component: {fileID: 856219999}
   m_Layer: 5
   m_Name: Green Player II
   m_TagString: Untagged
@@ -6265,6 +6348,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bc5f22f32397ee42a101aab951828a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &856219999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 856219988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 4
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &856220000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 856219988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &859693942
 GameObject:
   m_ObjectHideFlags: 0
@@ -6672,6 +6793,8 @@ GameObject:
   - component: {fileID: 882854613}
   - component: {fileID: 882854615}
   - component: {fileID: 882854616}
+  - component: {fileID: 882854618}
+  - component: {fileID: 882854617}
   m_Layer: 5
   m_Name: Red Player IV
   m_TagString: Untagged
@@ -6883,6 +7006,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ea1a99d757a847498c405530ef193fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &882854617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882854606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 6
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &882854618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882854606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &890165683
 GameObject:
   m_ObjectHideFlags: 0
@@ -7496,6 +7657,8 @@ GameObject:
   - component: {fileID: 996982335}
   - component: {fileID: 996982337}
   - component: {fileID: 996982338}
+  - component: {fileID: 996982340}
+  - component: {fileID: 996982339}
   m_Layer: 5
   m_Name: Green Player III
   m_TagString: Untagged
@@ -7707,6 +7870,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6e3b107dce1a264a94ce36add5905b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &996982339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 996982328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 3
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &996982340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 996982328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &1002987738 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1000011647754690, guid: 8189353e277a944bd8e74786d68ba0f0,
@@ -10446,6 +10647,8 @@ GameObject:
   - component: {fileID: 1510654803}
   - component: {fileID: 1510654805}
   - component: {fileID: 1510654806}
+  - component: {fileID: 1510654808}
+  - component: {fileID: 1510654807}
   m_Layer: 5
   m_Name: Green Player IV
   m_TagString: Untagged
@@ -10657,6 +10860,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce74f94959b27c54f9c54eefb98dcddb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1510654807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1510654796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 2
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &1510654808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1510654796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &1514668945
 GameObject:
   m_ObjectHideFlags: 0
@@ -14765,6 +15006,8 @@ GameObject:
   - component: {fileID: 2054359804}
   - component: {fileID: 2054359806}
   - component: {fileID: 2054359807}
+  - component: {fileID: 2054359809}
+  - component: {fileID: 2054359808}
   m_Layer: 5
   m_Name: Red Player III
   m_TagString: Untagged
@@ -14976,6 +15219,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d10a3cad25b854343a96907fee782001, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2054359808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2054359797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 7
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &2054359809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2054359797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &2064292255
 GameObject:
   m_ObjectHideFlags: 0
@@ -15185,6 +15466,8 @@ GameObject:
   - component: {fileID: 2135014348}
   - component: {fileID: 2135014350}
   - component: {fileID: 2135014351}
+  - component: {fileID: 2135014353}
+  - component: {fileID: 2135014352}
   m_Layer: 5
   m_Name: Red Player I
   m_TagString: Untagged
@@ -15396,6 +15679,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1718ed1a979ae34a863c92978747695, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2135014352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2135014341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 2135014353}
+  sceneViewId: 8
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &2135014353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2135014341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &2138221648
 GameObject:
   m_ObjectHideFlags: 0

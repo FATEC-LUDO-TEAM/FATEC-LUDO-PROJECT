@@ -185,8 +185,8 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
         {
 			Debug.Log("O jogo entendeu que é seu turno e vc pode rodar");
             selectDiceNumAnimation = randomNo.Next(1, 7);
-			selectDiceNumAnimation = 6;
-            photonView.RPC("DiceRollResult", RpcTarget.All, selectDiceNumAnimation);
+			//selectDiceNumAnimation = 6;
+            photonView.RPC("SyncDiceRoll", RpcTarget.All, selectDiceNumAnimation);
             ExecutePlayersNotInitialized();
         }
         else
@@ -195,65 +195,37 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
-    void DiceRollResult(int result)
+[PunRPC]
+void SyncDiceRoll(int diceValue)
+{
+    PlayDiceAnimation(diceValue);
+}
+
+void PlayDiceAnimation(int diceValue)
+{
+    // Desativa todas as animações primeiro
+    dice1_Roll_Animation.SetActive(false);
+    dice2_Roll_Animation.SetActive(false);
+    dice3_Roll_Animation.SetActive(false);
+    dice4_Roll_Animation.SetActive(false);
+    dice5_Roll_Animation.SetActive(false);
+    dice6_Roll_Animation.SetActive(false);
+
+    // Ativa a animação correspondente ao valor do dado
+    switch (diceValue)
     {
-        DiceRollButton.interactable = false;
-		selectDiceNumAnimation = result;
-        switch (selectDiceNumAnimation)
-        {
-            case 1:
-                dice1_Roll_Animation.SetActive(true);
-                dice2_Roll_Animation.SetActive (false);
-				dice3_Roll_Animation.SetActive (false);
-				dice4_Roll_Animation.SetActive (false);
-				dice5_Roll_Animation.SetActive (false);
-				dice6_Roll_Animation.SetActive (false);
-                break;
-            case 2:
-                dice1_Roll_Animation.SetActive (false);
-				dice2_Roll_Animation.SetActive (true);
-				dice3_Roll_Animation.SetActive (false);
-				dice4_Roll_Animation.SetActive (false);
-				dice5_Roll_Animation.SetActive (false);
-				dice6_Roll_Animation.SetActive (false);
-                break;
-            case 3:
-                dice1_Roll_Animation.SetActive (false);
-				dice2_Roll_Animation.SetActive (false);
-				dice3_Roll_Animation.SetActive (true);
-				dice4_Roll_Animation.SetActive (false);
-				dice5_Roll_Animation.SetActive (false);
-				dice6_Roll_Animation.SetActive (false);
-                break;
-            case 4:
-                dice1_Roll_Animation.SetActive (false);
-				dice2_Roll_Animation.SetActive (false);
-				dice3_Roll_Animation.SetActive (false);
-				dice4_Roll_Animation.SetActive (true);
-				dice5_Roll_Animation.SetActive (false);
-				dice6_Roll_Animation.SetActive (false);
-                break;
-            case 5:
-                dice1_Roll_Animation.SetActive (false);
-				dice2_Roll_Animation.SetActive (false);
-				dice3_Roll_Animation.SetActive (false);
-				dice4_Roll_Animation.SetActive (false);
-				dice5_Roll_Animation.SetActive (true);
-				dice6_Roll_Animation.SetActive (false);
-                break;
-            case 6:
-                dice1_Roll_Animation.SetActive (false);
-				dice2_Roll_Animation.SetActive (false);
-				dice3_Roll_Animation.SetActive (false);
-				dice4_Roll_Animation.SetActive (false);
-				dice5_Roll_Animation.SetActive (false);
-				dice6_Roll_Animation.SetActive (true);
-                break;
-        }
+        case 1: dice1_Roll_Animation.SetActive(true); break;
+        case 2: dice2_Roll_Animation.SetActive(true); break;
+        case 3: dice3_Roll_Animation.SetActive(true); break;
+        case 4: dice4_Roll_Animation.SetActive(true); break;
+        case 5: dice5_Roll_Animation.SetActive(true); break;
+        case 6: dice6_Roll_Animation.SetActive(true); break;
+    }
+}
+    
        
 	   
-    }
+    
 //▒█▀▀█ █░░ █▀▀█ █░░█ █▀▀ █▀▀█ █▀▀ 　 █▀▀▄ █▀▀█ ▀▀█▀▀ 　 
 //▒█▄▄█ █░░ █▄▄█ █▄▄█ █▀▀ █▄▄▀ ▀▀█ 　 █░░█ █░░█ ░░█░░ 　 
 //▒█░░░ ▀▀▀ ▀░░▀ ▄▄▄█ ▀▀▀ ▀░▀▀ ▀▀▀ 　 ▀░░▀ ▀▀▀▀ ░░▀░░ 　 
@@ -418,8 +390,32 @@ void SyncPlayersState(string turn, int diceValue,
 void InitializeDice()
 {
     DiceRollButton.interactable = true;
+       Debug.Log("Posições chegando em Initialize Dice: RedPlayerI - " + redPlayerI.transform.position +
+                "Posições chegando em Initialize Dice: RedPlayerII - " + redPlayerII.transform.position +
+                "Posições chegando em Initialize Dice: RedPlayerIII - " + redPlayerIII.transform.position +
+                "Posições chegando em Initialize Dice: RedPlayerIV - " + redPlayerIV.transform.position);
+
 	DesativarInteracaoPecas(); 
+
+    Debug.Log("Posições Após em Initialize Dice DesativarInteracaoPecas: RedPlayerI - " + redPlayerI.transform.position +
+                "Posições Após em Initialize Dice DesativarInteracaoPecas: RedPlayerII - " + redPlayerII.transform.position +
+                "Posições Após em Initialize Dice DesativarInteracaoPecas: RedPlayerIII - " + redPlayerIII.transform.position +
+                "Posições Após em Initialize Dice DesativarInteracaoPecas: RedPlayerIV - " + redPlayerIV.transform.position);
+
 	VerificarUltrapassagem();
+
+     Debug.Log("Posições Após em Initialize Dice VerificarUltrapassagem();: RedPlayerI - " + redPlayerI.transform.position +
+                "Posições Após em Initialize Dice VerificarUltrapassagem();: RedPlayerII - " + redPlayerII.transform.position +
+                "Posições Após em Initialize Dice VerificarUltrapassagem();: RedPlayerIII - " + redPlayerIII.transform.position +
+                "Posições Após em Initialize Dice VerificarUltrapassagem();: RedPlayerIV - " + redPlayerIV.transform.position);
+
+
+    Debug.Log("Posições Após em Initialize Dice ConfigurarPosicaoDado();: RedPlayerI - " + redPlayerI.transform.position +
+                "Posições Após em Initialize Dice ConfigurarPosicaoDado();: RedPlayerII - " + redPlayerII.transform.position +
+                "Posições Após em Initialize Dice ConfigurarPosicaoDado();: RedPlayerIII - " + redPlayerIII.transform.position +
+                "Posições Após em Initialize Dice ConfigurarPosicaoDado();: RedPlayerIV - " + redPlayerIV.transform.position);
+
+   Debug.Log("cheguei em initialize dice de novo");
 
 int totalInHouse = (playerTurn == "RED") ? totalRedInHouse : totalGreenInHouse;
 
@@ -430,28 +426,12 @@ int totalInHouse = (playerTurn == "RED") ? totalRedInHouse : totalGreenInHouse;
                totalInHouse,
                RedPlayerI_Button.interactable, RedPlayerII_Button.interactable, RedPlayerIII_Button.interactable, RedPlayerIV_Button.interactable,
                GreenPlayerI_Button.interactable, GreenPlayerII_Button.interactable, GreenPlayerIII_Button.interactable, GreenPlayerIV_Button.interactable, 
-               redPlayerI.transform.position, redPlayerII.transform.position, redPlayerIII.transform.position, redPlayerIV.transform.position,
-               greenPlayerI.transform.position, greenPlayerII.transform.position, greenPlayerIII.transform.position, greenPlayerIV.transform.position);
+               dice1_Roll_Animation.activeInHierarchy, dice2_Roll_Animation.activeInHierarchy, dice3_Roll_Animation.activeInHierarchy, dice4_Roll_Animation.activeInHierarchy, dice5_Roll_Animation.activeInHierarchy, dice6_Roll_Animation.activeInHierarchy);
 
     // Verifica se houve vitória antes de preparar o próximo turno
   
 }
 
-private void ConfigurarPosicaoDado()
-{
-    dice1_Roll_Animation.SetActive(false);
-    dice2_Roll_Animation.SetActive(false);
-    dice3_Roll_Animation.SetActive(false);
-    dice4_Roll_Animation.SetActive(false);
-    dice5_Roll_Animation.SetActive(false);
-    dice6_Roll_Animation.SetActive(false);
-
-//se playerturn é Red, redposition, se não green
-    diceRoll.position = (playerTurn == "RED") ? redDiceRollPos.position : greenDiceRollPos.position;
-
-	
-
-}
 
 private bool VerificarCondicaoVitoria()
 {
@@ -533,8 +513,7 @@ void SyncDiceState(string newTurn, int diceValue, bool vitoria,
     int totalInHouse,
     bool  redPlayer1Interactable, bool redPlayer2Interactable, bool redPlayer3Interactable,  bool redPlayer4Interactable,
     bool greenPlayer1Interactable, bool greenPlayer2Interactable, bool greenPlayer3Interactable, bool greenPlayer4Interactable,
-    Vector3 redPlayer1_Pos, Vector3 redPlayer2_Pos, Vector3 redPlayer3_Pos, Vector3 redPlayer4_Pos,
-    Vector3 greenPlayer1_Pos, Vector3 greenPlayer2_Pos, Vector3 greenPlayer3_Pos, Vector3 greenPlayer4_Pos)
+    bool diceI_Roll_Animation, bool diceII_Roll_Animation, bool diceIII_Roll_Animation, bool diceIV_Roll_Animation, bool diceV_Roll_Animation, bool diceVI_Roll_Animation)
 {
     // Atualiza o turno, valor do dado e os passos das peças
     playerTurn = newTurn;
@@ -548,6 +527,13 @@ void SyncDiceState(string newTurn, int diceValue, bool vitoria,
     this.greenPlayerIII_Steps = greenPlayerIII_Steps;
     this.greenPlayerIV_Steps = greenPlayerIV_Steps;
 
+    dice1_Roll_Animation.SetActive(diceI_Roll_Animation);
+    dice2_Roll_Animation.SetActive(diceII_Roll_Animation);
+    dice3_Roll_Animation.SetActive(diceIII_Roll_Animation);
+    dice4_Roll_Animation.SetActive(diceIV_Roll_Animation);
+    dice5_Roll_Animation.SetActive(dice5_Roll_Animation);
+    dice6_Roll_Animation.SetActive(dice6_Roll_Animation);
+
     if (playerTurn == "RED")
     {
         totalRedInHouse = totalInHouse;
@@ -556,31 +542,37 @@ void SyncDiceState(string newTurn, int diceValue, bool vitoria,
     {
         totalGreenInHouse = totalInHouse;
     }
+    
+
+
+      Debug.Log("Posições antes de SyncDiceState: RedPlayerI - " + redPlayerI.transform.position +
+                "Posições antes de SyncDiceState: RedPlayerII - " + redPlayerII.transform.position +
+                "Posições antes de SyncDiceState: RedPlayerIII - " + redPlayerIII.transform.position +
+                "Posições antes de SyncDiceState: RedPlayerIV - " + redPlayerIV.transform.position);
+
 
     // Atualiza o estado de interatividade dos botões das peças vermelhas
     RedPlayerI_Button.interactable = redPlayer1Interactable;
     RedPlayerII_Button.interactable = redPlayer2Interactable;
     RedPlayerIII_Button.interactable = redPlayer3Interactable;
     RedPlayerIV_Button.interactable = redPlayer4Interactable;
+    
 
+      Debug.Log("Posições após SyncDiceState: RedPlayerI - " + redPlayerI.transform.position +
+                "Posições após SyncDiceState: RedPlayerII - " + redPlayerII.transform.position +
+                "Posições após SyncDiceState: RedPlayerIII - " + redPlayerIII.transform.position +
+                "Posições após SyncDiceState: RedPlayerIV - " + redPlayerIV.transform.position);
+
+
+     
     // Atualiza o estado de interatividade dos botões das peças verdes
     GreenPlayerI_Button.interactable = greenPlayer1Interactable;
     GreenPlayerII_Button.interactable = greenPlayer2Interactable;
     GreenPlayerIII_Button.interactable = greenPlayer3Interactable;
     GreenPlayerIV_Button.interactable = greenPlayer4Interactable;
+    
 
     Debug.Log("SyncDiceState concluído com turno: " + playerTurn + ", totalInHouse atualizado: " + totalInHouse);
-    // Atualiza as posições das peças
-    redPlayerI.transform.position = redPlayer1_Pos;
-    redPlayerII.transform.position = redPlayer2_Pos;
-    redPlayerIII.transform.position = redPlayer3_Pos;
-    redPlayerIV.transform.position = redPlayer4_Pos;
-    
-    greenPlayerI.transform.position = greenPlayer1_Pos;
-    greenPlayerII.transform.position = greenPlayer2_Pos;
-    greenPlayerIII.transform.position = greenPlayer3_Pos;
-    greenPlayerIV.transform.position = greenPlayer4_Pos;
-    ConfigurarPosicaoDado();
 
 
     if (vitoria)
@@ -819,7 +811,7 @@ void MoveRedPlayerI()
     if (VerificarMovimentoPossivel(redPlayerI_Steps, selectDiceNumAnimation, redMovementBlocks))
     {
         // Executa o movimento e atualiza os passos e turno
-        StartCoroutine(MoverPeca(redPlayerI, redPlayerI_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerI_Button, playerTurn, totalRedInHouse));
+        MoverPeca(redPlayerI, redPlayerI_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerI_Button, playerTurn, totalRedInHouse);
     }
     else
     {
@@ -850,7 +842,7 @@ void MoveRedPlayerII()
     if (VerificarMovimentoPossivel(redPlayerII_Steps, selectDiceNumAnimation, redMovementBlocks))
     {
         // Executa o movimento e atualiza os passos e turno
-        StartCoroutine(MoverPeca(redPlayerII, redPlayerII_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerII_Button, playerTurn, totalRedInHouse));
+        MoverPeca(redPlayerII, redPlayerII_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerII_Button, playerTurn, totalRedInHouse);
     }
     else
     {
@@ -882,7 +874,7 @@ void MoveRedPlayerIII()
     if (VerificarMovimentoPossivel(redPlayerIII_Steps, selectDiceNumAnimation, redMovementBlocks))
     {
         // Executa o movimento e atualiza os passos e turno
-        StartCoroutine(MoverPeca(redPlayerIII, redPlayerIII_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerIII_Button, playerTurn, totalRedInHouse));
+        MoverPeca(redPlayerIII, redPlayerIII_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerIII_Button, playerTurn, totalRedInHouse);
     }
     else
     {
@@ -915,7 +907,7 @@ void MoveRedPlayerIV()
     if (VerificarMovimentoPossivel(redPlayerIV_Steps, selectDiceNumAnimation, redMovementBlocks))
     {
         // Executa o movimento e atualiza os passos e turno
-        StartCoroutine(MoverPeca(redPlayerIV, redPlayerIV_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerIV_Button, playerTurn, totalRedInHouse));
+        MoverPeca(redPlayerIV, redPlayerIV_Steps, selectDiceNumAnimation, redMovementBlocks, RedPlayerIV_Button, playerTurn, totalRedInHouse);
     }
     else
     {
@@ -947,7 +939,7 @@ void MoveGreenPlayerI()
     if (VerificarMovimentoPossivel(greenPlayerI_Steps, selectDiceNumAnimation, greenMovementBlocks))
     {
         // Executa o movimento e atualiza os passos e turno
-        StartCoroutine(MoverPeca(greenPlayerI, greenPlayerI_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerI_Button, playerTurn, totalGreenInHouse));
+        MoverPeca(greenPlayerI, greenPlayerI_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerI_Button, playerTurn, totalGreenInHouse);
     }
     else
     {
@@ -978,7 +970,7 @@ void MoveGreenPlayerII()
     if (VerificarMovimentoPossivel(greenPlayerII_Steps, selectDiceNumAnimation, greenMovementBlocks))
     {
         // Executa o movimento e atualiza os passos e turno
-        StartCoroutine(MoverPeca(greenPlayerII, greenPlayerII_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerII_Button, playerTurn, totalGreenInHouse));
+        MoverPeca(greenPlayerII, greenPlayerII_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerII_Button, playerTurn, totalGreenInHouse);
     }
     else
     {
@@ -1010,7 +1002,7 @@ void MoveGreenPlayerIII()
     if (VerificarMovimentoPossivel(greenPlayerIII_Steps, selectDiceNumAnimation, greenMovementBlocks))
     {
         // Executa o movimento e atualiza os passos e turno
-        StartCoroutine(MoverPeca(greenPlayerIII, greenPlayerIII_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerIII_Button, playerTurn, totalGreenInHouse));
+        MoverPeca(greenPlayerIII, greenPlayerIII_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerIII_Button, playerTurn, totalGreenInHouse);
     }
     else
     {
@@ -1043,7 +1035,7 @@ void MoveGreenPlayerIV()
     if (VerificarMovimentoPossivel(greenPlayerIV_Steps, selectDiceNumAnimation, greenMovementBlocks))
     {
         // Executa o movimento e atualiza os passos e turno
-        StartCoroutine(MoverPeca(greenPlayerIV, greenPlayerIV_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerIV_Button, playerTurn, totalGreenInHouse));
+        MoverPeca(greenPlayerIV, greenPlayerIV_Steps, selectDiceNumAnimation, greenMovementBlocks, GreenPlayerIV_Button, playerTurn, totalGreenInHouse);
     }
     else
     {
@@ -1067,7 +1059,7 @@ void MoveGreenPlayerIV()
 
 
 
-IEnumerator MoverPeca(GameObject player, int playerSteps, int diceValue, List<GameObject> movementBlocks, Button playerButton, string color, int totalInHouse)
+void MoverPeca(GameObject player, int playerSteps, int diceValue, List<GameObject> movementBlocks, Button playerButton, string color, int totalInHouse)
 {
     int stepsToMove = diceValue;
     Vector3[] Player_Path = new Vector3[stepsToMove];
@@ -1095,14 +1087,14 @@ IEnumerator MoverPeca(GameObject player, int playerSteps, int diceValue, List<Ga
         if (Player_Path.Length > 1)
         {
 
-          photonView.RPC("PlayMovementAnimation", RpcTarget.Others, Player_Path,  player.name);
-
-          iTween.MoveTo (player, iTween.Hash ("path", Player_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+          iTween.MoveTo (player, iTween.Hash ("path", Player_Path, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "FinalizarMovimento", "oncompletetarget", this.gameObject));
+         
+          
         }
         else
         {
-          photonView.RPC("PlayMovementAnimation", RpcTarget.Others, Player_Path,  player.name);
-           iTween.MoveTo (player, iTween.Hash ("position", Player_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+           iTween.MoveTo (player, iTween.Hash ("position", Player_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "FinalizarMovimento", "oncompletetarget", this.gameObject));
+           
         }
     
     }
@@ -1111,12 +1103,16 @@ IEnumerator MoverPeca(GameObject player, int playerSteps, int diceValue, List<Ga
         Player_Path[0] = movementBlocks[playerSteps].transform.position;
         playerSteps += 1;
         playerTurn = color; 
-        photonView.RPC("PlayMovementAnimation", RpcTarget.Others, Player_Path,  player.name);
-        iTween.MoveTo (player, iTween.Hash ("position", Player_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "InitializeDice", "oncompletetarget", this.gameObject));
+        iTween.MoveTo (player, iTween.Hash ("position", Player_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "FinalizarMovimento", "oncompletetarget", this.gameObject));
+       
     }
 
-        yield return new WaitForSeconds(2.0f);
+}
 
+void FinalizarMovimento()
+{
+    // Chama InitializeDice, que irá sincronizar o estado com SyncDiceState
+        InitializeDice();
 }
 
 
@@ -1137,30 +1133,6 @@ bool VerificarMovimentoPossivel(int playerSteps, int diceValue, List<GameObject>
 void TrocarTurno()
 {
     playerTurn = (playerTurn == "RED") ? "GREEN" : "RED";
-}
-
-
-
-
-
-[PunRPC]
-void PlayMovementAnimation(Vector3[] path, string playerName)
-{
-    GameObject player = GameObject.Find(playerName);
-    if (player != null)
-    {
-        iTween.MoveTo(player, iTween.Hash(
-            "path", path,
-            "speed", 125,
-            "time", 2.0f,
-            "easetype", "elastic",
-            "looptype", "none"
-        ));
-    }
-    else
-    {
-        Debug.LogWarning("GameObject com o nome " + playerName + " não encontrado.");
-    }
 }
 
 
