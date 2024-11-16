@@ -186,7 +186,7 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
            
 			Debug.Log("O jogo entendeu que é seu turno e vc pode rodar");
             selectDiceNumAnimation = randomNo.Next(1, 7);
-			selectDiceNumAnimation = 6;
+			//selectDiceNumAnimation = 6;
             photonView.RPC("SyncDiceRoll", RpcTarget.All, selectDiceNumAnimation);
             ExecutePlayersNotInitialized();
         }
@@ -425,9 +425,16 @@ int totalInHouse = (playerTurn == "RED") ? totalRedInHouse : totalGreenInHouse;
   
      photonView.RPC("SyncDiceState", RpcTarget.Others, playerTurn, selectDiceNumAnimation, selectDiceNumAnimation,
                totalInHouse,
+               redPlayerI_Steps, redPlayerII_Steps, redPlayerIII_Steps, redPlayerIV_Steps,
+               greenPlayerI_Steps, greenPlayerII_Steps, greenPlayerIII_Steps, greenPlayerIV_Steps,
+               RedPlayerI_Script_Multiplayer.redPlayerI_ColName, RedPlayerII_Script_Multiplayer.redPlayerII_ColName,
+               RedPlayerIII_Script_Multiplayer.redPlayerIII_ColName, RedPlayerIV_Script_Multiplayer.redPlayerIV_ColName,
+               GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName, GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName,
+               GreenPlayerIII_Script_Multiplayer.greenPlayerIII_ColName, GreenPlayerIV_Script_Multiplayer.greenPlayerIV_ColName,
                RedPlayerI_Button.interactable, RedPlayerII_Button.interactable, RedPlayerIII_Button.interactable, RedPlayerIV_Button.interactable,
                GreenPlayerI_Button.interactable, GreenPlayerII_Button.interactable, GreenPlayerIII_Button.interactable, GreenPlayerIV_Button.interactable, 
-               dice1_Roll_Animation.activeInHierarchy, dice2_Roll_Animation.activeInHierarchy, dice3_Roll_Animation.activeInHierarchy, dice4_Roll_Animation.activeInHierarchy, dice5_Roll_Animation.activeInHierarchy, dice6_Roll_Animation.activeInHierarchy);
+               dice1_Roll_Animation.activeInHierarchy, dice2_Roll_Animation.activeInHierarchy, dice3_Roll_Animation.activeInHierarchy, 
+               dice4_Roll_Animation.activeInHierarchy, dice5_Roll_Animation.activeInHierarchy, dice6_Roll_Animation.activeInHierarchy);
 
     // Verifica se houve vitória antes de preparar o próximo turno
   
@@ -507,7 +514,7 @@ private void VerificarUltrapassagem()
                     Debug.Log ("currentPlayerName = " + currentPlayer);
 					if (currentPlayer == GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName && (currentPlayer != "Star" && GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName != "Star")) {
 						SoundManagerScript.dismissalAudioSource.Play ();
-						greenPlayerI.transform.position = greenPlayerI_Pos;
+                        iTween.MoveTo (greenPlayerI, iTween.Hash ("position", greenPlayerI_Pos, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none"));
 						GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName = "none";
 						greenPlayerI_Steps = 0;
 						playerTurn = "RED";
@@ -517,7 +524,7 @@ private void VerificarUltrapassagem()
 					}
 					if (currentPlayer == GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName && (currentPlayer != "Star" && GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName != "Star")) {
 						SoundManagerScript.dismissalAudioSource.Play ();
-						greenPlayerII.transform.position = greenPlayerII_Pos;
+                        iTween.MoveTo (greenPlayerII, iTween.Hash ("position", greenPlayerII_Pos, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none"));
 						GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName = "none";
 						greenPlayerII_Steps = 0;
 						playerTurn = "RED";
@@ -525,7 +532,7 @@ private void VerificarUltrapassagem()
 					}
 					if (currentPlayer == GreenPlayerIII_Script_Multiplayer.greenPlayerIII_ColName && (currentPlayer != "Star" && GreenPlayerIII_Script_Multiplayer.greenPlayerIII_ColName != "Star")) {
 						SoundManagerScript.dismissalAudioSource.Play ();
-						greenPlayerIII.transform.position = greenPlayerIII_Pos;
+						iTween.MoveTo (greenPlayerIII, iTween.Hash ("position", greenPlayerIII_Pos, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none"));
 						GreenPlayerIII_Script_Multiplayer.greenPlayerIII_ColName = "none";
 						greenPlayerIII_Steps = 0;
 						playerTurn = "RED";
@@ -533,7 +540,7 @@ private void VerificarUltrapassagem()
 					}
 					if (currentPlayer == GreenPlayerIV_Script_Multiplayer.greenPlayerIV_ColName && (currentPlayer != "Star" && GreenPlayerIV_Script_Multiplayer.greenPlayerIV_ColName != "Star")) {
 						SoundManagerScript.dismissalAudioSource.Play ();
-						greenPlayerIV.transform.position = greenPlayerIV_Pos;
+						iTween.MoveTo (greenPlayerIV, iTween.Hash ("position", greenPlayerIV_Pos, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none"));
 						GreenPlayerIV_Script_Multiplayer.greenPlayerIV_ColName = "none";
 						greenPlayerIV_Steps = 0;
 						playerTurn = "RED";
@@ -545,7 +552,7 @@ private void VerificarUltrapassagem()
                 if (currentPlayerName.Contains ("GREEN PLAYER")) {
 					if (currentPlayer == RedPlayerI_Script_Multiplayer.redPlayerI_ColName && (currentPlayer != "Star" && RedPlayerI_Script_Multiplayer.redPlayerI_ColName != "Star")) {
 						SoundManagerScript.dismissalAudioSource.Play ();
-						redPlayerI.transform.position = redPlayerI_Pos;
+                        iTween.MoveTo (redPlayerI, iTween.Hash ("position", redPlayerI_Pos, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none"));
 						RedPlayerI_Script_Multiplayer.redPlayerI_ColName = "none";
 						redPlayerI_Steps = 0;
 						playerTurn = "GREEN";
@@ -553,7 +560,7 @@ private void VerificarUltrapassagem()
 					}
 					if (currentPlayer == RedPlayerII_Script_Multiplayer.redPlayerII_ColName && (currentPlayer != "Star" && RedPlayerII_Script_Multiplayer.redPlayerII_ColName != "Star")) {
 						SoundManagerScript.dismissalAudioSource.Play ();
-						redPlayerII.transform.position = redPlayerII_Pos;
+						iTween.MoveTo (redPlayerII, iTween.Hash ("position", redPlayerII_Pos, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none"));
 						RedPlayerII_Script_Multiplayer.redPlayerII_ColName = "none";
 						redPlayerII_Steps = 0;
 						playerTurn = "GREEN";
@@ -561,7 +568,7 @@ private void VerificarUltrapassagem()
 					}
 					if (currentPlayer == RedPlayerIII_Script_Multiplayer.redPlayerIII_ColName && (currentPlayer != "Star" && RedPlayerIII_Script_Multiplayer.redPlayerIII_ColName != "Star")) {
 						SoundManagerScript.dismissalAudioSource.Play ();
-						redPlayerIII.transform.position = redPlayerIII_Pos;
+						iTween.MoveTo (redPlayerIII, iTween.Hash ("position", redPlayerIII_Pos, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none"));
 						RedPlayerIII_Script_Multiplayer.redPlayerIII_ColName = "none";
 						redPlayerIII_Steps = 0;
 						playerTurn = "GREEN";
@@ -569,7 +576,7 @@ private void VerificarUltrapassagem()
 					}
 					if (currentPlayer == RedPlayerIV_Script_Multiplayer.redPlayerIV_ColName && (currentPlayer != "Star" && RedPlayerIV_Script_Multiplayer.redPlayerIV_ColName != "Star")) {
 						SoundManagerScript.dismissalAudioSource.Play ();
-						redPlayerIV.transform.position = redPlayerIV_Pos;
+						iTween.MoveTo (redPlayerIV, iTween.Hash ("position", redPlayerIV_Pos, "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none"));
 						RedPlayerIV_Script_Multiplayer.redPlayerIV_ColName = "none";
 						redPlayerIV_Steps = 0;
 						playerTurn = "GREEN";
@@ -604,6 +611,10 @@ private void VerificarUltrapassagem()
 [PunRPC]
 void SyncDiceState(string newTurn, int diceValue, bool vitoria, 
     int totalInHouse,
+    int redPlayerI_Steps, int redPlayerII_Steps, int redPlayerIII_Steps, int redPlayerIV_Steps,
+    int greenPlayerI_Steps, int greenPlayerII_Steps, int greenPlayerIII_Steps, int greenPlayerIV_Steps,
+    string redPlayerI_ColName, string redPlayerII_ColName, string redPlayerIII_ColName, string redPlayerIV_ColName,
+    string greenPlayerI_ColName, string greenPlayerII_ColName, string greenPlayerIII_ColName, string greenPlayerIV_ColName,
     bool  redPlayer1Interactable, bool redPlayer2Interactable, bool redPlayer3Interactable,  bool redPlayer4Interactable,
     bool greenPlayer1Interactable, bool greenPlayer2Interactable, bool greenPlayer3Interactable, bool greenPlayer4Interactable,
     bool diceI_Roll_Animation, bool diceII_Roll_Animation, bool diceIII_Roll_Animation, bool diceIV_Roll_Animation, bool diceV_Roll_Animation, bool diceVI_Roll_Animation)
@@ -612,13 +623,32 @@ void SyncDiceState(string newTurn, int diceValue, bool vitoria,
     playerTurn = newTurn;
     selectDiceNumAnimation = diceValue;
 
+    this.redPlayerI_Steps = redPlayerI_Steps;
+    this.redPlayerII_Steps = redPlayerII_Steps;
+    this.redPlayerIII_Steps = redPlayerIII_Steps;
+    this.redPlayerIV_Steps = redPlayerIV_Steps;
+
+    this.greenPlayerI_Steps = greenPlayerI_Steps;
+    this.greenPlayerII_Steps = greenPlayerII_Steps;
+    this.greenPlayerIII_Steps = greenPlayerIII_Steps;
+    this.greenPlayerIV_Steps = greenPlayerIV_Steps;
+
+
+    RedPlayerI_Script_Multiplayer.redPlayerI_ColName = redPlayerI_ColName;
+    RedPlayerII_Script_Multiplayer.redPlayerII_ColName = redPlayerII_ColName;
+    RedPlayerIII_Script_Multiplayer.redPlayerIII_ColName = redPlayerIII_ColName;
+    RedPlayerIV_Script_Multiplayer.redPlayerIV_ColName = redPlayerIV_ColName;
+    GreenPlayerI_Script_Multiplayer.greenPlayerI_ColName = greenPlayerI_ColName;
+    GreenPlayerII_Script_Multiplayer.greenPlayerII_ColName = greenPlayerII_ColName;
+    GreenPlayerIII_Script_Multiplayer.greenPlayerIII_ColName = greenPlayerIII_ColName;
+    GreenPlayerIV_Script_Multiplayer.greenPlayerIV_ColName = greenPlayerIV_ColName;
 
     dice1_Roll_Animation.SetActive(diceI_Roll_Animation);
     dice2_Roll_Animation.SetActive(diceII_Roll_Animation);
     dice3_Roll_Animation.SetActive(diceIII_Roll_Animation);
     dice4_Roll_Animation.SetActive(diceIV_Roll_Animation);
-    dice5_Roll_Animation.SetActive(dice5_Roll_Animation);
-    dice6_Roll_Animation.SetActive(dice6_Roll_Animation);
+    dice5_Roll_Animation.SetActive(diceV_Roll_Animation);
+    dice6_Roll_Animation.SetActive(diceVI_Roll_Animation);
 
     if (playerTurn == "RED")
     {
@@ -1188,7 +1218,7 @@ void MoverPeca(GameObject player, ref int playerSteps, int diceValue, List<GameO
     {
         Player_Path[0] = movementBlocks[playerSteps].transform.position;
         playerSteps += 1;
-        playerTurn = color; 
+        TrocarTurno();
         iTween.MoveTo (player, iTween.Hash ("position", Player_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "FinalizarMovimento", "oncompletetarget", this.gameObject));
        
     }
@@ -1208,7 +1238,7 @@ void FinalizarMovimento()
 
 bool VerificarMovimentoPossivel(int playerSteps, int diceValue, List<GameObject> movementBlocks)
 {
-    if (playerSteps == 0 && diceValue != 6)
+    if (playerSteps == 0 && diceValue != 1)
     {
         return false;
     }
