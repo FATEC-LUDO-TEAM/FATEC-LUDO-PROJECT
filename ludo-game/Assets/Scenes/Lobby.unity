@@ -836,7 +836,7 @@ GameObject:
   - component: {fileID: 1080058344}
   - component: {fileID: 1080058343}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Exit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -988,7 +988,7 @@ MonoBehaviour:
   createInput: {fileID: 2062619724}
   joinInput: {fileID: 1700155479}
   feedbackText: {fileID: 1774084040}
-  playerCountText: {fileID: 0}
+  playerCountText: {fileID: 1344497375}
   startGameButton: {fileID: 1262611301}
   CreateJoin: {fileID: 130681398}
 --- !u!4 &1104137916
@@ -1139,7 +1139,7 @@ GameObject:
   - component: {fileID: 1344497376}
   - component: {fileID: 1344497375}
   m_Layer: 5
-  m_Name: GameObject (1)
+  m_Name: Player Count Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1198,7 +1198,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 2 jogadores na sala. Jogador vermelho,  aperte Start Game!
+  m_Text: 
 --- !u!222 &1344497376
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1527,7 +1527,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Voc\xEA se tornou o jogador vermelho, pois o antigo Master saiu!"
+  m_Text: 
 --- !u!222 &1774084041
 CanvasRenderer:
   m_ObjectHideFlags: 0

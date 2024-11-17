@@ -309,15 +309,17 @@ IEnumerator PlayDiceAnimation(int diceValue)
 		}
 		Debug.Log("RedPlayerI_Border ativo: " + redPlayerI_Border.activeInHierarchy + " | RedPlayerI_Button interagível: " + RedPlayerI_Button.interactable);
      photonView.RPC("SyncPlayersState", RpcTarget.Others,
-        playerTurn, selectDiceNumAnimation,
-        redPlayerI_Border.activeInHierarchy, RedPlayerI_Button.interactable,
-        redPlayerII_Border.activeInHierarchy, RedPlayerII_Button.interactable,
-        redPlayerIII_Border.activeInHierarchy, RedPlayerIII_Button.interactable,
-        redPlayerIV_Border.activeInHierarchy, RedPlayerIV_Button.interactable,
-        greenPlayerI_Border.activeInHierarchy, GreenPlayerI_Button.interactable,
-        greenPlayerII_Border.activeInHierarchy, GreenPlayerII_Button.interactable,
-        greenPlayerIII_Border.activeInHierarchy, GreenPlayerIII_Button.interactable,
-        greenPlayerIV_Border.activeInHierarchy, GreenPlayerIV_Button.interactable);
+        playerTurn, selectDiceNumAnimation
+        // ,
+        // redPlayerI_Border.activeInHierarchy, RedPlayerI_Button.interactable,
+        // redPlayerII_Border.activeInHierarchy, RedPlayerII_Button.interactable,
+        // redPlayerIII_Border.activeInHierarchy, RedPlayerIII_Button.interactable,
+        // redPlayerIV_Border.activeInHierarchy, RedPlayerIV_Button.interactable,
+        // greenPlayerI_Border.activeInHierarchy, GreenPlayerI_Button.interactable,
+        // greenPlayerII_Border.activeInHierarchy, GreenPlayerII_Button.interactable,
+        // greenPlayerIII_Border.activeInHierarchy, GreenPlayerIII_Button.interactable,
+        // greenPlayerIV_Border.activeInHierarchy, GreenPlayerIV_Button.interactable
+        );
      
      if (turncolor != playerTurn){
         photonView.RPC("SyncGameState", RpcTarget.All);
@@ -396,44 +398,47 @@ private bool DeveMudarTurno()
 } 
 
 [PunRPC]
-void SyncPlayersState(string turn, int diceValue,
-    bool redPlayerIBorderActive, bool redPlayerIButtonInteractable,
-    bool redPlayerIIBorderActive, bool redPlayerIIButtonInteractable,
-    bool redPlayerIIIBorderActive, bool redPlayerIIIButtonInteractable,
-    bool redPlayerIVBorderActive, bool redPlayerIVButtonInteractable,
-    bool greenPlayerIBorderActive, bool greenPlayerIButtonInteractable,
-    bool greenPlayerIIBorderActive, bool greenPlayerIIButtonInteractable,
-    bool greenPlayerIIIBorderActive, bool greenPlayerIIIButtonInteractable,
-    bool greenPlayerIVBorderActive, bool greenPlayerIVButtonInteractable)
+void SyncPlayersState(string turn, int diceValue
+
+    // ,
+    // bool redPlayerIBorderActive, bool redPlayerIButtonInteractable,
+    // bool redPlayerIIBorderActive, bool redPlayerIIButtonInteractable,
+    // bool redPlayerIIIBorderActive, bool redPlayerIIIButtonInteractable,
+//     bool redPlayerIVBorderActive, bool redPlayerIVButtonInteractable,
+//     bool greenPlayerIBorderActive, bool greenPlayerIButtonInteractable,
+//     bool greenPlayerIIBorderActive, bool greenPlayerIIButtonInteractable,
+//     bool greenPlayerIIIBorderActive, bool greenPlayerIIIButtonInteractable,
+//     bool greenPlayerIVBorderActive, bool greenPlayerIVButtonInteractable
+)
 {
     playerTurn = turn;
     selectDiceNumAnimation = diceValue;
     Debug.Log("    selectDiceNumAnimation =  "  + selectDiceNumAnimation.ToString());
 
     // Sincronize os estados de borda e botão
-    redPlayerI_Border.SetActive(redPlayerIBorderActive);
-    RedPlayerI_Button.interactable = redPlayerIButtonInteractable;
+    // redPlayerI_Border.SetActive(redPlayerIBorderActive);
+    // RedPlayerI_Button.interactable = redPlayerIButtonInteractable;
 
-    redPlayerII_Border.SetActive(redPlayerIIBorderActive);
-    RedPlayerII_Button.interactable = redPlayerIIButtonInteractable;
+    // redPlayerII_Border.SetActive(redPlayerIIBorderActive);
+    // RedPlayerII_Button.interactable = redPlayerIIButtonInteractable;
 
-     redPlayerIII_Border.SetActive(redPlayerIIIBorderActive);
-    RedPlayerIII_Button.interactable = redPlayerIIIButtonInteractable;
+    //  redPlayerIII_Border.SetActive(redPlayerIIIBorderActive);
+    // RedPlayerIII_Button.interactable = redPlayerIIIButtonInteractable;
 
-    redPlayerIV_Border.SetActive(redPlayerIVBorderActive);
-    RedPlayerIV_Button.interactable = redPlayerIVButtonInteractable;
+    // redPlayerIV_Border.SetActive(redPlayerIVBorderActive);
+    // RedPlayerIV_Button.interactable = redPlayerIVButtonInteractable;
 
-    greenPlayerI_Border.SetActive(greenPlayerIBorderActive);
-    GreenPlayerI_Button.interactable = greenPlayerIButtonInteractable;
+    // greenPlayerI_Border.SetActive(greenPlayerIBorderActive);
+    // GreenPlayerI_Button.interactable = greenPlayerIButtonInteractable;
 
-    greenPlayerII_Border.SetActive(greenPlayerIIBorderActive);
-    GreenPlayerII_Button.interactable = greenPlayerIIButtonInteractable;
+    // greenPlayerII_Border.SetActive(greenPlayerIIBorderActive);
+    // GreenPlayerII_Button.interactable = greenPlayerIIButtonInteractable;
 
-    greenPlayerIII_Border.SetActive(greenPlayerIIIBorderActive);
-    GreenPlayerIII_Button.interactable = greenPlayerIIIButtonInteractable;
+    // greenPlayerIII_Border.SetActive(greenPlayerIIIBorderActive);
+    // GreenPlayerIII_Button.interactable = greenPlayerIIIButtonInteractable;
 
-    greenPlayerIV_Border.SetActive(greenPlayerIVBorderActive);
-    GreenPlayerIV_Button.interactable = greenPlayerIVButtonInteractable;
+    // greenPlayerIV_Border.SetActive(greenPlayerIVBorderActive);
+    // GreenPlayerIV_Button.interactable = greenPlayerIVButtonInteractable;
 
    
 }
@@ -1250,7 +1255,7 @@ void MoverPeca(GameObject player, ref int playerSteps, int diceValue, List<GameO
     {
         Player_Path[0] = movementBlocks[playerSteps].transform.position;
         playerSteps += 1;
-        TrocarTurno();
+        playerTurn = color; 
         iTween.MoveTo (player, iTween.Hash ("position", Player_Path [0], "speed", 125,"time",2.0f, "easetype", "elastic", "looptype", "none", "oncomplete", "FinalizarMovimento", "oncompletetarget", this.gameObject));
        
     }
