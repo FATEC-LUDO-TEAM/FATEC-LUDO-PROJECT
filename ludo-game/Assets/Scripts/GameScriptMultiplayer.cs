@@ -12,6 +12,11 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
 {
     private int totalRedInHouse, totalGreenInHouse;
 
+    private string lastPlayerTurn;
+    public GameObject turnred;
+    public GameObject turngreen;
+
+
     public GameObject redPlayerI_StartPos;
     public GameObject redPlayerII_StartPos;
      public GameObject redPlayerIII_StartPos;
@@ -177,13 +182,13 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
     {
         if (playerTurn == "RED")
         {
-            frameRed.SetActive(true);
+            frameRed.SetActive(false);
             frameGreen.SetActive(false);
         }
         else if (playerTurn == "GREEN")
         {
             frameRed.SetActive(false);
-            frameGreen.SetActive(true);
+            frameGreen.SetActive(false);
         }
     }
 
@@ -198,6 +203,9 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
         Debug.Log("Conexão com o servidor perdida. Tentando reconectar... Voltando ao Menu");
 		//SceneManager.LoadScene("CoreMenu");
     	}
+
+        lastPlayerTurn = ""; // Inicializa com um valor que não corresponde a nenhum turno
+        AtualizarTurnoUI();
     }
 
 
@@ -1284,7 +1292,19 @@ void TrocarTurno()
     playerTurn = (playerTurn == "RED") ? "GREEN" : "RED";
 }
 
-
+void AtualizarTurnoUI()
+{
+    if (playerTurn == "RED")
+    {
+        turnred.SetActive(true);
+        turngreen.SetActive(false);
+    }
+    else if (playerTurn == "GREEN")
+    {
+        turngreen.SetActive(true);
+        turnred.SetActive(false);
+    }
+}
 
  void Update()
     {
@@ -1309,6 +1329,15 @@ void TrocarTurno()
                 Debug.Log("UI Raycast hit object: " + result.gameObject.name);
             }
         }
+
+
+        if (playerTurn != lastPlayerTurn)
+    {
+        AtualizarTurnoUI();
+        lastPlayerTurn = playerTurn;
+    }
+
+
 
         
     }
