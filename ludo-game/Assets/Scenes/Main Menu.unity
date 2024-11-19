@@ -327,43 +327,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afe1355469f9d4a8d8399e46358cccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tweenName: 
-  playAutomatically: 1
-  delay: 0
-  type: 15
-  showIconInInspector: 0
-  keys:
-  - time
-  - speed
-  - y
-  - easetype
-  - looptype
-  indexes: 0000000001000000020000000000000000000000
-  metadatas:
-  - 
-  - 
-  - 
-  - 
-  - 
-  ints: 
-  floats:
-  - 1
-  - 50
-  - 5
-  bools: 
-  strings: []
-  vector3s: []
-  colors: []
-  spaces: 
-  easeTypes: 15000000
-  loopTypes: 02000000
-  gameObjects: []
-  transforms: []
-  audioClips: []
-  audioSources: []
-  vector3Arrays: []
-  transformArrays: []
-  paths: []
 --- !u!1 &697996616
 GameObject:
   m_ObjectHideFlags: 0
@@ -485,43 +448,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afe1355469f9d4a8d8399e46358cccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tweenName: 
-  playAutomatically: 1
-  delay: 0
-  type: 15
-  showIconInInspector: 0
-  keys:
-  - time
-  - speed
-  - y
-  - easetype
-  - looptype
-  indexes: 0000000001000000020000000000000000000000
-  metadatas:
-  - 
-  - 
-  - 
-  - 
-  - 
-  ints: 
-  floats:
-  - 1
-  - 50
-  - 5
-  bools: 
-  strings: []
-  vector3s: []
-  colors: []
-  spaces: 
-  easeTypes: 15000000
-  loopTypes: 02000000
-  gameObjects: []
-  transforms: []
-  audioClips: []
-  audioSources: []
-  vector3Arrays: []
-  transformArrays: []
-  paths: []
 --- !u!1 &1245216984
 GameObject:
   m_ObjectHideFlags: 0
@@ -777,43 +703,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afe1355469f9d4a8d8399e46358cccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tweenName: 
-  playAutomatically: 1
-  delay: 0
-  type: 15
-  showIconInInspector: 0
-  keys:
-  - time
-  - speed
-  - y
-  - easetype
-  - looptype
-  indexes: 0000000001000000020000000000000000000000
-  metadatas:
-  - 
-  - 
-  - 
-  - 
-  - 
-  ints: 
-  floats:
-  - 1
-  - 50
-  - 5
-  bools: 
-  strings: []
-  vector3s: []
-  colors: []
-  spaces: 
-  easeTypes: 15000000
-  loopTypes: 02000000
-  gameObjects: []
-  transforms: []
-  audioClips: []
-  audioSources: []
-  vector3Arrays: []
-  transformArrays: []
-  paths: []
 --- !u!114 &1336098261
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1095,6 +984,11 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114000013301780626, guid: eede082d6a291425db3fffb3c8370e57,
+        type: 3}
+      propertyPath: buttonAudioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 512c519c56f9de9408baffeb51e27dfe, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eede082d6a291425db3fffb3c8370e57, type: 3}
 --- !u!1 &1787517861
@@ -1365,7 +1259,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: d6ebdc282bb2249b495a878be5e4db88, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.225
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -1611,43 +1505,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afe1355469f9d4a8d8399e46358cccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tweenName: 
-  playAutomatically: 1
-  delay: 0
-  type: 15
-  showIconInInspector: 0
-  keys:
-  - time
-  - speed
-  - y
-  - easetype
-  - looptype
-  indexes: 0000000001000000020000000000000000000000
-  metadatas:
-  - 
-  - 
-  - 
-  - 
-  - 
-  ints: 
-  floats:
-  - 1
-  - 50
-  - 5
-  bools: 
-  strings: []
-  vector3s: []
-  colors: []
-  spaces: 
-  easeTypes: 15000000
-  loopTypes: 02000000
-  gameObjects: []
-  transforms: []
-  audioClips: []
-  audioSources: []
-  vector3Arrays: []
-  transformArrays: []
-  paths: []
 --- !u!1 &2105042458
 GameObject:
   m_ObjectHideFlags: 0

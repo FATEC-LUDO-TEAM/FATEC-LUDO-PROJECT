@@ -36,18 +36,21 @@ public class CreateandJoinRooms : MonoBehaviourPunCallbacks
 
     public void CreateRoom()
     {
+        SoundManagerScript.buttonAudioSource.Play ();
         RoomOptions roomOptions = new RoomOptions { MaxPlayers = maxPlayers };
         PhotonNetwork.CreateRoom(createInput.text, roomOptions);
     }
 
     public void JoinRoom()
     {
+        SoundManagerScript.buttonAudioSource.Play ();
         PhotonNetwork.JoinRoom(joinInput.text);
     }
 
 
     public void ExitLobby()
 {
+    SoundManagerScript.buttonAudioSource.Play ();
     Debug.Log("Saindo do lobby e desconectando...");
     PhotonNetwork.LeaveRoom(); // Sai da sala atual
     PhotonNetwork.Disconnect(); // Desconecta do Photon

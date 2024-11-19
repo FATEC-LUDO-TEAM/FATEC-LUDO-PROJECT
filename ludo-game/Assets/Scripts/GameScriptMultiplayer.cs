@@ -219,7 +219,7 @@ public class GameScriptMultiplayer : MonoBehaviourPunCallbacks
     {
         if (playerTurn == "RED" && PhotonNetwork.IsMasterClient || playerTurn == "GREEN" && !PhotonNetwork.IsMasterClient)
         {
-           
+            SoundManagerScript.diceAudioSource.Play ();
 			Debug.Log("O jogo entendeu que é seu turno e vc pode rodar");
             selectDiceNumAnimation = randomNo.Next(1, 7);
 			//selectDiceNumAnimation = 6;
@@ -514,12 +514,14 @@ void VerificarCondicaoVitoria()
 {
     if (playerTurn == "RED" && totalRedInHouse > 3)
     {
+        SoundManagerScript.winAudioSource.Play ();
         photonView.RPC("StartGameCompletedRoutine", RpcTarget.All);
         
         
     }
     else if (playerTurn == "GREEN" && totalGreenInHouse > 3)
     {
+        SoundManagerScript.winAudioSource.Play ();
         greenScreen.SetActive(true);
         photonView.RPC("StartGameCompletedRoutine", RpcTarget.All);
     }
@@ -787,7 +789,8 @@ private void DesativarInteracaoPecas()
 
 
 public void redPlayerI_UI()
-{
+{   
+    SoundManagerScript.playerAudioSource.Play ();
     Debug.Log("Tentativa de clique em RedPlayerI");
 
     // Verifica se é o Master Client e se é o turno vermelho
@@ -809,7 +812,7 @@ public void redPlayerI_UI()
 
 
 public void redPlayerII_UI()
-{
+{   SoundManagerScript.playerAudioSource.Play ();
     Debug.Log("Tentativa de clique em RedPlayerII");
 
     // Verifica se é o Master Client e se é o turno vermelho
@@ -831,6 +834,7 @@ public void redPlayerII_UI()
 
 public void redPlayerIII_UI()
 {
+    SoundManagerScript.playerAudioSource.Play ();
     Debug.Log("Tentativa de clique em RedPlayerIII");
 
     // Verifica se é o Master Client e se é o turno vermelho
@@ -852,7 +856,7 @@ public void redPlayerIII_UI()
 
 
 public void redPlayerIV_UI()
-{
+{   SoundManagerScript.playerAudioSource.Play ();
     Debug.Log("Tentativa de clique em RedPlayerIV");
 
     // Verifica se é o Master Client e se é o turno vermelho
@@ -998,7 +1002,7 @@ void MoveRedPlayerIV()
 }
 
 public void greenPlayerI_UI()
-{
+{   SoundManagerScript.playerAudioSource.Play ();
     Debug.Log("Tentativa de clique em GreenPlayerI");
 
     // Verifica se é o Master Client e se é o turno vermelho
@@ -1044,7 +1048,7 @@ public void greenPlayerI_UI()
 
 
 public void greenPlayerII_UI()
-{
+{   SoundManagerScript.playerAudioSource.Play ();
     Debug.Log("Tentativa de clique em GreenPlayerII");
 
     // Verifica se é o Master Client e se é o turno vermelho
@@ -1090,7 +1094,7 @@ public void greenPlayerII_UI()
 
 
 public void greenPlayerIII_UI()
-{
+{   SoundManagerScript.playerAudioSource.Play ();
     Debug.Log("Tentativa de clique em GreenPlayerIII");
 
     // Verifica se é o Master Client e se é o turno vermelho
@@ -1137,7 +1141,7 @@ public void greenPlayerIII_UI()
 
 
 public void greenPlayerIV_UI()
-{
+{   SoundManagerScript.playerAudioSource.Play ();
     Debug.Log("Tentativa de clique em GreenPlayerIV");
 
     // Verifica se é o Master Client e se é o turno vermelho

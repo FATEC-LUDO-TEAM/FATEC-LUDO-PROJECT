@@ -159,8 +159,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -204, y: -181}
-  m_SizeDelta: {x: 330, y: 150}
+  m_AnchoredPosition: {x: -207.2089, y: -183.6741}
+  m_SizeDelta: {x: 336.4178, y: 144.6518}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &63869363
 MonoBehaviour:
@@ -448,8 +448,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 139, y: -181}
-  m_SizeDelta: {x: 280, y: 120}
+  m_AnchoredPosition: {x: 139.5, y: -173.51256}
+  m_SizeDelta: {x: 279, y: 87.9109}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &794505488
 MonoBehaviour:
@@ -1243,8 +1243,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 140, y: -69}
-  m_SizeDelta: {x: 280, y: 120}
+  m_AnchoredPosition: {x: 140, y: -61.244}
+  m_SizeDelta: {x: 280, y: 100.21}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1414371237
 MonoBehaviour:
@@ -1387,7 +1387,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 6a55065c16db32d4ea251ef3d8351498, type: 3}
+    m_Font: {fileID: 12800000, guid: b956183b7a0d6f94889a278f154a0e9d, type: 3}
     m_FontSize: 60
     m_FontStyle: 0
     m_BestFit: 0
@@ -1592,8 +1592,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -204, y: -75}
-  m_SizeDelta: {x: 330, y: 150}
+  m_AnchoredPosition: {x: -206.67407, y: -68.582214}
+  m_SizeDelta: {x: 380.2726, y: 162.8356}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1969951625
 MonoBehaviour:
@@ -1749,7 +1749,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 6a55065c16db32d4ea251ef3d8351498, type: 3}
+    m_Font: {fileID: 12800000, guid: b956183b7a0d6f94889a278f154a0e9d, type: 3}
     m_FontSize: 60
     m_FontStyle: 0
     m_BestFit: 0
