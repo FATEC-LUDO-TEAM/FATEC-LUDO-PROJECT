@@ -17,5 +17,5 @@ public class LudoContext : DbContext {
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
-        => options.UseNpgsql("Host=bf5zt2pz3q1ghre9ct5y-postgresql.services.clever-cloud.com;Port=50013;Username=uqphekhutoos9bvf3twr;Password=5gdw08Nyzk5cxCzQgc1QLsSPjKbKdO;Database=bf5zt2pz3q1ghre9ct5y");
+         => options.UseNpgsql("Host=bf5zt2pz3q1ghre9ct5y-postgresql.services.clever-cloud.com;Port=50013;Username=uqphekhutoos9bvf3twr;Password=5gdw08Nyzk5cxCzQgc1QLsSPjKbKdO;Database=bf5zt2pz3q1ghre9ct5y");
 }
