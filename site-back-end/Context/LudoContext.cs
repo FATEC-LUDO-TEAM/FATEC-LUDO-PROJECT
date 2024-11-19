@@ -17,5 +17,5 @@ public class LudoContext : DbContext {
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
-        => options.UseSqlServer("Server=DESKTOP-B8DRR0T; Database=ludo; Integrated Security=True; Trusted_Connection=True; TrustServerCertificate=True ");
+        => options.UseNpgsql("Host=bf5zt2pz3q1ghre9ct5y-postgresql.services.clever-cloud.com;Port=50013;Username=uqphekhutoos9bvf3twr;Password=5gdw08Nyzk5cxCzQgc1QLsSPjKbKdO;Database=bf5zt2pz3q1ghre9ct5y");
 }
