@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+<body>
+    <img id="logo" src="../assets/logo.png" alt="Logo do Site">
+    <div id="login-card">
+        <div class="icon-container">
+           <i class="bi bi-arrow-left-square-fill" onclick="goBack()"></i>
+            <i class="bi bi-x-square-fill" onclick="goBack()"></i>
+        </div>
+        <h1>BEM-VINDO</h1>
+        
+        <form id="my-form">
+            <div id="error-message">Email e/ou senha Incorretos!</div>
+            <input type="email" required name="email" placeholder="e-mail">
+            <input type="password" required name="password" placeholder="senha">
+            <button type="submit">Login</button>
+            <button type="button" onclick="forgotPassword()">Esqueci a senha</button>
+        </form>
+        
+    </div>
+</body>
+    <!-- <script src="../scripts/geral.js"></script> -->
+    <script src="../scripts/login.js"></script>
+</html>
+
+<script>
+    function redirectoMenu() {
+        window.location.href = "menu.html";
+
+
+    function forgotPassword() {
+        // Redirecionar ou abrir a página de recuperação de senha
+        window.location.href = "esqueci.html";
+    }
+    }
+</script>
+</html>
