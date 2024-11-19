@@ -5,8 +5,13 @@ using Photon.Realtime;
 using UnityEngine.SceneManagement;
 using System.Collections;
 
+
 public class CreateandJoinRooms : MonoBehaviourPunCallbacks
 {
+
+    private string[] availableScenes = { "LudoMultiplayer", "LudoMultiMago", "LudoMultiDragao", "LudoMultiArqueiro"}; // Substitua pelos nomes reais das cenas
+    private const string ScenePropertyKey = "SelectedScene";
+
     public InputField createInput;
     public InputField joinInput;
     public Text feedbackText;
@@ -31,18 +36,21 @@ public class CreateandJoinRooms : MonoBehaviourPunCallbacks
 
     public void CreateRoom()
     {
+        SoundManagerScript.buttonAudioSource.Play ();
         RoomOptions roomOptions = new RoomOptions { MaxPlayers = maxPlayers };
         PhotonNetwork.CreateRoom(createInput.text, roomOptions);
     }
 
     public void JoinRoom()
     {
+        SoundManagerScript.buttonAudioSource.Play ();
         PhotonNetwork.JoinRoom(joinInput.text);
     }
 
 
     public void ExitLobby()
 {
+    SoundManagerScript.buttonAudioSource.Play ();
     Debug.Log("Saindo do lobby e desconectando...");
     PhotonNetwork.LeaveRoom(); // Sai da sala atual
     PhotonNetwork.Disconnect(); // Desconecta do Photon
@@ -154,13 +162,37 @@ public override void OnMasterClientSwitched(Player newMasterClient)
 
     private void StartGame()
     {
-        if (PhotonNetwork.CurrentRoom.PlayerCount == maxPlayers)
+       if (PhotonNetwork.CurrentRoom.PlayerCount == 2) // Substitua 2 pelo número máximo de jogadores
         {
-            SceneManager.LoadScene("LudoMultiplayer");
+            if (PhotonNetwork.IsMasterClient)
+            {
+                // Escolha uma cena aleatória
+                string selectedScene = availableScenes[Random.Range(0, availableScenes.Length)];
+
+                // Salve a cena escolhida como propriedade da sala
+                PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { ScenePropertyKey, selectedScene } });
+
+                // Carregue a cena para todos
+                PhotonNetwork.LoadLevel(selectedScene);
+            }
+            else
+            {
+                // Aguarda o MasterClient definir a cena
+                string selectedScene = PhotonNetwork.CurrentRoom.CustomProperties[ScenePropertyKey] as string;
+                if (!string.IsNullOrEmpty(selectedScene))
+                {
+                    PhotonNetwork.LoadLevel(selectedScene);
+                }
+                else
+                {
+                    Debug.Log("Aguardando o Master Client selecionar a cena...");
+                }
+            }
         }
         else
         {
-            feedbackText.text = "Aguardando o segundo jogador...";
+            Debug.Log("Aguardando outros jogadores...");
         }
+    
     }
 }

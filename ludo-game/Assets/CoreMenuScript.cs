@@ -16,5 +16,7 @@ public class CoreMenuScript : MonoBehaviour
     {
         SceneManager.LoadScene("Loading");  
     }
+
+  
     
 }
