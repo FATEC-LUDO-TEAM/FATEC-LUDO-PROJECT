@@ -34,8 +34,8 @@ public class CosmeticController : ControllerBase
                 image = jsonBody.Image,
                 data = jsonBody.Data,
                 item_type = jsonBody.ItemType,
-                created_at = DateTime.Now,
-                updated_at = DateTime.Now
+                created_at = DateTime.UtcNow,
+                updated_at = DateTime.UtcNow
             };
             _ludocontext.Cosmetics.Add(newCosmetic);
             _ludocontext.SaveChanges();
