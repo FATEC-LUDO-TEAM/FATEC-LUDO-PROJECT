@@ -36,7 +36,7 @@ document.getElementById('payment-form').addEventListener('submit', function(even
         };
 
         // Enviar os dados para o servidor
-        fetch('http://localhost:5005/payment', requestOptions)
+        fetch('https://5cbc-191-181-59-166.ngrok-free.app/payment', requestOptions)
             .then(response => {
                 if (response.ok) {
                     return response.json();

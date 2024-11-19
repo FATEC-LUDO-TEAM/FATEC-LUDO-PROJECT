@@ -19,7 +19,7 @@ document.getElementById('forgot-password-form').addEventListener('submit', funct
         };
 
         // Envia requisição para o endpoint de recuperação de senha
-        fetch('http://localhost:5005/user/forgot-password', requestOptions)
+        fetch('https://5cbc-191-181-59-166.ngrok-free.app/user/forgot-password', requestOptions)
             .then(response => {
                 if (response.ok) {
                     return response.json();
