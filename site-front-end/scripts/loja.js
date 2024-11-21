@@ -16,7 +16,7 @@ async function getUserCosmetics(user_id){
     var items_list = [];
 
     //post
-    await fetch('http://localhost:5005/inventory/list', requestOptions)
+    await fetch('https://5cbc-191-181-59-166.ngrok-free.app/inventory/list', requestOptions)
     .then(response => {
         if (response.ok) {
             // Resposta 200 OK
@@ -47,7 +47,7 @@ async function getUserCosmetics(user_id){
 async function getUserCoins(user_id){
     var user_coins = 0;
     //get
-    await fetch('http://localhost:5005/user/user_coins?user_id='+user_id)
+    await fetch('https://5cbc-191-181-59-166.ngrok-free.app/user/user_coins?user_id='+user_id)
     .then(response => {
         if (response.ok) {
             // Resposta 200 OK

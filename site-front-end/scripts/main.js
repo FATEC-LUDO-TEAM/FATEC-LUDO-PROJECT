@@ -20,10 +20,10 @@ function isCookieExpired(cookieName) {
     return true;
 }
 
-if (getCookie("loginToken") && !isCookieExpired("loginToken")) {
-    console.log("usuario ta logado");
-} else {
-    console.log("usuario nao ta logado, rediricionando a pagina de login...");
-    window.location.href = "login.html";
-}
+// if (getCookie("loginToken") && !isCookieExpired("loginToken")) {
+//     console.log("usuario ta logado");
+// } else {
+//     console.log("usuario nao ta logado, rediricionando a pagina de login...");
+//     window.location.href = "login.html";
+// }
 //checar se o usuario ta logado

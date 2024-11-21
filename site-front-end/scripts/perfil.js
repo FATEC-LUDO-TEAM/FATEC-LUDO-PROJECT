@@ -12,7 +12,7 @@ function getCookie(name) {
 async function getUserCoins(user_id){
     var user_coins = 0;
     //get
-    await fetch('http://localhost:5005/user/user_coins?user_id='+user_id)
+    await fetch('https://5cbc-191-181-59-166.ngrok-free.app/user/user_coins?user_id='+user_id)
     .then(response => {
         if (response.ok) {
             // Resposta 200 OK

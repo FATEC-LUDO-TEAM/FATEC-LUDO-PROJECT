@@ -20,9 +20,10 @@ document.getElementById('my-form').addEventListener('submit', function(event) {
             },
             body: JSON.stringify(object)
         };
+        console.log(requestOptions)
 
         //post
-        fetch('http://localhost:5005/user/login', requestOptions)
+        fetch('https://5cbc-191-181-59-166.ngrok-free.app/user/login', requestOptions)
             .then(response => {
                 if (response.ok) {
                     // Resposta 200 OK

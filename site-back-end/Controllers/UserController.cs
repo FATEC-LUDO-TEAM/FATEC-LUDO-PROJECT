@@ -21,6 +21,7 @@ public class UserController : ControllerBase
     [HttpPost("subscribe")]
     public IResult SubscribeUser([FromBody] SubscribeUserBody jsonBody)
     {
+        Console.WriteLine("Tentativa de criacao de usuario: " + jsonBody.Username);
 
         //checando se já existe um usuário com username ou email
         var UsuariosParecidos = _ludocontext.Users.Where(u => u.username == jsonBody.Username || u.email == jsonBody.Email).ToList();
@@ -40,8 +41,8 @@ public class UserController : ControllerBase
                 email = jsonBody.Email,
                 password = jsonBody.Password,
                 is_admin = false,
-                created_at = DateTime.Now,
-                updated_at = DateTime.Now
+                created_at = DateTime.UtcNow,
+                updated_at = DateTime.UtcNow
             };
             _ludocontext.Users.Add(user);
             
@@ -61,6 +62,7 @@ public class UserController : ControllerBase
     [HttpPost("login")]
     public IResult LoginUser ([FromBody] LoginUserBody jsonBody)
     {
+        Console.WriteLine("tentativa de login: U: " + jsonBody.Username + " P: " + jsonBody.Password);
         //procura se existe um usuário com tal senha e nome no banco
         var UsuarioEncontrado = _ludocontext.Users.Where(u => u.email == jsonBody.Username && u.password == jsonBody.Password).FirstOrDefault();
         if(UsuarioEncontrado == null)

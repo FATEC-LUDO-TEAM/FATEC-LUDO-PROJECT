@@ -26,7 +26,7 @@ document.getElementById('my-form').addEventListener('submit', function(event) {
         };
 
    
-        fetch('http://localhost:5005/user/subscribe', requestOptions) 
+        fetch('https://5cbc-191-181-59-166.ngrok-free.app/user/subscribe', requestOptions) 
             .then(response => {
                 
                 if (response.status === 400) {

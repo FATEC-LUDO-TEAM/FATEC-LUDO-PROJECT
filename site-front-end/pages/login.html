@@ -54,7 +54,7 @@
     <img id="logo" src="../assets/logo.png" alt="Logo do Site">
     <div id="login-card">
         <div class="icon-container">
-            <i class="bi bi-arrow-left-square-fill" onclick="goBack()"></i>
+           <i class="bi bi-arrow-left-square-fill" onclick="goBack()"></i>
             <i class="bi bi-x-square-fill" onclick="goBack()"></i>
         </div>
         <h1>BEM-VINDO</h1>
@@ -63,7 +63,7 @@
             <div id="error-message">Email e/ou senha Incorretos!</div>
             <input type="email" required name="email" placeholder="e-mail">
             <input type="password" required name="password" placeholder="senha">
-            <button type="submit" onclick="redirectoMenu()">Login</button>
+            <button type="submit">Login</button>
             <button type="button" onclick="forgotPassword()">Esqueci a senha</button>
         </form>
 
@@ -78,6 +78,9 @@
             <img src="../assets/modal1.png" alt="Propaganda">
         </div>
     </div>
+</body>
+    <!-- <script src="../scripts/geral.js"></script> -->
+    <script src="../scripts/login.js"></script>
 
     <script>
         // Funções existentes
@@ -111,5 +114,4 @@
             });
         });
     </script>
-</body>
 </html>
